@@ -1,5 +1,7 @@
 (() => {
-  if (/^\/accounts\/[0-9]+\/users\/[0-9]+/.test(window.location.pathname) || /^\/users\/[0-9]+/.test(window.location.pathname)) {
+  if (/^\/accounts\/[0-9]+\/users\/[0-9]+/.test(window.location.pathname) || 
+      /^\/accounts\/self\/users\/[0-9]+/.test(window.location.pathname) || 
+      /^\/users\/[0-9]+/.test(window.location.pathname)) {
     chrome.storage.sync.get({
       adminUsersEnrollmentsResizable: true,
       adminUsersEnrollmentsDefaultHeight: 400,
@@ -108,7 +110,7 @@
       requestNum++;
       await new Promise(r => setTimeout(r, requestNum * 20 + 10));
       const accountNumber = item.querySelector("a").href.split("/").pop();
-      const url = `https://${window.location.hostname}/api/v1/accounts/${accountNumber}/admins?user_id[]=${userId}`; // TODO Update to be paginated
+      const url = `/api/v1/accounts/${accountNumber}/admins?user_id[]=${userId}`; // TODO Update to be paginated
       fetch(url)
         .then(response => response.json())
         .then(data => {
@@ -351,7 +353,7 @@
           const courseCode = courseNameLink.parentElement.querySelector("span.ski-course-code");
           if (!courseCode) {
             const canvasCourseCode = courseNameLink.href.match(/\/courses\/[0-9]+\//)[0].replace("courses", "").replaceAll("/", "");
-            fetch(`https://${document.location.hostname}/api/v1/courses/${canvasCourseCode}`)
+            fetch(`/api/v1/courses/${canvasCourseCode}`)
               .then(response => response.json())
               .then(data => {
                 const courseCode = data["course_code"];

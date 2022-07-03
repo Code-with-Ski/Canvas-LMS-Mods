@@ -43,7 +43,7 @@
               const courseCode = courseNameLink.parentElement.querySelector("span.ski-course-code");
               if (!courseCode) {
                 const canvasCourseCode = courseNameLink.href.split("/").pop();
-                fetch(`https://${document.location.hostname}/api/v1/courses/${canvasCourseCode}`)
+                fetch(`/api/v1/courses/${canvasCourseCode}`)
                   .then(response => response.json())
                   .then(data => {
                     const courseCode = data["course_code"];
@@ -67,7 +67,7 @@
           const courseCode = courseNameLink.parentElement.querySelector("span.ski-course-code");
           if (!courseCode) {
             const canvasCourseCode = courseNameLink.href.split("/").pop();
-            fetch(`https://${document.location.hostname}/api/v1/courses/${canvasCourseCode}`)
+            fetch(`/api/v1/courses/${canvasCourseCode}`)
               .then(response => response.json())
               .then(data => {
                 const courseCode = data["course_code"];

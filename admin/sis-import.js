@@ -177,9 +177,8 @@
         return;
       }
 
-      const BASE_URL = document.location.hostname;
       const PER_PAGE = 10;
-      url = `https://${BASE_URL}/accounts/1/sis_imports?per_page=${PER_PAGE}`;
+      url = `/api/v1/accounts/self/sis_imports?per_page=${PER_PAGE}`;
       checkedWorkflowStates.forEach(state => {
         url += `&workflow_state[]=${state.value}`;
       });
@@ -229,9 +228,8 @@
     const newRow = document.createElement("tr");
 
     const idTd = document.createElement("td");
-    const BASE_URL = document.location.hostname;
     const sisImportId = sisImportJSON['id']
-    idTd.innerHTML = `<a href='https://${BASE_URL}/accounts/1/sis_imports/${sisImportId}' target='_blank'>${sisImportId}</a>`;
+    idTd.innerHTML = `<a href='/accounts/self/sis_imports/${sisImportId}' target='_blank'>${sisImportId}</a>`;
 
     const dateTimeTd = document.createElement("td");
     const createdAtDate = new Date(sisImportJSON['created_at']);
@@ -287,7 +285,7 @@
       
     }
 
-    summaryTd.innerHTML += `<br><br>User: <a href='https://${BASE_URL}/accounts/1/users/${user["id"]}' target='_blank'>${user["name"]} (ID: ${user["id"]})</a>
+    summaryTd.innerHTML += `<br><br>User: <a href='/accounts/self/users/${user["id"]}' target='_blank'>${user["name"]} (ID: ${user["id"]})</a>
     <br>Diffing Data Set ID: ${diffingDataSetId}
     <br>Supplied Batches: ${suppliedBatches}
     <br>Skip Deletes: ${skipDeletes}
@@ -397,7 +395,7 @@
     const days = Math.floor(time / 1000 / 60 / 60 / 24);
     const hours = Math.floor(time / 1000 / 60 / 60) % 24;
     const minutes = Math.floor(time / 1000 / 60) % 60;
-    const seconds = time / 1000 % 60;
+    const seconds = (time / 1000 % 60).toFixed(2);
 
     if (days > 0) {
       return `${days} days: ${hours} hours: ${minutes} minutes: ${seconds} seconds`;

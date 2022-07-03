@@ -1,0 +1,74 @@
+{
+    "name": "Canvas LMS Mods (Basic)",
+    "description": "This provides modifications to the Canvas LMS to improve the user experience visually and functionally.",
+    "version": "1.0.0",
+    "manifest_version": 3,
+    "permissions": ["storage"],
+    "host_permissions": [
+      "https://*.instructure.com/*"
+    ],
+    "content_scripts": [
+      {
+        "matches": [
+          "https://*.instructure.com/users/*"
+        ],
+        "js": ["admin/user.js"]
+      },
+      {
+        "matches": [
+          "https://*.instructure.com/accounts/*/users/*"
+        ],
+        "js": ["admin/user.js"]
+      },
+      {
+        "matches": [
+          "https://*.instructure.com/accounts/*/avatars*"
+        ],
+        "js": ["admin/user-profile-picture-review.js"]
+      },
+      {
+        "matches": [
+          "https://*.instructure.com/accounts/*"
+        ],
+        "js": ["admin/course-search.js"]
+      },
+      {
+        "matches": [
+          "https://*.instructure.com/accounts/*/terms"
+        ],
+        "js": ["admin/terms.js"]
+      },
+      {
+        "matches": [
+          "https://*.instructure.com/accounts/*/rubrics"
+        ],
+        "js": ["admin/rubrics.js"]
+      },
+      {
+        "matches": [
+          "https://*.instructure.com/accounts/*/question_banks"
+        ],
+        "js": ["admin/question-banks.js"]
+      },
+      {
+        "matches": [
+          "https://*.instructure.com/accounts/*/sub_accounts"
+        ],
+        "js": ["admin/sub-accounts.js"]
+      },
+      {
+        "matches": [
+          "https://*.instructure.com/accounts/*/sis_import"
+        ],
+        "js": ["admin/sis-import.js"]
+      }
+  
+    ],
+    "icons": {
+      "16": "/images/extension_logo16.png",
+      "32": "/images/extension_logo32.png",
+      "48": "/images/extension_logo48.png",
+      "128": "/images/extension_logo128.png"
+    },
+    "options_page": "options.html"
+  }

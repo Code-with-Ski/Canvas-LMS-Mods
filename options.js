@@ -1,5 +1,8 @@
 // Saves options to chrome.storage
 function saveOptions() {
+  // Dashboard settings
+  const isDashboardAddAllCoursesButton = document.getElementById("dashboard-add-all-courses-button").checked;
+
   // Admin - Courses settings
   const isBlueprintInputFillPrevent = document.getElementById("admin-courses-blueprint-input-prevent-fill").checked;
   const isCourseCodeEnabled = document.getElementById("admin-courses-course-code").checked;
@@ -48,6 +51,7 @@ function saveOptions() {
   const isSisImportLogEnabled = document.getElementById("admin-sis-import-log").checked;
 
   chrome.storage.sync.set({
+    dashboardAddAllCoursesButton: isDashboardAddAllCoursesButton,
     adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
     adminCoursesCourseCode: isCourseCodeEnabled,
     adminUsersEnrollmentsResizable: isCourseListResizable,
@@ -86,6 +90,7 @@ function saveOptions() {
 // stored in chrome.storage.
 function restoreOptions() {
   chrome.storage.sync.get({
+    dashboardAddAllCoursesButton: true,
     adminCoursesBlueprintInputPreventFill: true,
     adminCoursesCourseCode: true,
     adminUsersEnrollmentsResizable: true,
@@ -111,6 +116,9 @@ function restoreOptions() {
     adminSubAccountsSisId: true,
     adminSisImportLog: true
   }, function(items) {
+    // Dashboard settings
+    document.getElementById("dashboard-add-all-courses-button").checked = items.dashboardAddAllCoursesButton;
+
     // Admin - Courses settings
     document.getElementById("admin-courses-blueprint-input-prevent-fill").checked = items.adminCoursesBlueprintInputPreventFill;
     document.getElementById("admin-courses-course-code").checked = items.adminCoursesCourseCode;

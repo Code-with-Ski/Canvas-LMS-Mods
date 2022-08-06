@@ -4,46 +4,90 @@
   "version": "1.1.0",
   "manifest_version": 3,
   "permissions": ["storage"],
-  "host_permissions": ["https://*.instructure.com/*"],
+  "host_permissions": [
+    "https://*.instructure.com/*",
+    "https://*.test.instructure.com/*",
+    "https://*.beta.instructure.com/*"
+  ],
   "content_scripts": [
     {
-      "matches": ["https://*.instructure.com/"],
+      "matches": [
+        "https://*.instructure.com/",
+        "https://*.test.instructure.com/*",
+        "https://*.beta.instructure.com/*"
+      ],
       "js": ["dashboard/dashboard.js"]
     },
     {
-      "matches": ["https://*.instructure.com/users/*"],
+      "matches": [
+        "https://*.instructure.com/users/*",
+        "https://*.test.instructure.com/users/*",
+        "https://*.beta.instructure.com/users/*"
+      ],
       "js": ["admin/user.js"]
     },
     {
-      "matches": ["https://*.instructure.com/accounts/*/users/*"],
+      "matches": [
+        "https://*.instructure.com/accounts/*/users/*",
+        "https://*.test.instructure.com/accounts/*/users/*",
+        "https://*.beta.instructure.com/accounts/*/users/*"
+      ],
       "js": ["admin/user.js"]
     },
     {
-      "matches": ["https://*.instructure.com/accounts/*/avatars*"],
+      "matches": [
+        "https://*.instructure.com/accounts/*/avatars*",
+        "https://*.test.instructure.com/accounts/*/avatars*",
+        "https://*.beta.instructure.com/accounts/*/avatars*"
+      ],
       "js": ["admin/user-profile-picture-review.js"]
     },
     {
-      "matches": ["https://*.instructure.com/accounts/*"],
+      "matches": [
+        "https://*.instructure.com/accounts/*",
+        "https://*.test.instructure.com/accounts/*",
+        "https://*.beta.instructure.com/accounts/*"
+      ],
       "js": ["admin/course-search.js"]
     },
     {
-      "matches": ["https://*.instructure.com/accounts/*/terms"],
+      "matches": [
+        "https://*.instructure.com/accounts/*/terms",
+        "https://*.test.instructure.com/accounts/*/terms",
+        "https://*.beta.instructure.com/accounts/*/terms"
+      ],
       "js": ["admin/terms.js"]
     },
     {
-      "matches": ["https://*.instructure.com/accounts/*/rubrics"],
+      "matches": [
+        "https://*.instructure.com/accounts/*/rubrics",
+        "https://*.test.instructure.com/accounts/*/rubrics",
+        "https://*.beta.instructure.com/accounts/*/rubrics"
+      ],
       "js": ["admin/rubrics.js"]
     },
     {
-      "matches": ["https://*.instructure.com/accounts/*/question_banks"],
+      "matches": [
+        "https://*.instructure.com/accounts/*/question_banks",
+        "https://*.test.instructure.com/accounts/*/question_banks",
+        "https://*.beta.instructure.com/accounts/*/question_banks"
+      ],
       "js": ["admin/question-banks.js"]
     },
     {
-      "matches": ["https://*.instructure.com/accounts/*/sub_accounts"],
+      "matches": [
+        "https://*.instructure.com/accounts/*/sub_accounts",
+        "https://*.test.instructure.com/accounts/*/sub_accounts",
+        "https://*.beta.instructure.com/accounts/*/sub_accounts"
+      ],
       "js": ["admin/sub-accounts.js"]
     },
     {
-      "matches": ["https://*.instructure.com/accounts/*/sis_import"],
+      "matches": [
+        "https://*.instructure.com/accounts/*/sis_import",
+        "https://*.test.instructure.com/accounts/*/sis_import", 
+        "https://*.beta.instructure.com/accounts/*/sis_import"
+      ],
       "js": ["admin/sis-import.js"]
     }
   ],

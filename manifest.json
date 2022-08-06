@@ -13,10 +13,19 @@
     {
       "matches": [
         "https://*.instructure.com/",
-        "https://*.test.instructure.com/*",
-        "https://*.beta.instructure.com/*"
+        "https://*.test.instructure.com/",
+        "https://*.beta.instructure.com/"
       ],
       "js": ["dashboard/dashboard.js"]
+    },
+    {
+      "matches": [
+        "https://*.instructure.com/courses/*/modules",
+        "https://*.test.instructure.com/courses/*/modules",
+        "https://*.beta.instructure.com/courses/*/modules"
+      ],
+      "js": ["course/modules.js"],
+      "css": ["global/global.css"]
     },
     {
       "matches": [

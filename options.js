@@ -3,6 +3,9 @@ function saveOptions() {
   // Dashboard settings
   const isDashboardAddAllCoursesButton = document.getElementById("dashboard-add-all-courses-button").checked;
 
+  // Course - Modules settings
+  const isCourseModulesJumpToEnabled = document.getElementById("course-modules-jump-to").checked;
+
   // Admin - Courses settings
   const isBlueprintInputFillPrevent = document.getElementById("admin-courses-blueprint-input-prevent-fill").checked;
   const isCourseCodeEnabled = document.getElementById("admin-courses-course-code").checked;
@@ -52,6 +55,7 @@ function saveOptions() {
 
   chrome.storage.sync.set({
     dashboardAddAllCoursesButton: isDashboardAddAllCoursesButton,
+    courseModulesJumpToEnabled: isCourseModulesJumpToEnabled,
     adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
     adminCoursesCourseCode: isCourseCodeEnabled,
     adminUsersEnrollmentsResizable: isCourseListResizable,
@@ -91,6 +95,7 @@ function saveOptions() {
 function restoreOptions() {
   chrome.storage.sync.get({
     dashboardAddAllCoursesButton: true,
+    courseModulesJumpToEnabled: true,
     adminCoursesBlueprintInputPreventFill: true,
     adminCoursesCourseCode: true,
     adminUsersEnrollmentsResizable: true,
@@ -118,6 +123,9 @@ function restoreOptions() {
   }, function(items) {
     // Dashboard settings
     document.getElementById("dashboard-add-all-courses-button").checked = items.dashboardAddAllCoursesButton;
+
+    // Course - Modules settings
+    document.getElementById("course-modules-jump-to").checked = items.courseModulesJumpToEnabled;
 
     // Admin - Courses settings
     document.getElementById("admin-courses-blueprint-input-prevent-fill").checked = items.adminCoursesBlueprintInputPreventFill;

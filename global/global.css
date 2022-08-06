@@ -18,3 +18,11 @@ details.ski-comp[open] summary {
   border-bottom: 1px solid #aaa;
   margin-bottom: .5em;
 }
+
+div.ski-comp-sticky-top {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background-color: white;
+}

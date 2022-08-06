@@ -3,6 +3,9 @@ function saveOptions() {
   // Dashboard settings
   const isDashboardAddAllCoursesButton = document.getElementById("dashboard-add-all-courses-button").checked;
 
+  // Course - Global settings
+  const isCourseGlobalStickyHeaderEnabled = document.getElementById("course-global-sticky-header").checked;
+
   // Course - Modules settings
   const isCourseModulesJumpToEnabled = document.getElementById("course-modules-jump-to").checked;
 
@@ -55,6 +58,7 @@ function saveOptions() {
 
   chrome.storage.sync.set({
     dashboardAddAllCoursesButton: isDashboardAddAllCoursesButton,
+    courseGlobalStickyHeader: isCourseGlobalStickyHeaderEnabled,
     courseModulesJumpToEnabled: isCourseModulesJumpToEnabled,
     adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
     adminCoursesCourseCode: isCourseCodeEnabled,
@@ -95,6 +99,7 @@ function saveOptions() {
 function restoreOptions() {
   chrome.storage.sync.get({
     dashboardAddAllCoursesButton: true,
+    courseGlobalStickyHeader: true,
     courseModulesJumpToEnabled: true,
     adminCoursesBlueprintInputPreventFill: true,
     adminCoursesCourseCode: true,
@@ -123,6 +128,9 @@ function restoreOptions() {
   }, function(items) {
     // Dashboard settings
     document.getElementById("dashboard-add-all-courses-button").checked = items.dashboardAddAllCoursesButton;
+
+    // Course - Global settings
+    document.getElementById("course-global-sticky-header").checked = items.courseGlobalStickyHeader;
 
     // Course - Modules settings
     document.getElementById("course-modules-jump-to").checked = items.courseModulesJumpToEnabled;

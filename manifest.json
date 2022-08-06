@@ -20,6 +20,15 @@
     },
     {
       "matches": [
+        "https://*.instructure.com/courses/*",
+        "https://*.test.instructure.com/courses/*",
+        "https://*.beta.instructure.com/courses/*"
+      ],
+      "js": ["course/course-global.js"],
+      "css": ["global/global.css"]
+    },
+    {
+      "matches": [
         "https://*.instructure.com/courses/*/modules",
         "https://*.test.instructure.com/courses/*/modules",
         "https://*.beta.instructure.com/courses/*/modules"

@@ -25,6 +25,10 @@ Options will also be updated to allow the user to enable/disable certain customi
 - Global
   - Enable full-width for body
 
+- Account
+  - Profile
+    - Enable "View Grades" button on the profile
+
 - Dashboard
   - Enable "See all courses" button on the dashboard
 

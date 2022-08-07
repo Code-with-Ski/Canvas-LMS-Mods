@@ -21,6 +21,14 @@
     },
     {
       "matches": [
+        "https://*.instructure.com/profile",
+        "https://*.test.instructure.com/profile",
+        "https://*.beta.instructure.com/profile"
+      ],
+      "js": ["account/profile.js"]
+    },
+    {
+      "matches": [
         "https://*.instructure.com/",
         "https://*.test.instructure.com/",
         "https://*.beta.instructure.com/"

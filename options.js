@@ -3,6 +3,9 @@ function saveOptions() {
   // Global settings
   const isGlobalFullWidthEnabled = document.getElementById("global-body-full-width").checked;
 
+  // Account - Profile settings
+  const isAccountProfileGradesButtonEnabled = document.getElementById("account-profile-grades-button").checked;
+
   // Dashboard settings
   const isDashboardAddAllCoursesButton = document.getElementById("dashboard-add-all-courses-button").checked;
 
@@ -61,6 +64,7 @@ function saveOptions() {
 
   chrome.storage.sync.set({
     globalBodyFullWidth: isGlobalFullWidthEnabled,
+    accountProfileGradesButton: isAccountProfileGradesButtonEnabled,
     dashboardAddAllCoursesButton: isDashboardAddAllCoursesButton,
     courseGlobalStickyHeader: isCourseGlobalStickyHeaderEnabled,
     courseModulesJumpToEnabled: isCourseModulesJumpToEnabled,
@@ -103,6 +107,7 @@ function saveOptions() {
 function restoreOptions() {
   chrome.storage.sync.get({
     globalBodyFullWidth: true,
+    accountProfileGradesButton: true,
     dashboardAddAllCoursesButton: true,
     courseGlobalStickyHeader: true,
     courseModulesJumpToEnabled: true,
@@ -133,6 +138,9 @@ function restoreOptions() {
   }, function(items) {
     // Global settings
     document.getElementById("global-body-full-width").checked = items.globalBodyFullWidth;
+
+    // Account - Profile settings
+    document.getElementById("account-profile-grades-button").checked = items.accountProfileGradesButton;
     
     // Dashboard settings
     document.getElementById("dashboard-add-all-courses-button").checked = items.dashboardAddAllCoursesButton;

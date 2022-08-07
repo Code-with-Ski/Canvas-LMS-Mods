@@ -6,6 +6,10 @@ This is currently being designed as a Chrome browser extension, but additional v
 
 This will continue to grow in functionality. If you notice issues, please submit an issue and it will be investigated for consideration.  Suggestions for new features may be considered if they are low-code. Users are encouraged to continue to submit feature requests to Instructure in the Canvas Community to try to get them added as native features, especially for more advanced requests.
 
+If you find this code and/or extension useful, I would appreciate your support so that I can continue to maintain and enhance this project.
+
+[![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/default-blue.png)](https://www.buymeacoffee.com/codewithski)
+
 ## Code Organization
 
 Customizations will be organized primarily by the page on which they will be used. This will allow for only loading the relevant script files when needed. It should also help with tracking down errors when reported.
@@ -17,6 +21,22 @@ Longer scripts and/or scripts that are re-used across multiple pages may be orga
 Options will also be updated to allow the user to enable/disable certain customizations and adjust default values.  This is to help avoid potential conflicts with any local Canvas customizations and to allow the user some choice in the applied mods.
 
 ## Current Customizations Available
+
+- Global
+  - Enable full-width for body
+
+- Account
+  - Profile
+    - Enable "View Grades" button on the profile
+
+- Dashboard
+  - Enable "See all courses" button on the dashboard
+
+- Course
+  - Global for Course
+    - Enable sticky course header
+  - Modules
+    - Enable "Jump to Module" selection
 
 - Admin
   - Course Search

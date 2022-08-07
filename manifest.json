@@ -1,74 +1,134 @@
 {
-    "name": "Canvas LMS Mods (Basic)",
-    "description": "This provides modifications to the Canvas LMS to improve the user experience visually and functionally.",
-    "version": "1.0.0",
-    "manifest_version": 3,
-    "permissions": ["storage"],
-    "host_permissions": [
-      "https://*.instructure.com/*"
-    ],
-    "content_scripts": [
-      {
-        "matches": [
-          "https://*.instructure.com/users/*"
-        ],
-        "js": ["admin/user.js"]
-      },
-      {
-        "matches": [
-          "https://*.instructure.com/accounts/*/users/*"
-        ],
-        "js": ["admin/user.js"]
-      },
-      {
-        "matches": [
-          "https://*.instructure.com/accounts/*/avatars*"
-        ],
-        "js": ["admin/user-profile-picture-review.js"]
-      },
-      {
-        "matches": [
-          "https://*.instructure.com/accounts/*"
-        ],
-        "js": ["admin/course-search.js"]
-      },
-      {
-        "matches": [
-          "https://*.instructure.com/accounts/*/terms"
-        ],
-        "js": ["admin/terms.js"]
-      },
-      {
-        "matches": [
-          "https://*.instructure.com/accounts/*/rubrics"
-        ],
-        "js": ["admin/rubrics.js"]
-      },
-      {
-        "matches": [
-          "https://*.instructure.com/accounts/*/question_banks"
-        ],
-        "js": ["admin/question-banks.js"]
-      },
-      {
-        "matches": [
-          "https://*.instructure.com/accounts/*/sub_accounts"
-        ],
-        "js": ["admin/sub-accounts.js"]
-      },
-      {
-        "matches": [
-          "https://*.instructure.com/accounts/*/sis_import"
-        ],
-        "js": ["admin/sis-import.js"]
-      }
-  
-    ],
-    "icons": {
-      "16": "/images/extension_logo16.png",
-      "32": "/images/extension_logo32.png",
-      "48": "/images/extension_logo48.png",
-      "128": "/images/extension_logo128.png"
+  "name": "Canvas LMS Mods (Basic)",
+  "description": "This provides modifications to the Canvas LMS to improve the user experience visually and functionally.",
+  "version": "1.1.0",
+  "manifest_version": 3,
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://*.instructure.com/*",
+    "https://*.test.instructure.com/*",
+    "https://*.beta.instructure.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.instructure.com/*",
+        "https://*.test.instructure.com/*",
+        "https://*.beta.instructure.com/*"
+      ],
+      "js": ["global/global.js"],
+      "css": ["global/global.css"]
     },
-    "options_page": "options.html"
-  }
+    {
+      "matches": [
+        "https://*.instructure.com/profile",
+        "https://*.test.instructure.com/profile",
+        "https://*.beta.instructure.com/profile"
+      ],
+      "js": ["account/profile.js"]
+    },
+    {
+      "matches": [
+        "https://*.instructure.com/",
+        "https://*.test.instructure.com/",
+        "https://*.beta.instructure.com/"
+      ],
+      "js": ["dashboard/dashboard.js"]
+    },
+    {
+      "matches": [
+        "https://*.instructure.com/courses/*",
+        "https://*.test.instructure.com/courses/*",
+        "https://*.beta.instructure.com/courses/*"
+      ],
+      "js": ["course/course-global.js"]
+    },
+    {
+      "matches": [
+        "https://*.instructure.com/courses/*/modules",
+        "https://*.test.instructure.com/courses/*/modules",
+        "https://*.beta.instructure.com/courses/*/modules"
+      ],
+      "js": ["course/modules.js"]
+    },
+    {
+      "matches": [
+        "https://*.instructure.com/users/*",
+        "https://*.test.instructure.com/users/*",
+        "https://*.beta.instructure.com/users/*"
+      ],
+      "js": ["admin/user.js"]
+    },
+    {
+      "matches": [
+        "https://*.instructure.com/accounts/*/users/*",
+        "https://*.test.instructure.com/accounts/*/users/*",
+        "https://*.beta.instructure.com/accounts/*/users/*"
+      ],
+      "js": ["admin/user.js"]
+    },
+    {
+      "matches": [
+        "https://*.instructure.com/accounts/*/avatars*",
+        "https://*.test.instructure.com/accounts/*/avatars*",
+        "https://*.beta.instructure.com/accounts/*/avatars*"
+      ],
+      "js": ["admin/user-profile-picture-review.js"]
+    },
+    {
+      "matches": [
+        "https://*.instructure.com/accounts/*",
+        "https://*.test.instructure.com/accounts/*",
+        "https://*.beta.instructure.com/accounts/*"
+      ],
+      "js": ["admin/course-search.js"]
+    },
+    {
+      "matches": [
+        "https://*.instructure.com/accounts/*/terms",
+        "https://*.test.instructure.com/accounts/*/terms",
+        "https://*.beta.instructure.com/accounts/*/terms"
+      ],
+      "js": ["admin/terms.js"]
+    },
+    {
+      "matches": [
+        "https://*.instructure.com/accounts/*/rubrics",
+        "https://*.test.instructure.com/accounts/*/rubrics",
+        "https://*.beta.instructure.com/accounts/*/rubrics"
+      ],
+      "js": ["admin/rubrics.js"]
+    },
+    {
+      "matches": [
+        "https://*.instructure.com/accounts/*/question_banks",
+        "https://*.test.instructure.com/accounts/*/question_banks",
+        "https://*.beta.instructure.com/accounts/*/question_banks"
+      ],
+      "js": ["admin/question-banks.js"]
+    },
+    {
+      "matches": [
+        "https://*.instructure.com/accounts/*/sub_accounts",
+        "https://*.test.instructure.com/accounts/*/sub_accounts",
+        "https://*.beta.instructure.com/accounts/*/sub_accounts"
+      ],
+      "js": ["admin/sub-accounts.js"]
+    },
+    {
+      "matches": [
+        "https://*.instructure.com/accounts/*/sis_import",
+        "https://*.test.instructure.com/accounts/*/sis_import", 
+        "https://*.beta.instructure.com/accounts/*/sis_import"
+      ],
+      "js": ["admin/sis-import.js"]
+    }
+  ],
+  "icons": {
+    "16": "/images/extension_logo16.png",
+    "32": "/images/extension_logo32.png",
+    "48": "/images/extension_logo48.png",
+    "128": "/images/extension_logo128.png"
+  },
+  "options_page": "options.html"
+}

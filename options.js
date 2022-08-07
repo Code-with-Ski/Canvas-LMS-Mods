@@ -1,5 +1,20 @@
 // Saves options to chrome.storage
 function saveOptions() {
+  // Global settings
+  const isGlobalFullWidthEnabled = document.getElementById("global-body-full-width").checked;
+
+  // Account - Profile settings
+  const isAccountProfileGradesButtonEnabled = document.getElementById("account-profile-grades-button").checked;
+
+  // Dashboard settings
+  const isDashboardAddAllCoursesButton = document.getElementById("dashboard-add-all-courses-button").checked;
+
+  // Course - Global settings
+  const isCourseGlobalStickyHeaderEnabled = document.getElementById("course-global-sticky-header").checked;
+
+  // Course - Modules settings
+  const isCourseModulesJumpToEnabled = document.getElementById("course-modules-jump-to").checked;
+
   // Admin - Courses settings
   const isBlueprintInputFillPrevent = document.getElementById("admin-courses-blueprint-input-prevent-fill").checked;
   const isCourseCodeEnabled = document.getElementById("admin-courses-course-code").checked;
@@ -48,6 +63,11 @@ function saveOptions() {
   const isSisImportLogEnabled = document.getElementById("admin-sis-import-log").checked;
 
   chrome.storage.sync.set({
+    globalBodyFullWidth: isGlobalFullWidthEnabled,
+    accountProfileGradesButton: isAccountProfileGradesButtonEnabled,
+    dashboardAddAllCoursesButton: isDashboardAddAllCoursesButton,
+    courseGlobalStickyHeader: isCourseGlobalStickyHeaderEnabled,
+    courseModulesJumpToEnabled: isCourseModulesJumpToEnabled,
     adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
     adminCoursesCourseCode: isCourseCodeEnabled,
     adminUsersEnrollmentsResizable: isCourseListResizable,
@@ -86,6 +106,11 @@ function saveOptions() {
 // stored in chrome.storage.
 function restoreOptions() {
   chrome.storage.sync.get({
+    globalBodyFullWidth: true,
+    accountProfileGradesButton: true,
+    dashboardAddAllCoursesButton: true,
+    courseGlobalStickyHeader: true,
+    courseModulesJumpToEnabled: true,
     adminCoursesBlueprintInputPreventFill: true,
     adminCoursesCourseCode: true,
     adminUsersEnrollmentsResizable: true,
@@ -111,6 +136,21 @@ function restoreOptions() {
     adminSubAccountsSisId: true,
     adminSisImportLog: true
   }, function(items) {
+    // Global settings
+    document.getElementById("global-body-full-width").checked = items.globalBodyFullWidth;
+
+    // Account - Profile settings
+    document.getElementById("account-profile-grades-button").checked = items.accountProfileGradesButton;
+    
+    // Dashboard settings
+    document.getElementById("dashboard-add-all-courses-button").checked = items.dashboardAddAllCoursesButton;
+
+    // Course - Global settings
+    document.getElementById("course-global-sticky-header").checked = items.courseGlobalStickyHeader;
+
+    // Course - Modules settings
+    document.getElementById("course-modules-jump-to").checked = items.courseModulesJumpToEnabled;
+
     // Admin - Courses settings
     document.getElementById("admin-courses-blueprint-input-prevent-fill").checked = items.adminCoursesBlueprintInputPreventFill;
     document.getElementById("admin-courses-course-code").checked = items.adminCoursesCourseCode;

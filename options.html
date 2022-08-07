@@ -6,179 +6,240 @@
   <body>
     <h1>Enable/Disable Features and Customize Default Settings</h1>
 
-    <fieldset>
-      <legend>Admin - Courses</legend>
+    <details>
+      <summary>Global Customizations</summary>
       <label>
-        <input type="checkbox" id="admin-courses-blueprint-input-prevent-fill" checked />
-        Prevent "Show only blueprint courses" input from stretching to fill empty space
+        <input type="checkbox" id="global-body-full-width" checked />
+        Enable full-width for the body
       </label>
-      <label>
-        <input type="checkbox" id="admin-courses-course-code" checked />
-        Add course code to course search results
-      </label>
-    </fieldset>
+    </details>
 
-    <fieldset>
-      <legend>Admin - User Account Details</legend>
-      <label>
-        <input type="checkbox" id="admin-users-enrollments-resizable" checked />
-        Resizable course enrollments box
-      </label>
-      <label>
-        Default course enrollments box height
-        <input
-          type="number"
-          id="admin-users-enrollments-default-height"
-          required
-          min="100"
-          max="800"
-          value="400"
-          step="10"
-        />
-        px
-      </label>
-      <label>
-        <input type="checkbox" id="admin-users-enrollments-sort" checked />
-        Sort course enrollments by status, term, and role
-      </label>
-      <label>
-        <input type="checkbox" id="admin-users-enrollments-filter" checked />
-        Filter options for course enrollments
-      </label>
-      <label>
-        <input
-          type="checkbox"
-          id="admin-users-enrollments-course-code"
-          checked
-        />
-        Add course code to list of enrollments
-      </label>
-      <hr />
+    <details>
+      <summary>Account</summary>
+      <details>
+        <summary>Profile</summary>
+        <label>
+          <input type="checkbox" id="account-profile-grades-button" checked />
+          Add "View Grades" button to the account user profile page
+        </label>
+      </details>
+    </details>
 
+    <details>
+      <summary>Dashboard</summary>
       <label>
-        <input type="checkbox" id="admin-users-accounts-resizable" checked />
-        Resizable accounts box
+        <input type="checkbox" id="dashboard-add-all-courses-button" checked />
+        Add "See all courses" button to the dashboard header
       </label>
-      <label>
-        Default accounts box height
-        <input
-          type="number"
-          id="admin-users-accounts-default-height"
-          required
-          min="100"
-          max="800"
-          value="100"
-          step="10"
-        />
-        px
-      </label>
-      <label>
-        <input type="checkbox" id="admin-users-accounts-roles" checked />
-        Show admin roles in accounts
-      </label>
-      <hr />
+    </details>
 
-      <label>
-        <input type="checkbox" id="admin-users-groups-resizable" checked />
-        Resizable group enrollments box
-      </label>
-      <label>
-        Default group enrollments box height
-        <input
-          type="number"
-          id="admin-users-groups-default-height"
-          required
-          min="100"
-          max="800"
-          value="100"
-          step="10"
-        />
-        px
-      </label>
-      <hr />
+    <details>
+      <summary>Course</summary>
+      <details>
+        <summary>Global</summary>
+        <label>
+          <input type="checkbox" id="course-global-sticky-header" checked />
+          Enable sticky course header
+        </label>
+      </details>
+      <details>
+        <summary>Modules</summary>
+        <label>
+          <input type="checkbox" id="course-modules-jump-to" checked />
+          Enable "Jump to Module" selection
+        </label>
+      </details>
+    </details>
 
-      <label>
-        <input type="checkbox" id="admin-users-avatar-resizable" checked />
-        Resizable avatar image (Click and drag)
-      </label>
-    </fieldset>
+    <details>
+      <summary>Admin</summary>
+      <details>
+        <summary>Admin - Courses</summary>
+        <label>
+          <input
+            type="checkbox"
+            id="admin-courses-blueprint-input-prevent-fill"
+            checked
+          />
+          Prevent "Show only blueprint courses" input from stretching to fill
+          empty space
+        </label>
+        <label>
+          <input type="checkbox" id="admin-courses-course-code" checked />
+          Add course code to course search results
+        </label>
+      </details>
 
-    <fieldset>
-      <legend>Admin - Profile Pictures</legend>
-      <label>
-        <input type="checkbox" id="admin-profile-pictures-resizable" checked />
-        Resizable profile avatar image (drag corner to resize)
-      </label>
-      <label>
-        <input type="checkbox" id="admin-profile-pictures-square" checked />
-        Change profile pictures to be rounded square shape
-      </label>
-      <label>
-        Default profile picture height/width
-        <input
-          type="number"
-          id="admin-profile-pictures-default-height"
-          required
-          min="60"
-          max="800"
-          value="200"
-          step="10"
-        />
-        px
-      </label>
-    </fieldset>
+      <details>
+        <summary>Admin - User Account Details</summary>
+        <label>
+          <input
+            type="checkbox"
+            id="admin-users-enrollments-resizable"
+            checked
+          />
+          Resizable course enrollments box
+        </label>
+        <label>
+          Default course enrollments box height
+          <input
+            type="number"
+            id="admin-users-enrollments-default-height"
+            required
+            min="100"
+            max="800"
+            value="400"
+            step="10"
+          />
+          px
+        </label>
+        <label>
+          <input type="checkbox" id="admin-users-enrollments-sort" checked />
+          Sort course enrollments by status, term, and role
+        </label>
+        <label>
+          <input type="checkbox" id="admin-users-enrollments-filter" checked />
+          Filter options for course enrollments
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            id="admin-users-enrollments-course-code"
+            checked
+          />
+          Add course code to list of enrollments
+        </label>
+        <hr />
 
-    <fieldset>
-      <legend>Admin - Rubrics</legend>
-      <label>
-        <input type="checkbox" id="admin-rubrics-search" checked />
-        Enable search feature for rubrics
-      </label>
-    </fieldset>
+        <label>
+          <input type="checkbox" id="admin-users-accounts-resizable" checked />
+          Resizable accounts box
+        </label>
+        <label>
+          Default accounts box height
+          <input
+            type="number"
+            id="admin-users-accounts-default-height"
+            required
+            min="100"
+            max="800"
+            value="100"
+            step="10"
+          />
+          px
+        </label>
+        <label>
+          <input type="checkbox" id="admin-users-accounts-roles" checked />
+          Show admin roles in accounts
+        </label>
+        <hr />
 
-    <fieldset>
-      <legend>Admin - QuestionBanks</legend>
-      <label>
-        <input type="checkbox" id="admin-question-banks-search" checked />
-        Enable search feature for question banks
-      </label>
-    </fieldset>
+        <label>
+          <input type="checkbox" id="admin-users-groups-resizable" checked />
+          Resizable group enrollments box
+        </label>
+        <label>
+          Default group enrollments box height
+          <input
+            type="number"
+            id="admin-users-groups-default-height"
+            required
+            min="100"
+            max="800"
+            value="100"
+            step="10"
+          />
+          px
+        </label>
+        <hr />
 
-    <fieldset>
-      <legend>Admin - Sub-Accounts</legend>
-      <label>
-        <input type="checkbox" id="admin-sub-accounts-canvas-id" checked />
-        Show Canvas Account ID
-      </label>
-      <label>
-        <input type="checkbox" id="admin-sub-accounts-sis-id" checked />
-        Show SIS Account ID
-      </label>
-    </fieldset>
+        <label>
+          <input type="checkbox" id="admin-users-avatar-resizable" checked />
+          Resizable avatar image (Click and drag)
+        </label>
+      </details>
 
-    <fieldset>
-      <legend>Admin - Terms</legend>
-      <label>
-        <input type="checkbox" id="admin-terms-search" checked />
-        Enable search feature for terms
-      </label>
-      <label>
-        <input type="checkbox" id="admin-terms-move-add-term" checked />
-        Move Add Term button to the top of the terms table
-      </label>
-      <label>
-        <input type="checkbox" id="admin-terms-term-id" checked />
-        Show Canvas Term Id
-      </label>
-    </fieldset>
+      <details>
+        <summary>Admin - Profile Pictures</summary>
+        <label>
+          <input
+            type="checkbox"
+            id="admin-profile-pictures-resizable"
+            checked
+          />
+          Resizable profile avatar image (drag corner to resize)
+        </label>
+        <label>
+          <input type="checkbox" id="admin-profile-pictures-square" checked />
+          Change profile pictures to be rounded square shape
+        </label>
+        <label>
+          Default profile picture height/width
+          <input
+            type="number"
+            id="admin-profile-pictures-default-height"
+            required
+            min="60"
+            max="800"
+            value="200"
+            step="10"
+          />
+          px
+        </label>
+      </details>
 
-    <fieldset>
-      <legend>Admin - SIS Imports</legend>
-      <label>
-        <input type="checkbox" id="admin-sis-import-log" checked />
-        Enable SIS Import Log
-      </label>
-    </fieldset>
+      <details>
+        <summary>Admin - Rubrics</summary>
+        <label>
+          <input type="checkbox" id="admin-rubrics-search" checked />
+          Enable search feature for rubrics
+        </label>
+      </details>
+
+      <details>
+        <summary>Admin - QuestionBanks</summary>
+        <label>
+          <input type="checkbox" id="admin-question-banks-search" checked />
+          Enable search feature for question banks
+        </label>
+      </details>
+
+      <details>
+        <summary>Admin - Sub-Accounts</summary>
+        <label>
+          <input type="checkbox" id="admin-sub-accounts-canvas-id" checked />
+          Show Canvas Account ID
+        </label>
+        <label>
+          <input type="checkbox" id="admin-sub-accounts-sis-id" checked />
+          Show SIS Account ID
+        </label>
+      </details>
+
+      <details>
+        <summary>Admin - Terms</summary>
+        <label>
+          <input type="checkbox" id="admin-terms-search" checked />
+          Enable search feature for terms
+        </label>
+        <label>
+          <input type="checkbox" id="admin-terms-move-add-term" checked />
+          Move Add Term button to the top of the terms table
+        </label>
+        <label>
+          <input type="checkbox" id="admin-terms-term-id" checked />
+          Show Canvas Term Id
+        </label>
+      </details>
+
+      <details>
+        <summary>Admin - SIS Imports</summary>
+        <label>
+          <input type="checkbox" id="admin-sis-import-log" checked />
+          Enable SIS Import Log
+        </label>
+      </details>
+    </details>
 
     <div id="status"></div>
     <button id="save">Save</button>

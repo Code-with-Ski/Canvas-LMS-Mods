@@ -84,6 +84,19 @@
           <button id="ski-sis-import-log-select-all" class='Button'>Select All Workflow States</button>
           <button id="ski-sis-import-log-clear-all" class='Button'>Clear All Workflow States</button>
         </div>
+
+        <div class='content-box-mini'>
+          <div class="grid-row">
+            <div class='col-xs-12 col-sm-6 col-lg-4'>
+              <label class='ic-Label' for='ski-input-created-since'>Created Since: </label>
+              <input id='ski-input-created-since' type='datetime-local' pattern='[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}'>
+            </div>
+            <div class='col-xs-12 col-sm-6 col-lg-4'>
+              <label class='ic-Label' for='ski-input-created-before'>Created Before: </label>
+              <input id='ski-input-created-before' type='datetime-local' pattern='[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}'>
+            </div>
+          </div>
+        </div>
         
         <p><em>*An import that is stuck on intializing may need to be aborted</em></p>
         <p><em>**An import that is importing for a long time unexpectedly should be reviewed for unexpected changes.  May need to abort and restore.</em></p>
@@ -182,6 +195,32 @@
       checkedWorkflowStates.forEach(state => {
         url += `&workflow_state[]=${state.value}`;
       });
+
+      const createdSinceInput = document.getElementById("ski-input-created-since");
+      if (createdSinceInput) {
+        const createdSinceValue = createdSinceInput.value;
+        if (createdSinceValue) {
+          if (/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}$/.test(createdSinceValue)) {
+            url += `&created_since=${createdSinceValue}`;
+          } else {
+            alert("Invalid format for created since date. Clearing input...");
+            createdSinceInput.value = '';
+          }
+        }
+      }
+
+      const createdBeforeInput = document.getElementById("ski-input-created-before");
+      if (createdBeforeInput) {
+        const createdBeforeValue = createdBeforeInput.value;
+        if (createdBeforeValue) {
+          if (/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}$/.test(createdBeforeValue)) {
+            url += `&created_before=${createdBeforeValue}`;
+          } else {
+            alert("Invalid format for created before date. Clearing input...");
+            createdBeforeInput.value = '';
+          }
+        }
+      }
     }
 
     fetch(url)
@@ -206,6 +245,7 @@
       .then(data => {
         data['sis_imports'].forEach(sisImport => {
           sisImportLogBody.insertAdjacentElement("beforeend", createSisImportLogResultsRow(sisImport));
+          
           const logCountsButton = document.getElementById(`ski-sis-import-log-counts-btn-${sisImport["id"]}`);
           if (logCountsButton) {
             logCountsButton.addEventListener("click", () => updateRowDetails(sisImport["id"]));
@@ -407,4 +447,5 @@
       return `${seconds} seconds`;
     }
   }
+
 })();

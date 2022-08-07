@@ -12,6 +12,15 @@
   "content_scripts": [
     {
       "matches": [
+        "https://*.instructure.com/*",
+        "https://*.test.instructure.com/*",
+        "https://*.beta.instructure.com/*"
+      ],
+      "js": ["global/global.js"],
+      "css": ["global/global.css"]
+    },
+    {
+      "matches": [
         "https://*.instructure.com/",
         "https://*.test.instructure.com/",
         "https://*.beta.instructure.com/"
@@ -24,8 +33,7 @@
         "https://*.test.instructure.com/courses/*",
         "https://*.beta.instructure.com/courses/*"
       ],
-      "js": ["course/course-global.js"],
-      "css": ["global/global.css"]
+      "js": ["course/course-global.js"]
     },
     {
       "matches": [
@@ -33,8 +41,7 @@
         "https://*.test.instructure.com/courses/*/modules",
         "https://*.beta.instructure.com/courses/*/modules"
       ],
-      "js": ["course/modules.js"],
-      "css": ["global/global.css"]
+      "js": ["course/modules.js"]
     },
     {
       "matches": [

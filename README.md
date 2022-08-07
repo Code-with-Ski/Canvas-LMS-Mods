@@ -22,6 +22,18 @@ Options will also be updated to allow the user to enable/disable certain customi
 
 ## Current Customizations Available
 
+- Global
+  - Enable full-width for body
+
+- Dashboard
+  - Enable "See all courses" button on the dashboard
+
+- Course
+  - Global for Course
+    - Enable sticky course header
+  - Modules
+    - Enable "Jump to Module" selection
+
 - Admin
   - Course Search
     - Prevents input for "Show only blueprint courses" from filling to the end of the page in desktop view

@@ -1,5 +1,8 @@
 // Saves options to chrome.storage
 function saveOptions() {
+  // Global settings
+  const isGlobalFullWidthEnabled = document.getElementById("global-body-full-width").checked;
+
   // Dashboard settings
   const isDashboardAddAllCoursesButton = document.getElementById("dashboard-add-all-courses-button").checked;
 
@@ -57,6 +60,7 @@ function saveOptions() {
   const isSisImportLogEnabled = document.getElementById("admin-sis-import-log").checked;
 
   chrome.storage.sync.set({
+    globalBodyFullWidth: isGlobalFullWidthEnabled,
     dashboardAddAllCoursesButton: isDashboardAddAllCoursesButton,
     courseGlobalStickyHeader: isCourseGlobalStickyHeaderEnabled,
     courseModulesJumpToEnabled: isCourseModulesJumpToEnabled,
@@ -98,6 +102,7 @@ function saveOptions() {
 // stored in chrome.storage.
 function restoreOptions() {
   chrome.storage.sync.get({
+    globalBodyFullWidth: true,
     dashboardAddAllCoursesButton: true,
     courseGlobalStickyHeader: true,
     courseModulesJumpToEnabled: true,
@@ -126,6 +131,9 @@ function restoreOptions() {
     adminSubAccountsSisId: true,
     adminSisImportLog: true
   }, function(items) {
+    // Global settings
+    document.getElementById("global-body-full-width").checked = items.globalBodyFullWidth;
+    
     // Dashboard settings
     document.getElementById("dashboard-add-all-courses-button").checked = items.dashboardAddAllCoursesButton;
 

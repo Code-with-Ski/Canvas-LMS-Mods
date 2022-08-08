@@ -23,6 +23,6 @@ div.ski-comp-sticky-top {
   position: -webkit-sticky;
   position: sticky;
   top: 0;
-  z-index: 999;
+  z-index: 98;
   background-color: white;
 }

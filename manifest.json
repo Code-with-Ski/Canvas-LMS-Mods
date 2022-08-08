@@ -118,7 +118,7 @@
     {
       "matches": [
         "https://*.instructure.com/accounts/*/sis_import",
-        "https://*.test.instructure.com/accounts/*/sis_import", 
+        "https://*.test.instructure.com/accounts/*/sis_import",
         "https://*.beta.instructure.com/accounts/*/sis_import"
       ],
       "js": ["admin/sis-import.js"]

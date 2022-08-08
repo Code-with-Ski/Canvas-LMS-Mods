@@ -25,5 +25,10 @@
     if (courseMenu) {
       courseMenu.style.top = "4.5rem";
     }
+
+    const blueprintMenu = document.querySelector("div#wrapper div.blueprint__root");
+    if (blueprintMenu) {
+      blueprintMenu.style.zIndex = 99;
+    }
   }
 })();

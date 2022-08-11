@@ -140,7 +140,7 @@
 
       const sisImportLogResultsWrapper = document.getElementById("ski-sis-import-log-results-wrapper");
       sisImportLogResultsWrapper.addEventListener("scroll", () => {
-        if (sisImportLogResultsWrapper.scrollTop + sisImportLogResultsWrapper.clientHeight >= sisImportLogResultsWrapper.scrollHeight) {
+        if (Math.ceil(sisImportLogResultsWrapper.scrollTop + sisImportLogResultsWrapper.clientHeight) >= sisImportLogResultsWrapper.scrollHeight) {
           const nextLogButton = document.getElementById("ski-sis-import-log-next");
           if (!nextLogButton.disabled) {
             updateLogTable(nextLogButton.dataset.url);

@@ -3,10 +3,15 @@
     chrome.storage.sync.get(
       {
         courseModulesJumpToEnabled: true,
+        courseGlobalStickyHeader: true,
       },
       function (items) {
         if (items.courseModulesJumpToEnabled) {
           addJumpToModuleSelection();
+
+          if (items.courseGlobalStickyHeader) {
+            addStickyScrollHandlerClassToLinks();
+          }
         }
       }
     );
@@ -49,6 +54,17 @@
       jumpToModuleSelectionHTML += `</ul></details>`;
 
       contextModulesDiv.insertAdjacentHTML("beforebegin", jumpToModuleSelectionHTML);
+    }
+  }
+
+  /*
+    Adds a class for handling scrolling with the sticky header to
+    each of the links
+  */
+  function addStickyScrollHandlerClassToLinks() {
+    const links = document.querySelectorAll("div#context_modules > div > a");
+    for (let link of links) {
+      link.classList.add("ski-sticky-link-handler");
     }
   }
 })();

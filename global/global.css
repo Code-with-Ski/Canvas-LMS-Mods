@@ -26,3 +26,12 @@ div.ski-comp-sticky-top {
   z-index: 98;
   background-color: white;
 }
+
+a.ski-sticky-link-handler::before { 
+  display: block; 
+  content: " "; 
+  margin-top: -4.5rem; 
+  height: 4.5rem; 
+  visibility: hidden; 
+  pointer-events: none;
+}

@@ -9,6 +9,11 @@ function saveOptions() {
   // Dashboard settings
   const isDashboardAddAllCoursesButton = document.getElementById("dashboard-add-all-courses-button").checked;
 
+  // All Courses settings
+  const areFiltersEnabled = document.getElementById("courses-filters").checked;
+  const areSearchesEnabled = document.getElementById("courses-search-bars").checked;
+  const areColumnSortsEnabled = document.getElementById("courses-column-sorts").checked;
+
   // Course - Global settings
   const isCourseGlobalStickyHeaderEnabled = document.getElementById("course-global-sticky-header").checked;
 
@@ -66,6 +71,9 @@ function saveOptions() {
     globalBodyFullWidth: isGlobalFullWidthEnabled,
     accountProfileGradesButton: isAccountProfileGradesButtonEnabled,
     dashboardAddAllCoursesButton: isDashboardAddAllCoursesButton,
+    allCoursesFilters: areFiltersEnabled,
+    allCoursesSearchFields: areSearchesEnabled,
+    allCoursesColumnSorts: areColumnSortsEnabled,
     courseGlobalStickyHeader: isCourseGlobalStickyHeaderEnabled,
     courseModulesJumpToEnabled: isCourseModulesJumpToEnabled,
     adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
@@ -109,6 +117,9 @@ function restoreOptions() {
     globalBodyFullWidth: true,
     accountProfileGradesButton: true,
     dashboardAddAllCoursesButton: true,
+    allCoursesFilters: true,
+    allCoursesSearchFields: true,
+    allCoursesColumnSorts: true,
     courseGlobalStickyHeader: true,
     courseModulesJumpToEnabled: true,
     adminCoursesBlueprintInputPreventFill: true,
@@ -144,6 +155,11 @@ function restoreOptions() {
     
     // Dashboard settings
     document.getElementById("dashboard-add-all-courses-button").checked = items.dashboardAddAllCoursesButton;
+
+    // All Courses settings
+    document.getElementById("courses-filters").checked = items.allCoursesFilters;
+    document.getElementById("courses-search-bars").checked = items.allCoursesSearchFields;
+    document.getElementById("courses-column-sorts").checked = items.allCoursesColumnSorts;
 
     // Course - Global settings
     document.getElementById("course-global-sticky-header").checked = items.courseGlobalStickyHeader;

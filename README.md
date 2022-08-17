@@ -29,6 +29,11 @@ Options will also be updated to allow the user to enable/disable certain customi
   - Profile
     - Enable "View Grades" button on the profile
 
+- All Courses
+  - Enable filters on enrollment lists (Term, Enrolled as, Published)
+  - Enable search bars on enrollment lists (Course, Nickname)
+  - Enable column sorts on enrollment lists
+
 - Dashboard
   - Enable "See all courses" button on the dashboard
 

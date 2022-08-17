@@ -131,7 +131,8 @@
         "https://*.test.instructure.com/accounts/*/sis_import",
         "https://*.beta.instructure.com/accounts/*/sis_import"
       ],
-      "js": ["admin/sis-import.js"]
+      "js": ["admin/sis-import.js"],
+      "css": ["admin/sis-import.css"]
     }
   ],
   "icons": {

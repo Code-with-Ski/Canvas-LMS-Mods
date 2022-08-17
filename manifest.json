@@ -50,7 +50,8 @@
         "https://*.test.instructure.com/courses/*",
         "https://*.beta.instructure.com/courses/*"
       ],
-      "js": ["course/course-global.js"]
+      "js": ["course/course-global.js"],
+      "css": ["course/course-global.css"]
     },
     {
       "matches": [

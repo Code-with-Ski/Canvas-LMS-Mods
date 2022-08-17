@@ -119,6 +119,8 @@
             <tbody style='max-height: 400px; overflow-y: scroll;'>
             </tbody>
           </table>
+          <div class='ski-loading-icon' title="More results loading" style="display: none;">
+          </div>
         </div>
 
         <div class='content-box-mini'>
@@ -135,18 +137,39 @@
       clearAllButton.addEventListener("click", () => selectAllWorkflowStates(false));
 
       const updateLogButton = document.getElementById("ski-sis-import-log-update");
-      updateLogButton.addEventListener("click", () => updateLogTable(null));
+      updateLogButton.addEventListener("click", async () => {
+        showLoading(true);
+        await updateLogTable(null);
+        showLoading(false);
+      });
+
+      showLoading(true);
       updateLogTable(null);
+      showLoading(false);
 
       const sisImportLogResultsWrapper = document.getElementById("ski-sis-import-log-results-wrapper");
-      sisImportLogResultsWrapper.addEventListener("scroll", () => {
+      sisImportLogResultsWrapper.addEventListener("scroll", async () => {
         if (Math.ceil(sisImportLogResultsWrapper.scrollTop + sisImportLogResultsWrapper.clientHeight) >= sisImportLogResultsWrapper.scrollHeight) {
           const nextLogButton = document.getElementById("ski-sis-import-log-next");
           if (!nextLogButton.disabled) {
-            updateLogTable(nextLogButton.dataset.url);
+            nextLogButton.disabled = true;
+            showLoading(true);
+            await updateLogTable(nextLogButton.dataset.url);
+            showLoading(false);
           }
         }
       });
+    }
+  }
+
+  function showLoading(isLoading) {
+    const loadingIcon = document.querySelector("#ski-sis-import-log div.ski-loading-icon");
+    if (loadingIcon) {
+      if (isLoading) {
+        loadingIcon.style.display = "block";
+      } else {
+        loadingIcon.style.display = "none";
+      }
     }
   }
 
@@ -171,7 +194,7 @@
     If the url is null, it will get the first page of results
     based on the currently selected workflow states.
   */
-  function updateLogTable(url) {
+  async function updateLogTable(url) {
     const sisImportLogWrapper = document.getElementById("ski-sis-import-log-results-wrapper");
 
     const sisImportLogBody = document.querySelector("table#ski-sis-import-log-results tbody");
@@ -223,38 +246,43 @@
       }
     }
 
-    fetch(url)
-      .then(response => {
-        let links = response.headers.get("link");
-        links = links.replaceAll("<", "").replaceAll(">", "").replaceAll(" rel=", "").replaceAll('"', "");
-        links = links.split(",");
-        links = links.map(link => link.split(";"));
-        const linkDictionary = {};
-        links.forEach(link => linkDictionary[link[1]] = link[0]);
+    let fetches = [];
+    fetches.push(
+      fetch(url)
+        .then(response => {
+          let links = response.headers.get("link");
+          links = links.replaceAll("<", "").replaceAll(">", "").replaceAll(" rel=", "").replaceAll('"', "");
+          links = links.split(",");
+          links = links.map(link => link.split(";"));
+          const linkDictionary = {};
+          links.forEach(link => linkDictionary[link[1]] = link[0]);
 
-        const nextUrl = linkDictionary["next"];
-        if (nextUrl) {
-          nextButton.dataset.url = nextUrl;
-          nextButton.disabled = false;
-        } else {
-          nextButton.disabled = true;
-          nextButton.dataset.url = "";
-        }
-        return response.json();
-      })
-      .then(data => {
-        data['sis_imports'].forEach(sisImport => {
-          sisImportLogBody.insertAdjacentElement("beforeend", createSisImportLogResultsRow(sisImport));
-          
-          const logCountsButton = document.getElementById(`ski-sis-import-log-counts-btn-${sisImport["id"]}`);
-          if (logCountsButton) {
-            logCountsButton.addEventListener("click", () => updateRowDetails(sisImport["id"]));
+          const nextUrl = linkDictionary["next"];
+          if (nextUrl) {
+            nextButton.dataset.url = nextUrl;
+            nextButton.disabled = false;
+          } else {
+            nextButton.disabled = true;
+            nextButton.dataset.url = "";
           }
-        });
-      })
-      .catch((error) => {
-        console.error(`Error: ${error}`);
-      });
+          return response.json();
+        })
+        .then(data => {
+          data['sis_imports'].forEach(sisImport => {
+            sisImportLogBody.insertAdjacentElement("beforeend", createSisImportLogResultsRow(sisImport));
+            
+            const logCountsButton = document.getElementById(`ski-sis-import-log-counts-btn-${sisImport["id"]}`);
+            if (logCountsButton) {
+              logCountsButton.addEventListener("click", () => updateRowDetails(sisImport["id"]));
+            }
+          });
+        })
+        .catch((error) => {
+          console.error(`Error: ${error}`);
+        })
+      );
+
+    await Promise.all(fetches);
   }
 
 

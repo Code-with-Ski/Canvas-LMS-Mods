@@ -1,7 +1,7 @@
 {
   "name": "Canvas LMS Mods (Basic)",
   "description": "This provides modifications to the Canvas LMS to improve the user experience visually and functionally.",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "manifest_version": 3,
   "permissions": ["storage"],
   "host_permissions": [
@@ -37,11 +37,21 @@
     },
     {
       "matches": [
+        "https://*.instructure.com/courses",
+        "https://*.test.instructure.com/courses",
+        "https://*.beta.instructure.com/courses"
+      ],
+      "js": ["courses/all-courses.js"],
+      "css": ["courses/all-courses.css"]
+    },
+    {
+      "matches": [
         "https://*.instructure.com/courses/*",
         "https://*.test.instructure.com/courses/*",
         "https://*.beta.instructure.com/courses/*"
       ],
-      "js": ["course/course-global.js"]
+      "js": ["course/course-global.js"],
+      "css": ["course/course-global.css"]
     },
     {
       "matches": [
@@ -121,7 +131,8 @@
         "https://*.test.instructure.com/accounts/*/sis_import",
         "https://*.beta.instructure.com/accounts/*/sis_import"
       ],
-      "js": ["admin/sis-import.js"]
+      "js": ["admin/sis-import.js"],
+      "css": ["admin/sis-import.css"]
     }
   ],
   "icons": {

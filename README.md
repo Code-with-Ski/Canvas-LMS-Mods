@@ -42,6 +42,11 @@ Options will also be updated to allow the user to enable/disable certain customi
     - Enable sticky course header
   - Modules
     - Enable "Jump to Module" selection
+  - People/Users
+    - Enable users export to CSV button
+    - Enable ability to hide inactive users
+  - Groups
+    - Enable groups export to CSV button
 
 - Admin
   - Course Search

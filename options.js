@@ -20,6 +20,10 @@ function saveOptions() {
   // Course - Modules settings
   const isCourseModulesJumpToEnabled = document.getElementById("course-modules-jump-to").checked;
 
+  // Course - People/Users settings
+  const isCoursePeopleExportEnabled = document.getElementById("course-users-export").checked;
+  const isCoursePeopleInactiveFilterEnabled = document.getElementById("course-users-inactive").checked;
+
   // Course - Groups settings
   const isGroupsExportButtonEnabled = document.getElementById("course-groups-export").checked;
 
@@ -79,6 +83,8 @@ function saveOptions() {
     allCoursesColumnSorts: areColumnSortsEnabled,
     courseGlobalStickyHeader: isCourseGlobalStickyHeaderEnabled,
     courseModulesJumpToEnabled: isCourseModulesJumpToEnabled,
+    coursePeopleExportEnabled: isCoursePeopleExportEnabled,
+    coursePeopleInactiveFilter: isCoursePeopleInactiveFilterEnabled,
     courseGroupsExportEnabled: isGroupsExportButtonEnabled,
     adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
     adminCoursesCourseCode: isCourseCodeEnabled,
@@ -126,6 +132,8 @@ function restoreOptions() {
     allCoursesColumnSorts: true,
     courseGlobalStickyHeader: true,
     courseModulesJumpToEnabled: true,
+    coursePeopleExportEnabled: true,
+    coursePeopleInactiveFilter: true,
     courseGroupsExportEnabled: true,
     adminCoursesBlueprintInputPreventFill: true,
     adminCoursesCourseCode: true,
@@ -171,6 +179,10 @@ function restoreOptions() {
 
     // Course - Modules settings
     document.getElementById("course-modules-jump-to").checked = items.courseModulesJumpToEnabled;
+
+    // Course - People/Users settings
+    document.getElementById("course-users-export").checked = items.coursePeopleExportEnabled;
+    document.getElementById("course-users-inactive").checked = items.coursePeopleInactiveFilter;
 
     // Course - Groups settings
     document.getElementById("course-groups-export").checked = items.courseGroupsExportEnabled;

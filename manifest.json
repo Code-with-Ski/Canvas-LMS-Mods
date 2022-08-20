@@ -71,6 +71,15 @@
     },
     {
       "matches": [
+        "https://*.instructure.com/courses/*/users",
+        "https://*.test.instructure.com/courses/*/users",
+        "https://*.beta.instructure.com/courses/*/users"
+      ],
+      "js": ["course/people.js"],
+      "css": ["course/people.css"]
+    },
+    {
+      "matches": [
         "https://*.instructure.com/users/*",
         "https://*.test.instructure.com/users/*",
         "https://*.beta.instructure.com/users/*"

@@ -47,6 +47,8 @@ Options will also be updated to allow the user to enable/disable certain customi
     - Enable ability to hide inactive users
   - Groups
     - Enable groups export to CSV button
+  - User
+    - Enable access report export to CSV button
 
 - Admin
   - Course Search

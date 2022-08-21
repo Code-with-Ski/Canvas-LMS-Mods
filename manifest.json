@@ -80,6 +80,14 @@
     },
     {
       "matches": [
+        "https://*.instructure.com/courses/*/users/*/usage",
+        "https://*.test.instructure.com/courses/*/users/*/usage",
+        "https://*.beta.instructure.com/courses/*/users/*/usage"
+      ],
+      "js": ["course/user-access-report.js"]
+    },
+    {
+      "matches": [
         "https://*.instructure.com/users/*",
         "https://*.test.instructure.com/users/*",
         "https://*.beta.instructure.com/users/*"

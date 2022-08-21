@@ -27,6 +27,9 @@ function saveOptions() {
   // Course - Groups settings
   const isGroupsExportButtonEnabled = document.getElementById("course-groups-export").checked;
 
+  // Course - User Access Report settings
+  const isCourseUserAccessReportButtonEnabled = document.getElementById("course-user-access-report-export").checked;
+
   // Admin - Courses settings
   const isBlueprintInputFillPrevent = document.getElementById("admin-courses-blueprint-input-prevent-fill").checked;
   const isCourseCodeEnabled = document.getElementById("admin-courses-course-code").checked;
@@ -86,6 +89,7 @@ function saveOptions() {
     coursePeopleExportEnabled: isCoursePeopleExportEnabled,
     coursePeopleInactiveFilter: isCoursePeopleInactiveFilterEnabled,
     courseGroupsExportEnabled: isGroupsExportButtonEnabled,
+    courseUserAccessExportEnabled: isCourseUserAccessReportButtonEnabled,
     adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
     adminCoursesCourseCode: isCourseCodeEnabled,
     adminUsersEnrollmentsResizable: isCourseListResizable,
@@ -135,6 +139,7 @@ function restoreOptions() {
     coursePeopleExportEnabled: true,
     coursePeopleInactiveFilter: true,
     courseGroupsExportEnabled: true,
+    courseUserAccessExportEnabled: true,
     adminCoursesBlueprintInputPreventFill: true,
     adminCoursesCourseCode: true,
     adminUsersEnrollmentsResizable: true,
@@ -186,6 +191,9 @@ function restoreOptions() {
 
     // Course - Groups settings
     document.getElementById("course-groups-export").checked = items.courseGroupsExportEnabled;
+
+    // Course - User Access Report settings
+    document.getElementById("course-user-access-report-export").checked = items.courseUserAccessExportEnabled;
 
     // Admin - Courses settings
     document.getElementById("admin-courses-blueprint-input-prevent-fill").checked = items.adminCoursesBlueprintInputPreventFill;

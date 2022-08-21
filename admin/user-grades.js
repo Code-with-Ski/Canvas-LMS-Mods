@@ -27,7 +27,7 @@
       const headings = [...document.querySelectorAll("div#content h2")];
       for (let heading of headings) {
         if (heading.innerText.includes("I'm")) {
-          heading.innerHTML = heading.innerHTML.replace("I'm", `${userDisplayName} is`);
+          heading.innerHTML = heading.innerText.replace("I'm", `${userDisplayName} is`);
         }
       }
     }

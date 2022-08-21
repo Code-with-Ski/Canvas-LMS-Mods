@@ -102,7 +102,7 @@
     const splitPathname = window.location.pathname.split("/");
     const courseId = splitPathname[2];
     const userHeading = document.querySelector("div#content h1");
-    const userName = userHeading ? userHeading.innerHTML.replace(" ", "_"): "user_access_report";
+    const userName = userHeading ? userHeading.innerText.replace(" ", "_"): "user_access_report";
     const filename = `export_course_${courseId}_${userName}_${new Date().toLocaleString()}.csv`;
     const link = document.createElement("a");
     link.style.display = "none";

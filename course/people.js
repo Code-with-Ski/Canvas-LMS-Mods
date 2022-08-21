@@ -55,10 +55,15 @@
       const downloadButton = document.getElementById("ski-users-download");
       if (downloadButton) {
         downloadButton.addEventListener("click", () => {
-          const continueWithDownload = confirm(
-            `This will only download the users that are currently listed in the table.\n\nIf the class is large, be sure all rows have loaded before downloading.\n\nClick 'OK' to continue with the download`
-          );
-          if (continueWithDownload) {
+          const rows = document.querySelectorAll("div.roster-tab table tbody tr");
+          if (rows.length >= 25) {
+            const continueWithDownload = confirm(
+              `This will only download the users that are currently listed in the table.\n\nIf the class is large, be sure all rows have loaded before downloading.\n\nClick 'OK' to continue with the download`
+            );
+            if (continueWithDownload) {
+              downloadUsersAsCSV();
+            }
+          } else {
             downloadUsersAsCSV();
           }
         });

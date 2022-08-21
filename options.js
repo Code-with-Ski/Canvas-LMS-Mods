@@ -54,6 +54,11 @@ function saveOptions() {
 
   const isAvatarImgResizable = document.getElementById("admin-users-avatar-resizable").checked;
 
+  const isAdminUsersGradesLinkEnabled = document.getElementById("admin-users-add-grades-link").checked;
+
+  // Admin - User Grades settings
+  const isAdminUsersGradesPersonalized = document.getElementById("admin-users-grades-personalized").checked;
+
   // Admin - Profile Pictures settings
   const isProfileAvatarImgResizable = document.getElementById("admin-profile-pictures-resizable").checked;
   const isRoundedSquare = document.getElementById("admin-profile-pictures-square").checked;
@@ -105,6 +110,8 @@ function saveOptions() {
     adminUsersGroupsResizable: isGroupListResizable,
     adminUsersGroupsDefaultHeight: groupListDefaultSize,
     adminUsersAvatarResizable: isAvatarImgResizable,
+    adminUsersAddGradesLink: isAdminUsersGradesLinkEnabled,
+    adminUsersGradesPersonalized: isAdminUsersGradesPersonalized,
     adminTermsSearch: isTermsSearchable,
     adminTermsMoveAddTerm: isAddTermMoved,
     adminTermsTermId: isTermIdShown,
@@ -156,6 +163,8 @@ function restoreOptions() {
     adminUsersGroupsResizable: true,
     adminUsersGroupsDefaultHeight: 100,
     adminUsersAvatarResizable: true,
+    adminUsersAddGradesLink: true,
+    adminUsersGradesPersonalized: true,
     adminTermsSearch: true,
     adminTermsMoveAddTerm: true,
     adminTermsTermId: true,
@@ -218,6 +227,11 @@ function restoreOptions() {
     document.getElementById("admin-users-groups-default-height").value = items.adminUsersGroupsDefaultHeight;
 
     document.getElementById("admin-users-avatar-resizable").checked = items.adminUsersAvatarResizable;
+
+    document.getElementById("admin-users-add-grades-link").checked = items.adminUsersAddGradesLink;
+
+    // Admin - User Grades settings
+    document.getElementById("admin-users-grades-personalized").checked = items.adminUsersGradesPersonalized;
 
     // Admin - Profile Pictures
     document.getElementById("admin-profile-pictures-resizable").checked = items.adminProfilePicturesResizable;

@@ -96,6 +96,14 @@
     },
     {
       "matches": [
+        "https://*.instructure.com/users/*/grades",
+        "https://*.test.instructure.com/users/*/grades",
+        "https://*.beta.instructure.com/users/*/grades"
+      ],
+      "js": ["admin/user-grades.js"]
+    },
+    {
+      "matches": [
         "https://*.instructure.com/accounts/*/users/*",
         "https://*.test.instructure.com/accounts/*/users/*",
         "https://*.beta.instructure.com/accounts/*/users/*"

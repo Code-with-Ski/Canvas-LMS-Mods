@@ -72,6 +72,9 @@ Options will also be updated to allow the user to enable/disable certain customi
         - Set a default height
       - Avatar image
         - Make it resizable by clicking and/or dragging it to resize
+      - Add link to grades for active courses
+    - User Grades
+      - Updates the name and headings to reflect the user
     - Profile Pictures
       - Make it resizable by dragging the corner
       - Make it a rounded square instead of a circle to show more of the background

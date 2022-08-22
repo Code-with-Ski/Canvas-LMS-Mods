@@ -15,22 +15,36 @@
   */
   async function updateDisplayedName() {
     const userIdForGrades = window.location.pathname.split("/")[2];
-    const userForGrades = await getUser(userIdForGrades);
-    if (userForGrades) {
-      const userDisplayName = userForGrades.short_name;
+    const breadcrumbNavUserNameLink = document.querySelector("nav#breadcrumbs ul li:nth-of-type(2) a");
+    if (breadcrumbNavUserNameLink) {
+      const currentUserId = breadcrumbNavUserNameLink.href.split("/").pop();
+      if (userIdForGrades != currentUserId) {
+        const userForGrades = await getUser(userIdForGrades);
+        if (userForGrades) {
+          const userDisplayName = userForGrades.short_name;
 
-      const breadcrumbNavUserNameSpan = document.querySelector("nav#breadcrumbs ul li:nth-of-type(2) span");
-      if (breadcrumbNavUserNameSpan) {
-        breadcrumbNavUserNameSpan.innerHTML = userDisplayName;
-      }
+          const breadcrumbNavUserNameSpan = breadcrumbNavUserNameLink.querySelector("span");
+          if (breadcrumbNavUserNameSpan) {
+            breadcrumbNavUserNameSpan.innerHTML = userDisplayName;
+          }
 
-      const headings = [...document.querySelectorAll("div#content h2")];
-      for (let heading of headings) {
-        if (heading.innerText.includes("I'm")) {
-          heading.innerHTML = heading.innerText.replace("I'm", `${userDisplayName} is`);
+          const headings = [...document.querySelectorAll("div#content h2")];
+          for (let heading of headings) {
+            if (heading.innerText.includes("I'm")) {
+              heading.innerHTML = heading.innerText.replace("I'm", `${userDisplayName} is`);
+            }
+          }
+
+          const links = [...document.querySelectorAll("div#content table a")];
+          for (let link of links) {
+            if (link.href.includes(`/user/${currentUserId}`)) {
+              link.href = link.href.replace(`/user/${currentUserId}`, `/user/${userIdForGrades}`);
+            }
+          }
         }
       }
     }
+    
   }
 
   /*

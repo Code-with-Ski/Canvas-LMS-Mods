@@ -19,6 +19,7 @@
     if (breadcrumbNavUserNameLink) {
       const currentUserId = breadcrumbNavUserNameLink.href.split("/").pop();
       if (userIdForGrades != currentUserId) {
+        breadcrumbNavUserNameLink.href = breadcrumbNavUserNameLink.href.replace(`about/${currentUserId}`, `about/${userIdForGrades}`);
         const userForGrades = await getUser(userIdForGrades);
         if (userForGrades) {
           const userDisplayName = userForGrades.short_name;
@@ -37,8 +38,8 @@
 
           const links = [...document.querySelectorAll("div#content table a")];
           for (let link of links) {
-            if (link.href.includes(`/user/${currentUserId}`)) {
-              link.href = link.href.replace(`/user/${currentUserId}`, `/user/${userIdForGrades}`);
+            if (link.href.includes(`/users/${currentUserId}`)) {
+              link.href = link.href.replace(`/users/${currentUserId}`, `/users/${userIdForGrades}`);
             }
           }
         }

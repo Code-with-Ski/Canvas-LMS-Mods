@@ -24,6 +24,7 @@ function saveOptions() {
   const isCoursePeopleExportEnabled = document.getElementById("course-users-export").checked;
   const isCoursePeopleInactiveFilterEnabled = document.getElementById("course-users-inactive").checked;
   const isCoursePeopleSectionFilterEnabled = document.getElementById("course-users-section-filter").checked;
+  const isCoursePeopleSortEnabled = document.getElementById("course-people-sort").checked;
 
   // Course - Groups settings
   const isGroupsExportButtonEnabled = document.getElementById("course-groups-export").checked;
@@ -95,6 +96,7 @@ function saveOptions() {
     coursePeopleExportEnabled: isCoursePeopleExportEnabled,
     coursePeopleInactiveFilter: isCoursePeopleInactiveFilterEnabled,
     coursePeopleSectionFilter: isCoursePeopleSectionFilterEnabled,
+    coursePeopleSortEnabled: isCoursePeopleSortEnabled,
     courseGroupsExportEnabled: isGroupsExportButtonEnabled,
     courseUserAccessExportEnabled: isCourseUserAccessReportButtonEnabled,
     adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
@@ -148,6 +150,7 @@ function restoreOptions() {
     coursePeopleExportEnabled: true,
     coursePeopleInactiveFilter: true,
     coursePeopleSectionFilter: true,
+    coursePeopleSortEnabled: true,
     courseGroupsExportEnabled: true,
     courseUserAccessExportEnabled: true,
     adminCoursesBlueprintInputPreventFill: true,
@@ -201,6 +204,7 @@ function restoreOptions() {
     document.getElementById("course-users-export").checked = items.coursePeopleExportEnabled;
     document.getElementById("course-users-inactive").checked = items.coursePeopleInactiveFilter;
     document.getElementById("course-users-section-filter").checked = items.coursePeopleSectionFilter;
+    document.getElementById("course-people-sort").checked = items.coursePeopleSortEnabled;
 
     // Course - Groups settings
     document.getElementById("course-groups-export").checked = items.courseGroupsExportEnabled;

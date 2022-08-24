@@ -5,6 +5,7 @@
         coursePeopleExportEnabled: true,
         coursePeopleInactiveFilter: true,
         coursePeopleSectionFilter: true,
+        coursePeopleSortEnabled: true,
       },
       function (items) {
         if (items.coursePeopleExportEnabled) {
@@ -12,11 +13,21 @@
         }
 
         if (items.coursePeopleInactiveFilter) {
-          onElementRendered("div.roster-tab div.v-gutter", addInactiveUsersFilter);
+          onElementRendered(
+            "div.roster-tab div.v-gutter",
+            addInactiveUsersFilter
+          );
         }
 
         if (items.coursePeopleSectionFilter) {
           onElementRendered("div.roster-tab div.v-gutter", addSectionFilter);
+        }
+
+        if (items.coursePeopleSortEnabled) {
+          onElementRendered(
+            "div.roster-tab div.v-gutter table.roster",
+            addColumnSorts
+          );
         }
       }
     );
@@ -31,11 +42,11 @@
   function onElementRendered(selector, cb, _attempts) {
     let el = document.querySelectorAll(selector);
     _attempts = ++_attempts || 1;
-    
+
     if (el.length) return cb(el);
     if (_attempts == 60) return;
 
-    setTimeout(function() {
+    setTimeout(function () {
       onElementRendered(selector, cb, _attempts);
     }, 250);
   }
@@ -60,7 +71,9 @@
       const downloadButton = document.getElementById("ski-users-download");
       if (downloadButton) {
         downloadButton.addEventListener("click", () => {
-          const rows = document.querySelectorAll("div.roster-tab table tbody tr");
+          const rows = document.querySelectorAll(
+            "div.roster-tab table tbody tr"
+          );
           if (rows.length >= 25) {
             const continueWithDownload = confirm(
               `This will only download the users that are currently listed in the table.\n\nIf the class is large, be sure all rows have loaded before downloading.\n\nClick 'OK' to continue with the download`
@@ -231,14 +244,17 @@
 
       await loadSectionNames();
 
-      const sectionsFilter = document.getElementById("ski-users-section-filter");
+      const sectionsFilter = document.getElementById(
+        "ski-users-section-filter"
+      );
       if (sectionsFilter) {
         sectionsFilter.addEventListener("change", () => {
-          const sectionsFilter = document.getElementById("ski-users-section-filter");
-          const parsedValue = new DOMParser().parseFromString(
-            sectionsFilter.value,
-            "text/html"
-          ).body.innerText.trim();
+          const sectionsFilter = document.getElementById(
+            "ski-users-section-filter"
+          );
+          const parsedValue = new DOMParser()
+            .parseFromString(sectionsFilter.value, "text/html")
+            .body.innerText.trim();
 
           const tableRows = [
             ...document.querySelectorAll("div.roster-tab table tbody tr"),
@@ -251,11 +267,12 @@
 
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
-          const sectionsFilter = document.getElementById("ski-users-section-filter");
-          const section = new DOMParser().parseFromString(
-            sectionsFilter.value,
-            "text/html"
-          ).body.innerText.trim();
+          const sectionsFilter = document.getElementById(
+            "ski-users-section-filter"
+          );
+          const section = new DOMParser()
+            .parseFromString(sectionsFilter.value, "text/html")
+            .body.innerText.trim();
 
           if (mutation.target.nodeName == "TR") {
             updateRowDisplayBasedOnSection(mutation.target, section);
@@ -264,7 +281,7 @@
             addedNodes.forEach((node) => {
               if (node.nodeName == "TR") {
                 updateRowDisplayBasedOnSection(node, section);
-              } 
+              }
             });
           }
         });
@@ -286,8 +303,8 @@
     const fetches = [];
     fetches.push(
       fetch(url)
-        .then(response => response.json())
-        .then(data => {
+        .then((response) => response.json())
+        .then((data) => {
           sections = data;
         })
         .catch((error) => {
@@ -296,16 +313,21 @@
     );
 
     await Promise.all(fetches);
-    
-    const sectionNames = [...new Set([...sections.map(section => section.name)])];
+
+    const sectionNames = [
+      ...new Set([...sections.map((section) => section.name)]),
+    ];
     sectionNames.sort();
 
     const sectionFilter = document.getElementById("ski-users-section-filter");
     if (sectionFilter) {
       for (let name of sectionNames) {
-        sectionFilter.insertAdjacentHTML("beforeend", `
+        sectionFilter.insertAdjacentHTML(
+          "beforeend",
+          `
           <option value="${name}">${name}</option>
-        `);
+        `
+        );
       }
     }
   }
@@ -322,13 +344,276 @@
         row.classList.remove("ski-hide");
       } else {
         const sections = [...row.querySelectorAll("td div.section")];
-        const hasMatchingSection = sections.some(rowSection => {
+        const hasMatchingSection = sections.some((rowSection) => {
           return rowSection && rowSection.innerText.trim() == section;
-        })
+        });
         if (hasMatchingSection) {
           row.classList.remove("ski-hide");
         } else {
           row.classList.add("ski-hide");
+        }
+      }
+    }
+  }
+
+  function addColumnSorts() {
+    const sortableColumnNames = [
+      "Name",
+      "Login ID",
+      "SIS ID",
+      "Section",
+      "Role",
+      "Last Activity",
+      "Total Activity",
+    ];
+    const table = document.querySelector("div.v-gutter table.roster");
+    if (table) {
+      const tableHeaders = table.querySelectorAll("thead tr th[scope='col']");
+      let columnNum = 0;
+      for (let columnHeader of tableHeaders) {
+        columnNum++;
+        const columnName = columnHeader.innerText.trim();
+        if (sortableColumnNames.includes(columnName)) {
+          columnHeader.innerHTML = `
+              <button class="ski-column-sort-btn" data-ski-sort-dir="none" data-ski-col-name="${columnName}" data-ski-col-position="${columnNum}">
+                ${columnName}
+              </button>
+            `;
+
+          const columnSortButton = columnHeader.querySelector("button");
+          if (columnSortButton) {
+            columnSortButton.addEventListener("click", () => {
+              const sortDirection = columnSortButton.dataset.skiSortDir;
+
+              const sortButtons = [
+                ...document.querySelectorAll(
+                  `table.roster thead th button.ski-column-sort-btn`
+                ),
+              ];
+              for (let sortButton of sortButtons) {
+                sortButton.dataset.skiSortDir = "none";
+              }
+
+              if (sortDirection == "asc") {
+                columnSortButton.dataset.skiSortDir = "desc";
+              } else if (sortDirection == "desc") {
+                columnSortButton.dataset.skiSortDir = "asc";
+              } else {
+                columnSortButton.dataset.skiSortDir = "asc";
+              }
+
+              updateTableSortDisplay(
+                columnSortButton.dataset.skiColName,
+                columnSortButton.dataset.skiColPosition,
+                columnSortButton.dataset.skiSortDir == "asc"
+              );
+            });
+          }
+        }
+      }
+
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          const sortButton = document.querySelector(
+            "button.ski-column-sort-btn[data-ski-sort-dir=asc], button.ski-column-sort-btn[data-ski-sort-dir=desc]"
+          );
+          if (sortButton) {
+            const addedNodes = [...mutation.addedNodes];
+            if (
+              addedNodes.some(
+                (node) =>
+                  node.nodeName == "TR" &&
+                  !node.classList.contains("ski-existing-row")
+              )
+            ) {
+              updateTableSortDisplay(
+                sortButton.dataset.skiColName,
+                sortButton.dataset.skiColPosition,
+                sortButton.dataset.skiSortDir == "asc"
+              );
+            }
+          }
+        });
+      });
+
+      const rosterTableWrapper = document.querySelector(
+        "div.roster-tab div.v-gutter"
+      );
+      observer.observe(rosterTableWrapper, { subtree: true, childList: true });
+    }
+  }
+
+  function updateTableSortDisplay(
+    sortColumnName,
+    sortColumnPosition,
+    isOrderAscending
+  ) {
+    const table = document.querySelector("table.roster");
+    if (table) {
+      const tableBody = table.querySelector("tbody");
+      const tableRows = [...tableBody.querySelectorAll("tr.rosterUser")];
+      if (tableRows.length > 1) {
+        tableRows.sort((aRow, bRow) => {
+          const aCell = aRow.querySelector(
+            `td:nth-of-type(${sortColumnPosition})`
+          );
+          const bCell = bRow.querySelector(
+            `td:nth-of-type(${sortColumnPosition})`
+          );
+          if (aCell && bCell) {
+            if (sortColumnName == "Last Activity") {
+              const multiplier = isOrderAscending ? 1 : -1;
+              const aCellDiv = aCell.querySelector("div");
+              const bCellDiv = bCell.querySelector("div");
+              const aCellDivTitle = aCellDiv.dataset.htmlTooltipTitle;
+              const bCellDivTitle = bCellDiv.dataset.htmlTooltipTitle;
+
+              if (!aCellDivTitle) {
+                return -1 * multiplier;
+              } else if (!bCellDivTitle) {
+                return 1 * multiplier;
+              } else {
+                const months = {
+                  "Jan": 0,
+                  "Feb": 1,
+                  "Mar": 2,
+                  "Apr": 3,
+                  "May": 4,
+                  "Jun": 5,
+                  "Jul": 6,
+                  "Aug": 7,
+                  "Sep": 8,
+                  "Oct": 9,
+                  "Nov": 10,
+                  "Dec": 11
+                };
+                
+                const aCellSplitTitle = aCellDivTitle.split(" at ");
+                const aCellDateDetails = aCellSplitTitle[0].replace(",", "").split(" ");
+                if (aCellDateDetails.length == 2) {
+                  aCellDateDetails.push(new Date().getFullYear());
+                }
+                aCellDateDetails[0] = months[aCellDateDetails[0]]
+                const isACellTimeAM = aCellSplitTitle[1].endsWith("am");
+                const aCellTimeDetails = aCellSplitTitle[1].replace("am", "").replace("pm", "").split(":");
+                if (aCellTimeDetails.length == 1) {
+                  aCellTimeDetails.push("00");
+                }
+                if (isACellTimeAM && Number(aCellTimeDetails[0]) == 12) {
+                  aCellTimeDetails[0] = 0;
+                } else if (!isACellTimeAM && Number(aCellTimeDetails[0]) < 12) {
+                  aCellTimeDetails[0] = Number(aCellTimeDetails[0]) + 12;
+                }
+                const aCellDate = new Date(aCellDateDetails[2], aCellDateDetails[0], aCellDateDetails[1], aCellTimeDetails[0], aCellTimeDetails[1]);
+                
+                const bCellSplitTitle = bCellDivTitle.split(" at ");
+                const bCellDateDetails = bCellSplitTitle[0].replace(",", "").split(" ");
+                if (bCellDateDetails.length == 2) {
+                  bCellDateDetails.push(new Date().getFullYear());
+                }
+                bCellDateDetails[0] = months[bCellDateDetails[0]]
+                const isBCellTimeAM = bCellSplitTitle[1].endsWith("am");
+                const bCellTimeDetails = bCellSplitTitle[1].replace("am", "").replace("pm", "").split(":");
+                if (bCellTimeDetails.length == 1) {
+                  bCellTimeDetails.push("00");
+                }
+                if (isBCellTimeAM && Number(bCellTimeDetails[0]) == 12) {
+                  bCellTimeDetails[0] = 0;
+                } else if (!isBCellTimeAM && Number(bCellTimeDetails[0]) < 12) {
+                  bCellTimeDetails[0] = Number(bCellTimeDetails[0]) + 12;
+                }
+                const bCellDate = new Date(bCellDateDetails[2], bCellDateDetails[0], bCellDateDetails[1], bCellTimeDetails[0], bCellTimeDetails[1]);
+                
+                return aCellDate > bCellDate ? 1 * multiplier : aCellDate < bCellDate ? -1 * multiplier : 0;
+              }
+            } else if (sortColumnName == "Total Activity") {
+              const multiplier = isOrderAscending ? 1 : -1;
+              const aCellTotal = aCell.innerText.trim();
+              const bCellTotal = bCell.innerText.trim();
+              if (aCellTotal && bCellTotal) {
+                if (aCellTotal == bCellTotal) {
+                  return 0;
+                } else {
+                  let aCellTotalTimes = aCellTotal.split(":");
+                  let bCellTotalTimes = bCellTotal.split(":");
+                  if (aCellTotalTimes.length > bCellTotalTimes.length) {
+                    return 1 * multiplier;
+                  } else if (
+                    aCellTotalTimes.length < bCellTotalTimes.length
+                  ) {
+                    return -1 * multiplier;
+                  } else {
+                    if (aCellTotalTimes.length == 1) {
+                      aCellTotalTimes = [...["00", "00"], ...aCellTotalTimes];
+                      bCellTotalTimes = [...["00", "00"], ...bCellTotalTimes];
+                    } else if (aCellTotalTimes.length == 2) {
+                      aCellTotalTimes = [...["00"], ...aCellTotalTimes];
+                      bCellTotalTimes = [...["00"], ...bCellTotalTimes];
+                    }
+                    
+                    if (
+                      Number(aCellTotalTimes[0]) > Number(bCellTotalTimes[0])
+                    ) {
+                      return 1 * multiplier;
+                    } else if (
+                      Number(aCellTotalTimes[0]) < Number(bCellTotalTimes[0])
+                    ) {
+                      return -1 * multiplier;
+                    } else {
+                      if (
+                        Number(aCellTotalTimes[1]) >
+                        Number(bCellTotalTimes[1])
+                      ) {
+                        return 1 * multiplier;
+                      } else if (
+                        Number(aCellTotalTimes[1]) <
+                        Number(bCellTotalTimes[1])
+                      ) {
+                        return -1 * multiplier;
+                      } else {
+                        if (
+                          Number(aCellTotalTimes[2]) >
+                          Number(bCellTotalTimes[2])
+                        ) {
+                          return 1 * multiplier;
+                        } else if (
+                          Number(aCellTotalTimes[2]) <
+                          Number(bCellTotalTimes[2])
+                        ) {
+                          return -1 * multiplier;
+                        } else {
+                          return 0;
+                        }
+                      }
+                    }
+                  }
+                }
+              } else if (aCellTotal) {
+                return 1 * multiplier;
+              } else {
+                return -1 * multiplier;
+              }
+            } else {
+              if (isOrderAscending) {
+                return aCell.innerText
+                  .toUpperCase()
+                  .trim()
+                  .localeCompare(bCell.innerText.toUpperCase().trim());
+              } else {
+                return bCell.innerText
+                  .toUpperCase()
+                  .trim()
+                  .localeCompare(aCell.innerText.toUpperCase().trim());
+              }
+            }
+          } else {
+            return 0;
+          }
+        });
+
+        for (let row of tableRows) {
+          row.classList.add("ski-existing-row");
+          tableBody.insertBefore(row, null);
         }
       }
     }

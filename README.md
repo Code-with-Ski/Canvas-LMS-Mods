@@ -46,6 +46,7 @@ Options will also be updated to allow the user to enable/disable certain customi
     - Enable users export to CSV button
     - Enable ability to hide inactive users
     - Enable ability to filter by section
+    - Enable people sort by columns
   - Groups
     - Enable groups export to CSV button
   - User

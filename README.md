@@ -43,12 +43,12 @@ Options will also be updated to allow the user to enable/disable certain customi
   - Modules
     - Enable "Jump to Module" selection
   - People/Users
-    - Enable users export to CSV button
+    - Enable users export to CSV button (Requires course admin permission)
     - Enable ability to hide inactive users
     - Enable ability to filter by section (Uses Canvas LMS API)
     - Enable people sort by columns
   - Groups
-    - Enable groups export to CSV button (Uses Canvas LMS API)
+    - Enable groups export to CSV button (Requires course admin permission) (Uses Canvas LMS API)
   - User
     - Enable access report export to CSV button
 

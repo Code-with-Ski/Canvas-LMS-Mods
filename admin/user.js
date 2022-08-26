@@ -374,6 +374,9 @@
     }
   }
 
+  /*
+    Adds a link to view the user's grades in their current courses
+  */
   function addGradesButton() {
     const rightSide = document.getElementById("right-side");
     if (rightSide) {

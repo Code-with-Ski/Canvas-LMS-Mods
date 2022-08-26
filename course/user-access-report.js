@@ -50,7 +50,7 @@
     the resulting file.
   */
   function downloadUserAccessReportAsCSV() {
-    // Select rows from table_id
+    // Select rows from table
     const rows = document.querySelectorAll(
       "div#usage_report table thead tr, div#usage_report table tbody tr"
     );

@@ -99,24 +99,38 @@
     const rows = document.querySelectorAll(
       "table.roster thead tr, table.roster tbody tr"
     );
+    
     // Construct csv
     const csv = [];
+    let lastActivityColumnIndex = -1;
     for (let i = 0; i < rows.length; i++) {
       const row = [];
       const cols = rows[i].querySelectorAll("td, th");
       for (let j = 1; j < cols.length - 1; j++) {
-        // Clean innertext to remove multiple spaces and jumpline (break csv)
-        let data = cols[j].innerText
-          .replace(/(\r\n|\n|\r)/gm, "; ")
-          .replace(/(\s\s)/gm, " ");
-        // Escape double-quote with double-double-quote
+        let data = "";
+        if (row > 0 && j == lastActivityColumnIndex) {
+          data = cols[j].dataset.htmlTooltipTitle
+        } else {
+          data = cols[j].innerText.trim()
+        }
+        data = data.replace(/(\r\n|\n|\r)/gm, ";");
+        data = data.replace(/(\s\s)/gm, " ");
+        data = data.replace(/(; )+/gm, ";");
         data = data.replace(/"/g, '""');
+        
         // Push escaped string
         row.push(`"${data}"`);
+        
+        if (row == 0) {
+          if (cols[j].innerText.trim() == "Last Activity") {
+            lastActivityColumnIndex = j;
+          }
+        }
       }
       csv.push(row.join(","));
     }
     const csvString = csv.join("\n");
+    
     // Download it
     const courseId = window.location.pathname.split("/")[2];
     const filename = `export_course_${courseId}_users_${new Date().toLocaleString()}.csv`;
@@ -294,6 +308,9 @@
     }
   }
 
+  /*
+    Gets the section names in the course and loads them into the select menu
+  */
   async function loadSectionNames() {
     let sections = [];
     const courseId = window.location.pathname.split("/")[2];
@@ -356,6 +373,10 @@
     }
   }
 
+  /*
+    Changes sortable columns into buttons to use for sorting with data for
+    the column name, position, and sort direction
+  */
   function addColumnSorts() {
     const sortableColumnNames = [
       "Name",
@@ -443,6 +464,10 @@
     }
   }
 
+  /*
+    Sorts the rows in the table based on the given column name, position,
+    and sort order
+  */
   function updateTableSortDisplay(
     sortColumnName,
     sortColumnPosition,
@@ -487,44 +512,50 @@
                   "Nov": 10,
                   "Dec": 11
                 };
-                
-                const aCellSplitTitle = aCellDivTitle.split(" at ");
-                const aCellDateDetails = aCellSplitTitle[0].replace(",", "").split(" ");
-                if (aCellDateDetails.length == 2) {
-                  aCellDateDetails.push(new Date().getFullYear());
+
+                // Handle special format case
+                // TODO Determine how to handle other locale formats that may be used or update to use API calls to get time
+                if (/[A-Z][a-z]{2} [0-9]{1,2}(, [0-9]{4})? at [0-9]{1,2}(:[0-9]{2})?(am|pm)/.test(aCellDivTitle) && /[A-Z][a-z]{2} [0-9]{1,2}(, [0-9]{4})? at [0-9]{1,2}(:[0-9]{2})?(am|pm)/.test(aCellDivTitle)) {
+                  const aCellSplitTitle = aCellDivTitle.split(" at ");
+                  const aCellDateDetails = aCellSplitTitle[0].replace(",", "").split(" ");
+                  if (aCellDateDetails.length == 2) {
+                    aCellDateDetails.push(new Date().getFullYear());
+                  }
+                  aCellDateDetails[0] = months[aCellDateDetails[0]]
+                  const isACellTimeAM = aCellSplitTitle[1].endsWith("am");
+                  const aCellTimeDetails = aCellSplitTitle[1].replace("am", "").replace("pm", "").split(":");
+                  if (aCellTimeDetails.length == 1) {
+                    aCellTimeDetails.push("00");
+                  }
+                  if (isACellTimeAM && Number(aCellTimeDetails[0]) == 12) {
+                    aCellTimeDetails[0] = 0;
+                  } else if (!isACellTimeAM && Number(aCellTimeDetails[0]) < 12) {
+                    aCellTimeDetails[0] = Number(aCellTimeDetails[0]) + 12;
+                  }
+                  const aCellDate = new Date(aCellDateDetails[2], aCellDateDetails[0], aCellDateDetails[1], aCellTimeDetails[0], aCellTimeDetails[1]);
+                  
+                  const bCellSplitTitle = bCellDivTitle.split(" at ");
+                  const bCellDateDetails = bCellSplitTitle[0].replace(",", "").split(" ");
+                  if (bCellDateDetails.length == 2) {
+                    bCellDateDetails.push(new Date().getFullYear());
+                  }
+                  bCellDateDetails[0] = months[bCellDateDetails[0]]
+                  const isBCellTimeAM = bCellSplitTitle[1].endsWith("am");
+                  const bCellTimeDetails = bCellSplitTitle[1].replace("am", "").replace("pm", "").split(":");
+                  if (bCellTimeDetails.length == 1) {
+                    bCellTimeDetails.push("00");
+                  }
+                  if (isBCellTimeAM && Number(bCellTimeDetails[0]) == 12) {
+                    bCellTimeDetails[0] = 0;
+                  } else if (!isBCellTimeAM && Number(bCellTimeDetails[0]) < 12) {
+                    bCellTimeDetails[0] = Number(bCellTimeDetails[0]) + 12;
+                  }
+                  const bCellDate = new Date(bCellDateDetails[2], bCellDateDetails[0], bCellDateDetails[1], bCellTimeDetails[0], bCellTimeDetails[1]);
+                  
+                  return aCellDate > bCellDate ? 1 * multiplier : aCellDate < bCellDate ? -1 * multiplier : 0;
+                } else {
+                  return aCellDivTitle.localeCompare(bCellDivTitle) * multiplier;
                 }
-                aCellDateDetails[0] = months[aCellDateDetails[0]]
-                const isACellTimeAM = aCellSplitTitle[1].endsWith("am");
-                const aCellTimeDetails = aCellSplitTitle[1].replace("am", "").replace("pm", "").split(":");
-                if (aCellTimeDetails.length == 1) {
-                  aCellTimeDetails.push("00");
-                }
-                if (isACellTimeAM && Number(aCellTimeDetails[0]) == 12) {
-                  aCellTimeDetails[0] = 0;
-                } else if (!isACellTimeAM && Number(aCellTimeDetails[0]) < 12) {
-                  aCellTimeDetails[0] = Number(aCellTimeDetails[0]) + 12;
-                }
-                const aCellDate = new Date(aCellDateDetails[2], aCellDateDetails[0], aCellDateDetails[1], aCellTimeDetails[0], aCellTimeDetails[1]);
-                
-                const bCellSplitTitle = bCellDivTitle.split(" at ");
-                const bCellDateDetails = bCellSplitTitle[0].replace(",", "").split(" ");
-                if (bCellDateDetails.length == 2) {
-                  bCellDateDetails.push(new Date().getFullYear());
-                }
-                bCellDateDetails[0] = months[bCellDateDetails[0]]
-                const isBCellTimeAM = bCellSplitTitle[1].endsWith("am");
-                const bCellTimeDetails = bCellSplitTitle[1].replace("am", "").replace("pm", "").split(":");
-                if (bCellTimeDetails.length == 1) {
-                  bCellTimeDetails.push("00");
-                }
-                if (isBCellTimeAM && Number(bCellTimeDetails[0]) == 12) {
-                  bCellTimeDetails[0] = 0;
-                } else if (!isBCellTimeAM && Number(bCellTimeDetails[0]) < 12) {
-                  bCellTimeDetails[0] = Number(bCellTimeDetails[0]) + 12;
-                }
-                const bCellDate = new Date(bCellDateDetails[2], bCellDateDetails[0], bCellDateDetails[1], bCellTimeDetails[0], bCellTimeDetails[1]);
-                
-                return aCellDate > bCellDate ? 1 * multiplier : aCellDate < bCellDate ? -1 * multiplier : 0;
               }
             } else if (sortColumnName == "Total Activity") {
               const multiplier = isOrderAscending ? 1 : -1;

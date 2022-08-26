@@ -34,6 +34,35 @@
   }
 
   /*
+    Checks if user has the given course permission
+  */
+  async function hasCoursePermission(permissionKey) {
+    let permissions = [];
+    const courseId = window.location.pathname.split("/")[2];
+    const url = `/api/v1/courses/${courseId}/permissions`;
+
+    const fetches = [];
+    fetches.push(
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          permissions = data;
+        })
+        .catch((error) => {
+          console.error(`Error: ${error}`);
+        })
+    );
+
+    await Promise.all(fetches);
+
+    if (permissions) {
+      return permissions.hasOwnProperty(permissionKey) && permissions[permissionKey];
+    } else {
+      return false;
+    }
+  }
+
+  /*
     Checks to see if an element exists that matches the selector
     before calling a function.  If it exists, it calls the function.
     Otherwise, it increases the attempts and tries again after a short
@@ -54,37 +83,40 @@
   /*
     Adds a button to export the users to a CSV
   */
-  function addExportButton() {
-    const roleSelect = document.querySelector(
-      "div.roster-tab select[name='enrollment_role_id']"
-    );
-    if (roleSelect) {
-      roleSelect.insertAdjacentHTML(
-        "afterend",
-        `
-        <button id="ski-users-download" class="btn pull-right" title="Export to CSV" aria-label="Export to CSV">
-          <i class="icon-download"></i> Export
-        </button>
-      `
+  async function addExportButton() {
+    let hasPermission = await hasCoursePermission("read_as_admin");
+    if (hasPermission) {
+      const roleSelect = document.querySelector(
+        "div.roster-tab select[name='enrollment_role_id']"
       );
+      if (roleSelect) {
+        roleSelect.insertAdjacentHTML(
+          "afterend",
+          `
+          <button id="ski-users-download" class="btn pull-right" title="Export to CSV" aria-label="Export to CSV">
+            <i class="icon-download"></i> Export
+          </button>
+        `
+        );
 
-      const downloadButton = document.getElementById("ski-users-download");
-      if (downloadButton) {
-        downloadButton.addEventListener("click", () => {
-          const rows = document.querySelectorAll(
-            "div.roster-tab table tbody tr"
-          );
-          if (rows.length >= 25) {
-            const continueWithDownload = confirm(
-              `This will only download the users that are currently listed in the table.\n\nIf the class is large, be sure all rows have loaded before downloading.\n\nClick 'OK' to continue with the download`
+        const downloadButton = document.getElementById("ski-users-download");
+        if (downloadButton) {
+          downloadButton.addEventListener("click", () => {
+            const rows = document.querySelectorAll(
+              "div.roster-tab table tbody tr"
             );
-            if (continueWithDownload) {
+            if (rows.length >= 25) {
+              const continueWithDownload = confirm(
+                `This will only download the users that are currently listed in the table.\n\nIf the class is large, be sure all rows have loaded before downloading.\n\nClick 'OK' to continue with the download`
+              );
+              if (continueWithDownload) {
+                downloadUsersAsCSV();
+              }
+            } else {
               downloadUsersAsCSV();
             }
-          } else {
-            downloadUsersAsCSV();
-          }
-        });
+          });
+        }
       }
     }
   }

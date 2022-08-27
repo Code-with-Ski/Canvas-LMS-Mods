@@ -8,6 +8,7 @@ function saveOptions() {
 
   // Dashboard settings
   const isDashboardAddAllCoursesButton = document.getElementById("dashboard-add-all-courses-button").checked;
+  const isDashboardCourseGradesShown = document.getElementById("dashboard-show-course-grades").checked;
 
   // All Courses settings
   const areFiltersEnabled = document.getElementById("courses-filters").checked;
@@ -19,6 +20,18 @@ function saveOptions() {
 
   // Course - Modules settings
   const isCourseModulesJumpToEnabled = document.getElementById("course-modules-jump-to").checked;
+
+  // Course - People/Users settings
+  const isCoursePeopleExportEnabled = document.getElementById("course-users-export").checked;
+  const isCoursePeopleInactiveFilterEnabled = document.getElementById("course-users-inactive").checked;
+  const isCoursePeopleSectionFilterEnabled = document.getElementById("course-users-section-filter").checked;
+  const isCoursePeopleSortEnabled = document.getElementById("course-people-sort").checked;
+
+  // Course - Groups settings
+  const isGroupsExportButtonEnabled = document.getElementById("course-groups-export").checked;
+
+  // Course - User Access Report settings
+  const isCourseUserAccessReportButtonEnabled = document.getElementById("course-user-access-report-export").checked;
 
   // Admin - Courses settings
   const isBlueprintInputFillPrevent = document.getElementById("admin-courses-blueprint-input-prevent-fill").checked;
@@ -42,6 +55,11 @@ function saveOptions() {
   if (Number.isNaN(groupListDefaultSize)) { groupListDefaultSize = 400; }
 
   const isAvatarImgResizable = document.getElementById("admin-users-avatar-resizable").checked;
+
+  const isAdminUsersGradesLinkEnabled = document.getElementById("admin-users-add-grades-link").checked;
+
+  // Admin - User Grades settings
+  const isAdminUsersGradesPersonalized = document.getElementById("admin-users-grades-personalized").checked;
 
   // Admin - Profile Pictures settings
   const isProfileAvatarImgResizable = document.getElementById("admin-profile-pictures-resizable").checked;
@@ -71,11 +89,18 @@ function saveOptions() {
     globalBodyFullWidth: isGlobalFullWidthEnabled,
     accountProfileGradesButton: isAccountProfileGradesButtonEnabled,
     dashboardAddAllCoursesButton: isDashboardAddAllCoursesButton,
+    dashboardShowCourseGrades: isDashboardCourseGradesShown,
     allCoursesFilters: areFiltersEnabled,
     allCoursesSearchFields: areSearchesEnabled,
     allCoursesColumnSorts: areColumnSortsEnabled,
     courseGlobalStickyHeader: isCourseGlobalStickyHeaderEnabled,
     courseModulesJumpToEnabled: isCourseModulesJumpToEnabled,
+    coursePeopleExportEnabled: isCoursePeopleExportEnabled,
+    coursePeopleInactiveFilter: isCoursePeopleInactiveFilterEnabled,
+    coursePeopleSectionFilter: isCoursePeopleSectionFilterEnabled,
+    coursePeopleSortEnabled: isCoursePeopleSortEnabled,
+    courseGroupsExportEnabled: isGroupsExportButtonEnabled,
+    courseUserAccessExportEnabled: isCourseUserAccessReportButtonEnabled,
     adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
     adminCoursesCourseCode: isCourseCodeEnabled,
     adminUsersEnrollmentsResizable: isCourseListResizable,
@@ -89,6 +114,8 @@ function saveOptions() {
     adminUsersGroupsResizable: isGroupListResizable,
     adminUsersGroupsDefaultHeight: groupListDefaultSize,
     adminUsersAvatarResizable: isAvatarImgResizable,
+    adminUsersAddGradesLink: isAdminUsersGradesLinkEnabled,
+    adminUsersGradesPersonalized: isAdminUsersGradesPersonalized,
     adminTermsSearch: isTermsSearchable,
     adminTermsMoveAddTerm: isAddTermMoved,
     adminTermsTermId: isTermIdShown,
@@ -117,11 +144,18 @@ function restoreOptions() {
     globalBodyFullWidth: true,
     accountProfileGradesButton: true,
     dashboardAddAllCoursesButton: true,
+    dashboardShowCourseGrades: true,
     allCoursesFilters: true,
     allCoursesSearchFields: true,
     allCoursesColumnSorts: true,
     courseGlobalStickyHeader: true,
     courseModulesJumpToEnabled: true,
+    coursePeopleExportEnabled: true,
+    coursePeopleInactiveFilter: true,
+    coursePeopleSectionFilter: true,
+    coursePeopleSortEnabled: true,
+    courseGroupsExportEnabled: true,
+    courseUserAccessExportEnabled: true,
     adminCoursesBlueprintInputPreventFill: true,
     adminCoursesCourseCode: true,
     adminUsersEnrollmentsResizable: true,
@@ -135,6 +169,8 @@ function restoreOptions() {
     adminUsersGroupsResizable: true,
     adminUsersGroupsDefaultHeight: 100,
     adminUsersAvatarResizable: true,
+    adminUsersAddGradesLink: true,
+    adminUsersGradesPersonalized: true,
     adminTermsSearch: true,
     adminTermsMoveAddTerm: true,
     adminTermsTermId: true,
@@ -155,6 +191,7 @@ function restoreOptions() {
     
     // Dashboard settings
     document.getElementById("dashboard-add-all-courses-button").checked = items.dashboardAddAllCoursesButton;
+    document.getElementById("dashboard-show-course-grades").checked = items.dashboardShowCourseGrades;
 
     // All Courses settings
     document.getElementById("courses-filters").checked = items.allCoursesFilters;
@@ -166,6 +203,18 @@ function restoreOptions() {
 
     // Course - Modules settings
     document.getElementById("course-modules-jump-to").checked = items.courseModulesJumpToEnabled;
+
+    // Course - People/Users settings
+    document.getElementById("course-users-export").checked = items.coursePeopleExportEnabled;
+    document.getElementById("course-users-inactive").checked = items.coursePeopleInactiveFilter;
+    document.getElementById("course-users-section-filter").checked = items.coursePeopleSectionFilter;
+    document.getElementById("course-people-sort").checked = items.coursePeopleSortEnabled;
+
+    // Course - Groups settings
+    document.getElementById("course-groups-export").checked = items.courseGroupsExportEnabled;
+
+    // Course - User Access Report settings
+    document.getElementById("course-user-access-report-export").checked = items.courseUserAccessExportEnabled;
 
     // Admin - Courses settings
     document.getElementById("admin-courses-blueprint-input-prevent-fill").checked = items.adminCoursesBlueprintInputPreventFill;
@@ -186,6 +235,11 @@ function restoreOptions() {
     document.getElementById("admin-users-groups-default-height").value = items.adminUsersGroupsDefaultHeight;
 
     document.getElementById("admin-users-avatar-resizable").checked = items.adminUsersAvatarResizable;
+
+    document.getElementById("admin-users-add-grades-link").checked = items.adminUsersAddGradesLink;
+
+    // Admin - User Grades settings
+    document.getElementById("admin-users-grades-personalized").checked = items.adminUsersGradesPersonalized;
 
     // Admin - Profile Pictures
     document.getElementById("admin-profile-pictures-resizable").checked = items.adminProfilePicturesResizable;

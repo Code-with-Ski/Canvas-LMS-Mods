@@ -31,6 +31,10 @@
         <input type="checkbox" id="dashboard-add-all-courses-button" checked />
         Add "See all courses" button to the dashboard header
       </label>
+      <label>
+        <input type="checkbox" id="dashboard-show-course-grades" checked />
+        Show current course grade on course cards for student enrollments
+      </label>
     </details>
 
     <details>
@@ -63,6 +67,39 @@
         <label>
           <input type="checkbox" id="course-modules-jump-to" checked />
           Enable "Jump to Module" selection
+        </label>
+      </details>
+      <details>
+        <summary>People/Users</summary>
+        <label>
+          <input type="checkbox" id="course-users-export" checked />
+          Enable users export to CSV button
+        </label>
+        <label>
+          <input type="checkbox" id="course-users-inactive" checked />
+          Enable ability to hide inactive users
+        </label>
+        <label>
+          <input type="checkbox" id="course-users-section-filter" checked />
+          Enable ability to filter by section
+        </label>
+        <label>
+          <input type="checkbox" id="course-people-sort" checked />
+          Enable people sort by columns
+        </label>
+      </details>
+      <details>
+        <summary>Groups</summary>
+        <label>
+          <input type="checkbox" id="course-groups-export" checked />
+          Enable groups export to CSV button
+        </label>
+      </details>
+      <details>
+        <summary>User Access Report</summary>
+        <label>
+          <input type="checkbox" id="course-user-access-report-export" checked />
+          Enable user access report export to CSV button
         </label>
       </details>
     </details>
@@ -172,6 +209,19 @@
         <label>
           <input type="checkbox" id="admin-users-avatar-resizable" checked />
           Resizable avatar image (Click and drag)
+        </label>
+
+        <label>
+          <input type="checkbox" id="admin-users-add-grades-link" checked />
+          Add link to user's grades in active courses
+        </label>
+      </details>
+
+      <details>
+        <summary>Admin - User Grades</summary>
+        <label>
+          <input type="checkbox" id="admin-users-grades-personalized" checked />
+          Update user's grades page to show proper user name
         </label>
       </details>
 

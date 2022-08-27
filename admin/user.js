@@ -13,7 +13,8 @@
       adminUsersAccountsRoles: true,
       adminUsersGroupsResizable: true,
       adminUsersGroupsDefaultHeight: 100,
-      adminUsersAvatarResizable: true
+      adminUsersAvatarResizable: true,
+      adminUsersAddGradesLink: true,
     }, function (items) {
       // Update Courses List if available
       const coursesList = document.querySelector("div.courses ul");
@@ -64,6 +65,10 @@
       const avatarImgWrapper = document.querySelector("span.avatar_image");
       if (items.adminUsersAvatarResizable && avatarImgWrapper) {
         makeAvatarImageResizable(avatarImgWrapper);
+      }
+
+      if (items.adminUsersAddGradesLink) {
+        addGradesButton();
       }
     });
   }
@@ -366,6 +371,23 @@
           }
         }
       });
+    }
+  }
+
+  /*
+    Adds a link to view the user's grades in their current courses
+  */
+  function addGradesButton() {
+    const rightSide = document.getElementById("right-side");
+    if (rightSide) {
+      const userId = window.location.pathname.split("/").pop();
+      rightSide.insertAdjacentHTML("beforeend", `
+        <div>
+          <a href="/users/${userId}/grades" target="_blank" class="btn button-sidebar-wide">
+            <i class="icon-check-plus"></i> View Current Grades
+          </a>
+        </div>
+      `);
     }
   }
 })();

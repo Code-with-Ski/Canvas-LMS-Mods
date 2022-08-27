@@ -36,17 +36,27 @@ Options will also be updated to allow the user to enable/disable certain customi
 
 - Dashboard
   - Enable "See all courses" button on the dashboard
+  - Show current course grade on course cards for student enrollments (Uses Canvas LMS API)
 
 - Course
   - Global for Course
     - Enable sticky course header
   - Modules
     - Enable "Jump to Module" selection
+  - People/Users
+    - Enable users export to CSV button (Requires course admin permission)
+    - Enable ability to hide inactive users
+    - Enable ability to filter by section (Uses Canvas LMS API)
+    - Enable people sort by columns
+  - Groups
+    - Enable groups export to CSV button (Requires course admin permission) (Uses Canvas LMS API)
+  - User
+    - Enable access report export to CSV button
 
 - Admin
   - Course Search
     - Prevents input for "Show only blueprint courses" from filling to the end of the page in desktop view
-    - Add the course code to the course search results (Uses Canvas LMS API calls)
+    - Add the course code to the course search results (Uses Canvas LMS API)
   - People
     - User Account Details
       - Course enrollments box
@@ -54,16 +64,19 @@ Options will also be updated to allow the user to enable/disable certain customi
         - Set a default height
         - Sort the enrollments by status, term, and role
         - Filter enrollments by course published status, enrollment status, and/or term
-        - Add the course code to the list of enrollments (Uses Canvas LMS API calls)
+        - Add the course code to the list of enrollments (Uses Canvas LMS API)
       - Accounts box
         - Make it resizable
         - Set a default height
-        - Show the admin roles in each account (Uses Canvas LMS API calls)
+        - Show the admin roles in each account (Uses Canvas LMS API)
       - Groups box
         - Make it resizable
         - Set a default height
       - Avatar image
         - Make it resizable by clicking and/or dragging it to resize
+      - Add link to grades for active courses
+    - User Grades
+      - Updates the name and headings to reflect the user (Uses Canvas LMS API)
     - Profile Pictures
       - Make it resizable by dragging the corner
       - Make it a rounded square instead of a circle to show more of the background
@@ -74,10 +87,10 @@ Options will also be updated to allow the user to enable/disable certain customi
     - Add a search ability to the question banks
   - Sub-accounts
     - Enable show Canvas account ID
-    - Enable show SIS account ID (Uses Canvas LMS API calls)
+    - Enable show SIS account ID (Uses Canvas LMS API)
   - Terms
     - Add a search ability to the terms
     - Move the add term button to the top of the terms table
     - Show the Canvas Term ID
   - SIS Import
-    - Enable SIS History Log (Uses Canvas LMS API Calls)
+    - Enable SIS History Log (Uses Canvas LMS API)

@@ -36,6 +36,7 @@ Options will also be updated to allow the user to enable/disable certain customi
 
 - Dashboard
   - Enable "See all courses" button on the dashboard
+  - Show current course grade on course cards for student enrollments (Uses Canvas LMS API)
 
 - Course
   - Global for Course

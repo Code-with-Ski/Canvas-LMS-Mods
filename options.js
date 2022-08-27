@@ -8,6 +8,7 @@ function saveOptions() {
 
   // Dashboard settings
   const isDashboardAddAllCoursesButton = document.getElementById("dashboard-add-all-courses-button").checked;
+  const isDashboardCourseGradesShown = document.getElementById("dashboard-show-course-grades").checked;
 
   // All Courses settings
   const areFiltersEnabled = document.getElementById("courses-filters").checked;
@@ -88,6 +89,7 @@ function saveOptions() {
     globalBodyFullWidth: isGlobalFullWidthEnabled,
     accountProfileGradesButton: isAccountProfileGradesButtonEnabled,
     dashboardAddAllCoursesButton: isDashboardAddAllCoursesButton,
+    dashboardShowCourseGrades: isDashboardCourseGradesShown,
     allCoursesFilters: areFiltersEnabled,
     allCoursesSearchFields: areSearchesEnabled,
     allCoursesColumnSorts: areColumnSortsEnabled,
@@ -142,6 +144,7 @@ function restoreOptions() {
     globalBodyFullWidth: true,
     accountProfileGradesButton: true,
     dashboardAddAllCoursesButton: true,
+    dashboardShowCourseGrades: true,
     allCoursesFilters: true,
     allCoursesSearchFields: true,
     allCoursesColumnSorts: true,
@@ -188,6 +191,7 @@ function restoreOptions() {
     
     // Dashboard settings
     document.getElementById("dashboard-add-all-courses-button").checked = items.dashboardAddAllCoursesButton;
+    document.getElementById("dashboard-show-course-grades").checked = items.dashboardShowCourseGrades;
 
     // All Courses settings
     document.getElementById("courses-filters").checked = items.allCoursesFilters;

@@ -50,7 +50,11 @@
       const enrollments = course.enrollments;
       for (let enrollment of enrollments) {
         if (enrollment.role == "StudentEnrollment") {
-          studentEnrollmentGrades[course.id] = enrollment.computed_current_grade;
+          if (enrollment.hasOwnProperty("computed_current_grade")) {
+            studentEnrollmentGrades[course.id] = enrollment.computed_current_grade;
+          } else {
+            studentEnrollmentGrades[course.id] = "LOCKED";
+          }
         }
       }
     }
@@ -99,7 +103,7 @@
         dashboardCardHeader.insertAdjacentHTML("afterbegin", `
           <div style="position: absolute; top: 12px; left: 12px; height: 36px; padding: 0.5rem;">
             <span class="ski-dashboard-card-grade" style="position: relative; padding: 0.5rem; background-color: white; color: ${headerBackgroundColor}; border: 0; border-radius: 0.5rem;">
-              ${currentGrade ? currentGrade : "N/A"}
+              ${currentGrade ? (currentGrade == "LOCKED" ? "<i class='icon-Solid icon-lock'></i>" : currentGrade) : "N/A"}
             </span>
           </div>
         `);

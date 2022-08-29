@@ -470,8 +470,8 @@
           const sortButton = document.querySelector(
             "button.ski-column-sort-btn[data-ski-sort-dir=asc], button.ski-column-sort-btn[data-ski-sort-dir=desc]"
           );
+          const addedNodes = [...mutation.addedNodes];
           if (sortButton) {
-            const addedNodes = [...mutation.addedNodes];
             if (
               addedNodes.some(
                 (node) =>
@@ -484,8 +484,32 @@
                 sortButton.dataset.skiColPosition,
                 sortButton.dataset.skiSortDir == "asc"
               );
+            } 
+          } else if (addedNodes.some((node) => node.nodeName == "TABLE")) {
+              const removedNodes = [...mutation.removedNodes];
+              observer.disconnect();
+              addColumnSorts(); // TODO Remove recursive call
+
+              const removedTableNodes = [...removedNodes.filter((node) => node.nodeName == "TABLE")];
+              if (removedTableNodes.length > 0) {
+                const removedTable = removedTableNodes[0];
+                const removedSortButton = removedTable.querySelector(
+                  "button.ski-column-sort-btn[data-ski-sort-dir=asc], button.ski-column-sort-btn[data-ski-sort-dir=desc]"
+                );
+                if (removedSortButton) {
+                  const removedSortedColumnPosition = removedSortButton.dataset.skiColPosition;
+                  const newSortButton = document.querySelector(`table th:nth-of-type(${removedSortedColumnPosition}) button`);
+                  if (newSortButton) {
+                    newSortButton.dataset.skiSortDir = removedSortButton.dataset.skiSortDir;
+                    updateTableSortDisplay(
+                      newSortButton.dataset.skiColName,
+                      newSortButton.dataset.skiColPosition,
+                      newSortButton.dataset.skiSortDir == "asc"
+                    );
+                  }
+                }
+              }
             }
-          }
         });
       });
 

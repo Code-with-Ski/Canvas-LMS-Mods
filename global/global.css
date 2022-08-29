@@ -19,7 +19,7 @@ details.ski-comp[open] summary {
   margin-bottom: 0.5em;
 }
 
-div.ski-comp-sticky-top {
+html:not(.tox-fullscreen) div.ski-comp-sticky-top {
   position: -webkit-sticky;
   position: sticky;
   top: 0;

@@ -470,8 +470,8 @@
           const sortButton = document.querySelector(
             "button.ski-column-sort-btn[data-ski-sort-dir=asc], button.ski-column-sort-btn[data-ski-sort-dir=desc]"
           );
+          const addedNodes = [...mutation.addedNodes];
           if (sortButton) {
-            const addedNodes = [...mutation.addedNodes];
             if (
               addedNodes.some(
                 (node) =>
@@ -484,8 +484,11 @@
                 sortButton.dataset.skiColPosition,
                 sortButton.dataset.skiSortDir == "asc"
               );
+            } 
+          } else if (addedNodes.some((node) => node.nodeName == "TABLE")) {
+              observer.disconnect();
+              addColumnSorts(); // TODO Remove recursive call
             }
-          }
         });
       });
 

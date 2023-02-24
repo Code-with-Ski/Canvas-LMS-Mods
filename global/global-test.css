@@ -1,0 +1,13 @@
+header#header
+  div.ic-app-header__main-navigation
+  div.ic-app-header__logomark-container {
+    background-color: orange;
+    border: 1px dashed white;
+}
+
+ul#menu::before {
+  content: "*TEST*";
+  color: black;
+  background-color: yellow;
+  border: 1px solid white;
+}

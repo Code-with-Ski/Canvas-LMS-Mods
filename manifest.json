@@ -101,6 +101,14 @@
     },
     {
       "matches": [
+        "https://*.instructure.com/courses/*/gradebook/speed_grader*",
+        "https://*.test.instructure.com/courses/*/gradebook/speed_grader*",
+        "https://*.beta.instructure.com/courses/*/gradebook/speed_grader*"
+      ],
+      "css": ["course/speedgrader.css"]
+    },
+    {
+      "matches": [
         "https://*.instructure.com/users/*",
         "https://*.test.instructure.com/users/*",
         "https://*.beta.instructure.com/users/*"

@@ -1,0 +1,11 @@
+#right_side div.comment span.draft-marker {
+  visibility: hidden;
+}
+
+#right_side div.comment span.draft-marker::after {
+  content: "DRAFT";
+  border: 1px solid #9d261d;
+  padding: 5px;
+  border-radius: 20px;
+  visibility: visible;
+}

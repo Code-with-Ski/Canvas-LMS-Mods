@@ -3,6 +3,9 @@ function saveOptions() {
   // Global settings
   const isGlobalFullWidthEnabled = document.getElementById("global-body-full-width").checked;
 
+  // Global Nav settings
+  const isGlobalNavAdminQuickAccessEnabled = document.getElementById("admin-global-nav-quick-access-enabled").checked;
+
   // Account - Profile settings
   const isAccountProfileGradesButtonEnabled = document.getElementById("account-profile-grades-button").checked;
 
@@ -32,6 +35,9 @@ function saveOptions() {
 
   // Course - User Access Report settings
   const isCourseUserAccessReportButtonEnabled = document.getElementById("course-user-access-report-export").checked;
+
+  // Course - SpeedGrader settings
+  const isSpeedGraderCommentHyperlinksEnabled = document.getElementById("course-speedgrader-make-links-in-comments-clickable").checked;
 
   // Admin - Courses settings
   const isBlueprintInputFillPrevent = document.getElementById("admin-courses-blueprint-input-prevent-fill").checked;
@@ -87,6 +93,7 @@ function saveOptions() {
 
   chrome.storage.sync.set({
     globalBodyFullWidth: isGlobalFullWidthEnabled,
+    globalNavAdminQuickAccess: isGlobalNavAdminQuickAccessEnabled,
     accountProfileGradesButton: isAccountProfileGradesButtonEnabled,
     dashboardAddAllCoursesButton: isDashboardAddAllCoursesButton,
     dashboardShowCourseGrades: isDashboardCourseGradesShown,
@@ -101,6 +108,7 @@ function saveOptions() {
     coursePeopleSortEnabled: isCoursePeopleSortEnabled,
     courseGroupsExportEnabled: isGroupsExportButtonEnabled,
     courseUserAccessExportEnabled: isCourseUserAccessReportButtonEnabled,
+    courseSpeedGraderCommentsWithHyperlinksEnabled: isSpeedGraderCommentHyperlinksEnabled,
     adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
     adminCoursesCourseCode: isCourseCodeEnabled,
     adminUsersEnrollmentsResizable: isCourseListResizable,
@@ -142,6 +150,7 @@ function saveOptions() {
 function restoreOptions() {
   chrome.storage.sync.get({
     globalBodyFullWidth: true,
+    globalNavAdminQuickAccess: true,
     accountProfileGradesButton: true,
     dashboardAddAllCoursesButton: true,
     dashboardShowCourseGrades: true,
@@ -156,6 +165,7 @@ function restoreOptions() {
     coursePeopleSortEnabled: true,
     courseGroupsExportEnabled: true,
     courseUserAccessExportEnabled: true,
+    courseSpeedGraderCommentsWithHyperlinksEnabled: true,
     adminCoursesBlueprintInputPreventFill: true,
     adminCoursesCourseCode: true,
     adminUsersEnrollmentsResizable: true,
@@ -186,6 +196,9 @@ function restoreOptions() {
     // Global settings
     document.getElementById("global-body-full-width").checked = items.globalBodyFullWidth;
 
+    // Global Nav settings
+    document.getElementById("admin-global-nav-quick-access-enabled").checked = items.globalNavAdminQuickAccess,
+
     // Account - Profile settings
     document.getElementById("account-profile-grades-button").checked = items.accountProfileGradesButton;
     
@@ -215,6 +228,9 @@ function restoreOptions() {
 
     // Course - User Access Report settings
     document.getElementById("course-user-access-report-export").checked = items.courseUserAccessExportEnabled;
+
+    // Course - SpeedGrader settings
+    document.getElementById("course-speedgrader-make-links-in-comments-clickable").checked = items.courseSpeedGraderCommentsWithHyperlinksEnabled;
 
     // Admin - Courses settings
     document.getElementById("admin-courses-blueprint-input-prevent-fill").checked = items.adminCoursesBlueprintInputPreventFill;

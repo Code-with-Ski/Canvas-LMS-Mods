@@ -6,7 +6,7 @@
       globalNavAdminQuickAccess: true,
     },
     function (items) {
-      if (items.globalNavAdminQuickSearch) {
+      if (items.globalNavAdminQuickAccess) {
         watchForGlobalNavPortal();
       }
     }
@@ -31,7 +31,7 @@
     }
   }
 
-  function handleGlobalNavTrayChanges() {
+  async function handleGlobalNavTrayChanges() {
     // Check for visible Admin Tray
     const accountsTray = document.querySelector("#nav-tray-portal div[role='dialog'] div.navigation-tray-container.accounts-tray");
     if (accountsTray) {
@@ -119,6 +119,13 @@
             <hr role='presentation'>
             <h4>People Search</h4>
             <div class="ic-Form-control">
+                <select id="ski-user-role-select" class="ic-Input">
+                  <optgroup label="Select course role">
+                    <option value="">All Roles</option>
+                  </optgroup>
+                </select>
+              </div>
+            <div class="ic-Form-control">
               <input id="ski-people-search-input" type="text" class="ic-Input" placeholder="Search people...">
             </div>
             <div class="content-box-mini">
@@ -134,9 +141,16 @@
           </div>
         `);
 
-        loadAccountSelect();
+        await loadAccountSelect();
 
         loadTermsSelect();
+
+        loadRoleSelect();
+
+        const accountSelect = document.getElementById("ski-account-select");
+        if (accountSelect) {
+          accountSelect.addEventListener("change", loadRoleSelect);
+        }
 
         const courseSearchMoreOptions = document.getElementById("ski-course-search-additional-options-btn");
         if (courseSearchMoreOptions) {
@@ -365,10 +379,10 @@
       }
     });
     
-    const accountSelect = document.getElementById("ski-term-select");
-    const activeGroup = accountSelect.querySelector("optgroup[label='Active Terms']");
-    const futureGroup = accountSelect.querySelector("optgroup[label='Future Terms']");
-    const pastGroup = accountSelect.querySelector("optgroup[label='Past Terms']");
+    const termSelect = document.getElementById("ski-term-select");
+    const activeGroup = termSelect.querySelector("optgroup[label='Active Terms']");
+    const futureGroup = termSelect.querySelector("optgroup[label='Future Terms']");
+    const pastGroup = termSelect.querySelector("optgroup[label='Past Terms']");
     const currentDate = new Date();
     for (let term of terms) {
       const termStart = term.start_at;
@@ -409,6 +423,50 @@
     const terms = [];
     const url = `/api/v1/accounts/self/terms?per_page=100`;
     return paginatedRequest(url, terms, "enrollment_terms");
+  }
+
+  async function loadRoleSelect() {
+    const roles = await getRoles();
+    const roleSets = {
+      "StudentEnrollment": [],
+      "TeacherEnrollment": [],
+      "TaEnrollment": [],
+      "DesignerEnrollment": [],
+      "ObserverEnrollment": []
+    }
+    for (let role of roles) {
+      const baseRoleType = role.base_role_type;
+      if (baseRoleType in roleSets) {
+        roleSets[baseRoleType].push(role);
+      }
+    }
+    console.log(roleSets);
+    const roleSelect = document.getElementById("ski-user-role-select");
+    if (roleSelect) {
+      let roleSelectOptions = `
+        <optgroup label="Select course role">
+          <option value="">All Roles</option>
+      `;
+      for (let baseRoleType in roleSets) {
+        const rolesOfType = roleSets[baseRoleType];
+        for (let role of rolesOfType) {
+          roleSelectOptions += `<option value="${role.id}">${role.label}</option>`
+        }
+      }
+      roleSelectOptions += `</optgroup>`;
+      console.log(roleSelectOptions);
+      roleSelect.innerHTML = roleSelectOptions;
+    }
+  }
+
+  function getRoles() {
+    const roles = [];
+    const accountId = document.getElementById("ski-account-select")?.value;
+    if (accountId) {
+      const url = `/api/v1/accounts/${accountId}/roles?show_inherited=true&per_page=100`;
+      return paginatedRequest(url, roles);
+    }
+    return roles;
   }
 
   function paginatedRequest(url, results, keyForArray) {

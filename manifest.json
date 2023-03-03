@@ -137,7 +137,8 @@
         "https://*.test.instructure.com/accounts/*",
         "https://*.beta.instructure.com/accounts/*"
       ],
-      "js": ["admin/course-search.js"]
+      "js": ["admin/course-search.js"],
+      "css": ["admin/course-search.css"]
     },
     {
       "matches": [

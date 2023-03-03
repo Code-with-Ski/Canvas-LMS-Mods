@@ -43,6 +43,7 @@ function saveOptions() {
   const isBlueprintInputFillPrevent = document.getElementById("admin-courses-blueprint-input-prevent-fill").checked;
   const isCourseCodeEnabled = document.getElementById("admin-courses-course-code").checked;
   const isPeopleLinkEnabled = document.getElementById("admin-courses-people-link").checked;
+  const isAdminCoursesViewGradesButtonEnabled = document.getElementById("admin-courses-view-grades-button").checked;
   const isAdditionalSearchEnabled = document.getElementById("admin-courses-additional-search-inputs").checked;
 
   // Admin - Users settings
@@ -114,6 +115,7 @@ function saveOptions() {
     adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
     adminCoursesPeopleLink: isPeopleLinkEnabled,
     adminCoursesCourseCode: isCourseCodeEnabled,
+    adminCoursesGradesButton: isAdminCoursesViewGradesButtonEnabled,
     adminCoursesAdditionalSearchInputs: isAdditionalSearchEnabled,
     adminUsersEnrollmentsResizable: isCourseListResizable,
     adminUsersEnrollmentsDefaultHeight: enrollmentCourseListDefaultSize,
@@ -174,6 +176,7 @@ function restoreOptions() {
     adminCoursesAdditionalSearchInputs: true,
     adminCoursesCourseCode: true,
     adminCoursesPeopleLink: true,
+    adminCoursesGradesButton: true,
     adminUsersEnrollmentsResizable: true,
     adminUsersEnrollmentsDefaultHeight: 400,
     adminUsersEnrollmentsSort: true,
@@ -242,6 +245,7 @@ function restoreOptions() {
     document.getElementById("admin-courses-blueprint-input-prevent-fill").checked = items.adminCoursesBlueprintInputPreventFill;
     document.getElementById("admin-courses-course-code").checked = items.adminCoursesCourseCode;
     document.getElementById("admin-courses-people-link").checked = items.adminCoursesPeopleLink;
+    document.getElementById("admin-courses-view-grades-button").checked = items.adminCoursesGradesButton;
     document.getElementById("admin-courses-additional-search-inputs").checked = items.adminCoursesAdditionalSearchInputs;
 
     // Admin - Users settings

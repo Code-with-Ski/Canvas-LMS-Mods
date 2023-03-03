@@ -3,11 +3,12 @@
     chrome.storage.sync.get({
       adminCoursesCourseCode: true,
       adminCoursesPeopleLink: true,
+      adminCoursesGradesButton: true,
       adminCoursesBlueprintInputPreventFill: true,
       adminCoursesAdditionalSearchInputs: true
     }, function (items) {
-      if (items.adminCoursesCourseCode || items.adminCoursesPeopleLink) {
-        watchForTable(items.adminCoursesCourseCode, items.adminCoursesPeopleLink);
+      if (items.adminCoursesCourseCode || items.adminCoursesPeopleLink || items.adminCoursesGradesButton) {
+        watchForTable(items.adminCoursesCourseCode, items.adminCoursesPeopleLink, items.adminCoursesGradesButton);
       }
       if (items.adminCoursesBlueprintInputPreventFill || items.adminCoursesAdditionalSearchInputs) {
         watchForSearchForm(items.adminCoursesBlueprintInputPreventFill, items.adminCoursesAdditionalSearchInputs);
@@ -69,7 +70,7 @@
     })
   }
 
-  async function watchForTable(addCourseCode, addPeopleLink) {
+  async function watchForTable(addCourseCode, addPeopleLink, addViewGradesButton) {
     let currentUrl = window.location.href;
     let courses = await getCurrentCourses();
     const searchTable = document.querySelector("div#content > div > table");
@@ -96,7 +97,7 @@
                     }
                     if (canvasCourseCode in courses) {
                       const course = courses[canvasCourseCode];
-                      updateRow(newNode, course, addCourseCode, addPeopleLink);
+                      updateRow(newNode, course, addCourseCode, addPeopleLink, addViewGradesButton);
                     }
                   }
                 }
@@ -115,7 +116,7 @@
           const canvasCourseCode = courseNameLink.href.split("/").pop();
           if (canvasCourseCode in courses) {
             const course = courses[canvasCourseCode];
-            updateRow(row, course, addCourseCode, addPeopleLink);
+            updateRow(row, course, addCourseCode, addPeopleLink, addViewGradesButton);
           }
         }
       }
@@ -137,7 +138,7 @@
                 }
                 if (canvasCourseCode in courses) {
                   const course = courses[canvasCourseCode];
-                  updateRow(newNode, course, addCourseCode, addPeopleLink);
+                  updateRow(newNode, course, addCourseCode, addPeopleLink, addViewGradesButton);
                 }
               }
             }
@@ -148,7 +149,7 @@
     }
   }
 
-  function updateRow(row, course, addCourseCode, addPeopleLink) {
+  function updateRow(row, course, addCourseCode, addPeopleLink, addViewGradesButton) {
     const courseNameLink = row.querySelector("td > a[href*='/courses/']");
     if (addCourseCode) {
       const courseCodeSpan = courseNameLink.parentElement.querySelector("span.ski-course-code");
@@ -161,8 +162,21 @@
       const peopleLink = row.querySelector("td a.ski-course-people");
       if (!peopleLink) {
         const numOfStudentsTd = row.querySelector("td:nth-last-child(2)");
+        numOfStudentsTd.style.textAlign = "center";
         if (numOfStudentsTd) {
-          numOfStudentsTd.innerHTML = `<a href='/courses/${course['id']}/users' target='_blank' title='View People in course' id="ski-course-people">${numOfStudentsTd.innerText}</a>`;
+          if (!numOfStudentsTd.querySelector("a.ski-course-people")) {
+            numOfStudentsTd.innerHTML = `<a href='/courses/${course['id']}/users' target='_blank' title='View People in course' class="ski-course-people"'>${numOfStudentsTd.innerText}</a>`;
+          }
+        }
+        if (addViewGradesButton) {
+          if (!numOfStudentsTd.querySelector("a.ski-course-view-grades")) {
+            numOfStudentsTd.innerHTML += `
+              <br><br>
+              <a href='/courses/${course['id']}/gradebook' target='_blank' title='View course gradebook' class='ski-course-view-grades Button' style="background: white; margin: 0px; padding: 0.4rem; border-radius: 0.25rem; border-width: 0px; width: auto; cursor: pointer;">
+                <i class="icon-line icon-gradebook" aria-hidden="true"></i>
+              </a>
+            `;
+          }
         }
       }
     }
@@ -212,7 +226,7 @@
       
       rowOfSearchOptions.insertAdjacentHTML("afterend", `
         <div style="text-align: right;">
-          <button data-sort="" id="ski-course-search-course-id-sort-btn" class="Button Button--secondary">Sort by Canvas Course ID - Descending</button>
+          <button data-sort="" id="ski-course-search-course-id-sort-btn" class="Button">Sort by Canvas Course ID - Descending</button>
         </div>
       `);
 

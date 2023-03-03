@@ -42,6 +42,8 @@ function saveOptions() {
   // Admin - Courses settings
   const isBlueprintInputFillPrevent = document.getElementById("admin-courses-blueprint-input-prevent-fill").checked;
   const isCourseCodeEnabled = document.getElementById("admin-courses-course-code").checked;
+  const isPeopleLinkEnabled = document.getElementById("admin-courses-people-link").checked;
+  const isAdditionalSearchEnabled = document.getElementById("admin-courses-additional-search-inputs").checked;
 
   // Admin - Users settings
   const isCourseListResizable = document.getElementById("admin-users-enrollments-resizable").checked;
@@ -110,7 +112,9 @@ function saveOptions() {
     courseUserAccessExportEnabled: isCourseUserAccessReportButtonEnabled,
     courseSpeedGraderCommentsWithHyperlinksEnabled: isSpeedGraderCommentHyperlinksEnabled,
     adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
+    adminCoursesPeopleLink: isPeopleLinkEnabled,
     adminCoursesCourseCode: isCourseCodeEnabled,
+    adminCoursesAdditionalSearchInputs: isAdditionalSearchEnabled,
     adminUsersEnrollmentsResizable: isCourseListResizable,
     adminUsersEnrollmentsDefaultHeight: enrollmentCourseListDefaultSize,
     adminUsersEnrollmentsSort: isSortCourseEnrollments,
@@ -167,7 +171,9 @@ function restoreOptions() {
     courseUserAccessExportEnabled: true,
     courseSpeedGraderCommentsWithHyperlinksEnabled: true,
     adminCoursesBlueprintInputPreventFill: true,
+    adminCoursesAdditionalSearchInputs: true,
     adminCoursesCourseCode: true,
+    adminCoursesPeopleLink: true,
     adminUsersEnrollmentsResizable: true,
     adminUsersEnrollmentsDefaultHeight: 400,
     adminUsersEnrollmentsSort: true,
@@ -235,6 +241,8 @@ function restoreOptions() {
     // Admin - Courses settings
     document.getElementById("admin-courses-blueprint-input-prevent-fill").checked = items.adminCoursesBlueprintInputPreventFill;
     document.getElementById("admin-courses-course-code").checked = items.adminCoursesCourseCode;
+    document.getElementById("admin-courses-people-link").checked = items.adminCoursesPeopleLink;
+    document.getElementById("admin-courses-additional-search-inputs").checked = items.adminCoursesAdditionalSearchInputs;
 
     // Admin - Users settings
     document.getElementById("admin-users-enrollments-resizable").checked = items.adminUsersEnrollmentsResizable;

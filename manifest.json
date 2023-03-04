@@ -25,6 +25,24 @@
     },
     {
       "matches": [
+        "https://*.test.instructure.com/*"
+      ],
+      "js": [
+        "global/global-test.js"
+      ],
+      "css": ["global/global-test.css"]
+    },
+    {
+      "matches": [
+        "https://*.beta.instructure.com/*"
+      ],
+      "js": [
+        "global/global-beta.js"
+      ],
+      "css": ["global/global-beta.css"]
+    },
+    {
+      "matches": [
         "https://*.instructure.com/profile",
         "https://*.test.instructure.com/profile",
         "https://*.beta.instructure.com/profile"

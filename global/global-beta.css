@@ -1,11 +1,11 @@
-header#header
+body.ski-global-nav-beta-indicator header#header
   div.ic-app-header__main-navigation
   div.ic-app-header__logomark-container {
     background-color: orange;
     border: 1px dashed white;
 }
 
-ul#menu::before {
+body.ski-global-nav-beta-indicator ul#menu::before {
   content: "*BETA*";
   color: black;
   background-color: yellow;

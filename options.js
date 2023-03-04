@@ -5,6 +5,8 @@ function saveOptions() {
 
   // Global Nav settings
   const isGlobalNavAdminQuickAccessEnabled = document.getElementById("admin-global-nav-quick-access-enabled").checked;
+  const isGlobalNavTestIndicatorEnabled = document.getElementById("global-nav-test-server-indicator").checked;
+  const isGlobalNavBetaIndicatorEnabled = document.getElementById("global-nav-beta-server-indicator").checked;
 
   // Account - Profile settings
   const isAccountProfileGradesButtonEnabled = document.getElementById("account-profile-grades-button").checked;
@@ -99,6 +101,8 @@ function saveOptions() {
   chrome.storage.sync.set({
     globalBodyFullWidth: isGlobalFullWidthEnabled,
     globalNavAdminQuickAccess: isGlobalNavAdminQuickAccessEnabled,
+    globalNavTestIndicator: isGlobalNavTestIndicatorEnabled,
+    globalNavBetaIndicator: isGlobalNavBetaIndicatorEnabled,
     accountProfileGradesButton: isAccountProfileGradesButtonEnabled,
     dashboardAddAllCoursesButton: isDashboardAddAllCoursesButton,
     dashboardShowCourseGrades: isDashboardCourseGradesShown,
@@ -161,6 +165,8 @@ function restoreOptions() {
   chrome.storage.sync.get({
     globalBodyFullWidth: true,
     globalNavAdminQuickAccess: true,
+    globalNavTestIndicator: true,
+    globalNavBetaIndicator: true,
     accountProfileGradesButton: true,
     dashboardAddAllCoursesButton: true,
     dashboardShowCourseGrades: true,
@@ -213,6 +219,8 @@ function restoreOptions() {
 
     // Global Nav settings
     document.getElementById("admin-global-nav-quick-access-enabled").checked = items.globalNavAdminQuickAccess,
+    document.getElementById("global-nav-test-server-indicator").checked = items.globalNavTestIndicator;
+    document.getElementById("global-nav-beta-server-indicator").checked = items.globalNavBetaIndicator;
 
     // Account - Profile settings
     document.getElementById("account-profile-grades-button").checked = items.accountProfileGradesButton;

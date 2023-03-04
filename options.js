@@ -42,6 +42,7 @@ function saveOptions() {
   // Admin - Courses settings
   const isBlueprintInputFillPrevent = document.getElementById("admin-courses-blueprint-input-prevent-fill").checked;
   const isCourseCodeEnabled = document.getElementById("admin-courses-course-code").checked;
+  const isCourseConcludedIconEnabled = document.getElementById("admin-courses-concluded-icon").checked;
   const isAdminCoursesSubaccountLinkEnabled = document.getElementById("admin-courses-subaccount-link").checked;
   const isPeopleLinkEnabled = document.getElementById("admin-courses-people-link").checked;
   const isAdminCoursesViewGradesButtonEnabled = document.getElementById("admin-courses-view-grades-button").checked;
@@ -115,6 +116,7 @@ function saveOptions() {
     courseSpeedGraderCommentsWithHyperlinksEnabled: isSpeedGraderCommentHyperlinksEnabled,
     adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
     adminCoursesSubaccountLink: isAdminCoursesSubaccountLinkEnabled,
+    adminCoursesConcludedIcon: isCourseConcludedIconEnabled,
     adminCoursesPeopleLink: isPeopleLinkEnabled,
     adminCoursesCourseCode: isCourseCodeEnabled,
     adminCoursesGradesButton: isAdminCoursesViewGradesButtonEnabled,
@@ -177,6 +179,7 @@ function restoreOptions() {
     adminCoursesBlueprintInputPreventFill: true,
     adminCoursesAdditionalSearchInputs: true,
     adminCoursesCourseCode: true,
+    adminCoursesConcludedIcon: true,
     adminCoursesSubaccountLink: true,
     adminCoursesPeopleLink: true,
     adminCoursesGradesButton: true,
@@ -247,6 +250,7 @@ function restoreOptions() {
     // Admin - Courses settings
     document.getElementById("admin-courses-blueprint-input-prevent-fill").checked = items.adminCoursesBlueprintInputPreventFill;
     document.getElementById("admin-courses-course-code").checked = items.adminCoursesCourseCode;
+    document.getElementById("admin-courses-concluded-icon").checked = items.adminCoursesConcludedIcon;
     document.getElementById("admin-courses-subaccount-link").checked = items.adminCoursesSubaccountLink;
     document.getElementById("admin-courses-people-link").checked = items.adminCoursesPeopleLink;
     document.getElementById("admin-courses-view-grades-button").checked = items.adminCoursesGradesButton;

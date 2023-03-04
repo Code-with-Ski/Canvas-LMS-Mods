@@ -1,6 +1,7 @@
 (() => {
   if (/^\/accounts\/[0-9]+\??[^\/]*\/?$/.test(window.location.pathname)) {
     chrome.storage.sync.get({
+      adminCoursesConcludedIcon: true,
       adminCoursesCourseCode: true,
       adminCoursesPeopleLink: true,
       adminCoursesSubaccountLink: true,
@@ -8,12 +9,12 @@
       adminCoursesBlueprintInputPreventFill: true,
       adminCoursesAdditionalSearchInputs: true
     }, async function (items) {
-      if (items.adminCoursesCourseCode || items.adminCoursesPeopleLink || items.adminCoursesSubaccountLink || items.adminCoursesGradesButton) {
+      if (items.adminCoursesConcludedIcon || items.adminCoursesCourseCode || items.adminCoursesPeopleLink || items.adminCoursesSubaccountLink || items.adminCoursesGradesButton) {
         if (items.adminCoursesSubaccountLink) {
           const canManageAccountSettings = await hasPermission("manage_account_settings");
-          watchForTable(items.adminCoursesCourseCode, items.adminCoursesPeopleLink, canManageAccountSettings, items.adminCoursesGradesButton);
+          watchForTable(items.adminCoursesConcludedIcon, items.adminCoursesCourseCode, items.adminCoursesPeopleLink, canManageAccountSettings, items.adminCoursesGradesButton);
         } else {
-          watchForTable(items.adminCoursesCourseCode, items.adminCoursesPeopleLink, items.adminCoursesSubaccountLink, items.adminCoursesGradesButton);
+          watchForTable(items.adminCoursesConcludedIcon, items.adminCoursesCourseCode, items.adminCoursesPeopleLink, items.adminCoursesSubaccountLink, items.adminCoursesGradesButton);
         }
       }
       if (items.adminCoursesBlueprintInputPreventFill || items.adminCoursesAdditionalSearchInputs) {
@@ -100,7 +101,7 @@
     return permission in userPermissions && userPermissions[permission];
   }
 
-  async function watchForTable(addCourseCode, addPeopleLink, addSubaccountLink, addViewGradesButton) {
+  async function watchForTable(addConcludedIndicator, addCourseCode, addPeopleLink, addSubaccountLink, addViewGradesButton) {
     let currentUrl = window.location.href;
     let courses = await getCurrentCourses();
     const searchTable = document.querySelector("div#content > div > table");
@@ -127,7 +128,7 @@
                     }
                     if (canvasCourseCode in courses) {
                       const course = courses[canvasCourseCode];
-                      updateRow(newNode, course, addCourseCode, addPeopleLink, addSubaccountLink, addViewGradesButton);
+                      updateRow(newNode, course, addConcludedIndicator, addCourseCode, addPeopleLink, addSubaccountLink, addViewGradesButton);
                     }
                   }
                 }
@@ -146,7 +147,7 @@
           const canvasCourseCode = courseNameLink.href.split("/").pop();
           if (canvasCourseCode in courses) {
             const course = courses[canvasCourseCode];
-            updateRow(row, course, addCourseCode, addPeopleLink, addSubaccountLink, addViewGradesButton);
+            updateRow(row, course, addConcludedIndicator, addCourseCode, addPeopleLink, addSubaccountLink, addViewGradesButton);
           }
         }
       }
@@ -169,7 +170,7 @@
                 }
                 if (canvasCourseCode in courses) {
                   const course = courses[canvasCourseCode];
-                  updateRow(newNode, course, addCourseCode, addPeopleLink, addSubaccountLink, addViewGradesButton);
+                  updateRow(newNode, course, addConcludedIndicator, addCourseCode, addPeopleLink, addSubaccountLink, addViewGradesButton);
                 }
               }
             }
@@ -180,8 +181,18 @@
     }
   }
 
-  async function updateRow(row, course, addCourseCode, addPeopleLink, addSubaccountLink, addViewGradesButton) {
+  async function updateRow(row, course, addConcludedIndicator, addCourseCode, addPeopleLink, addSubaccountLink, addViewGradesButton) {
     const courseNameLink = row.querySelector("td > a[href*='/courses/']");
+    if (addConcludedIndicator) {
+      if (course["concluded"]) {
+        const concludedIcon = courseNameLink.querySelector("i.ski-course-concluded");
+        if (!concludedIcon) {
+          courseNameLink.insertAdjacentHTML("afterbegin", `
+            <i class="icon-line icon-lock" aria-hidden="true" class="ski-course-concluded" title="This course is concluded"></i>
+          `);
+        }
+      }
+    }
     if (addCourseCode) {
       const courseCodeSpan = courseNameLink.parentElement.querySelector("span.ski-course-code");
       if (!courseCodeSpan) {

@@ -68,7 +68,7 @@
               <input id="ski-course-search-input" type="text" class="ic-Input" placeholder="Search courses...">
             </div>
             <div class="content-box-mini" style="text-align: right;">
-              <button id="ski-course-search-additional-options-btn" class="Button Button--secondary">Use advanced search options</button>
+              <button id="ski-course-search-additional-options-btn" class="Button">Use advanced search options</button>
             </div>
             <div id="ski-course-search-additional-options" style="display: none;">
               <div class="ic-Checkbox-group">

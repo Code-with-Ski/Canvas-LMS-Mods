@@ -3,12 +3,18 @@
     chrome.storage.sync.get({
       adminCoursesCourseCode: true,
       adminCoursesPeopleLink: true,
+      adminCoursesSubaccountLink: true,
       adminCoursesGradesButton: true,
       adminCoursesBlueprintInputPreventFill: true,
       adminCoursesAdditionalSearchInputs: true
-    }, function (items) {
-      if (items.adminCoursesCourseCode || items.adminCoursesPeopleLink || items.adminCoursesGradesButton) {
-        watchForTable(items.adminCoursesCourseCode, items.adminCoursesPeopleLink, items.adminCoursesGradesButton);
+    }, async function (items) {
+      if (items.adminCoursesCourseCode || items.adminCoursesPeopleLink || items.adminCoursesSubaccountLink || items.adminCoursesGradesButton) {
+        if (items.adminCoursesSubaccountLink) {
+          const canManageAccountSettings = await hasPermission("manage_account_settings");
+          watchForTable(items.adminCoursesCourseCode, items.adminCoursesPeopleLink, canManageAccountSettings, items.adminCoursesGradesButton);
+        } else {
+          watchForTable(items.adminCoursesCourseCode, items.adminCoursesPeopleLink, items.adminCoursesSubaccountLink, items.adminCoursesGradesButton);
+        }
       }
       if (items.adminCoursesBlueprintInputPreventFill || items.adminCoursesAdditionalSearchInputs) {
         watchForSearchForm(items.adminCoursesBlueprintInputPreventFill, items.adminCoursesAdditionalSearchInputs);
@@ -29,19 +35,23 @@
 
   function getCurrentCourses() {
     let courses = {}
-    const url = new URL(`${window.location.origin}/api/v1${window.location.pathname}/courses${window.location.search}&include[]=concluded&per_page=15`);
+    const url = new URL(`${window.location.origin}/api/v1${window.location.pathname}/courses${window.location.search || "?"}`);
     const searchParams = url.searchParams.keys();
     for (let param of searchParams) {
       if (url.searchParams.get(param) === "") {
         url.searchParams.delete(param);
       }
     }
+    url.searchParams.set("include[]", "concluded");
+    url.searchParams.set("per_page", 15);
+    if (!url.searchParams.has("sort")) {
+      url.searchParams.set("sort", "sis_course_id");
+    }
     return fetch(url)
     .then(response => {
       return response.json();
     })
     .then(data => {
-      console.log(data);
       for (let course of data) {
         courses[`${course["id"]}`] = course;
       }
@@ -61,7 +71,6 @@
       return response.json();
     })
     .then(data => {
-      console.log(data);
       return data;
     })
     .catch((error) => {
@@ -70,7 +79,28 @@
     })
   }
 
-  async function watchForTable(addCourseCode, addPeopleLink, addViewGradesButton) {
+  function getPermissions() {
+    let userPermissions = {}
+    const url = new URL(`${window.location.origin}/api/v1/accounts/self/permissions`);
+    return fetch(url)
+    .then(response => {
+      return response.json();
+    })
+    .then(data => {
+      return data;
+    })
+    .catch((error) => {
+      console.error(`Error: ${error}`);
+      return userPermissions;
+    })
+  }
+
+  async function hasPermission(permission) {
+    const userPermissions = await getPermissions();
+    return permission in userPermissions && userPermissions[permission];
+  }
+
+  async function watchForTable(addCourseCode, addPeopleLink, addSubaccountLink, addViewGradesButton) {
     let currentUrl = window.location.href;
     let courses = await getCurrentCourses();
     const searchTable = document.querySelector("div#content > div > table");
@@ -79,7 +109,7 @@
         const loadedSearchTable = document.querySelector("div#content > div > table");
         if (loadedSearchTable) {
           observer.disconnect();
-          const tableObserver = new MutationObserver(async (mutations) => {
+            const tableObserver = new MutationObserver(async (mutations) => {
             for (let mutationRecord of mutations) {
               let newNodes = mutationRecord.addedNodes;
               for (let newNode of newNodes) {
@@ -97,7 +127,7 @@
                     }
                     if (canvasCourseCode in courses) {
                       const course = courses[canvasCourseCode];
-                      updateRow(newNode, course, addCourseCode, addPeopleLink, addViewGradesButton);
+                      updateRow(newNode, course, addCourseCode, addPeopleLink, addSubaccountLink, addViewGradesButton);
                     }
                   }
                 }
@@ -116,10 +146,11 @@
           const canvasCourseCode = courseNameLink.href.split("/").pop();
           if (canvasCourseCode in courses) {
             const course = courses[canvasCourseCode];
-            updateRow(row, course, addCourseCode, addPeopleLink, addViewGradesButton);
+            updateRow(row, course, addCourseCode, addPeopleLink, addSubaccountLink, addViewGradesButton);
           }
         }
       }
+
       const tableObserver = new MutationObserver(async (mutations) => {
         for (let mutationRecord of mutations) {
           let newNodes = mutationRecord.addedNodes;
@@ -138,7 +169,7 @@
                 }
                 if (canvasCourseCode in courses) {
                   const course = courses[canvasCourseCode];
-                  updateRow(newNode, course, addCourseCode, addPeopleLink, addViewGradesButton);
+                  updateRow(newNode, course, addCourseCode, addPeopleLink, addSubaccountLink, addViewGradesButton);
                 }
               }
             }
@@ -149,7 +180,7 @@
     }
   }
 
-  function updateRow(row, course, addCourseCode, addPeopleLink, addViewGradesButton) {
+  async function updateRow(row, course, addCourseCode, addPeopleLink, addSubaccountLink, addViewGradesButton) {
     const courseNameLink = row.querySelector("td > a[href*='/courses/']");
     if (addCourseCode) {
       const courseCodeSpan = courseNameLink.parentElement.querySelector("span.ski-course-code");
@@ -180,7 +211,16 @@
         }
       }
     }
-    // TODO Add template icon
+    if (addSubaccountLink) {
+      const subaccountLink = row.querySelector("td a.ski-course-subaccount");
+      if (!subaccountLink) {
+        const subaccountTd = row.querySelector("td:nth-last-child(3)");
+        subaccountTd.style.textAlign = "center";
+        if (subaccountTd) {
+          subaccountTd.innerHTML = `<a href='/accounts/${course['account_id']}?' target='_blank' title='Go to subaccount course search' class="ski-course-subaccount"'>${subaccountTd.innerText}</a>`;
+        }
+      }
+    }
   }
 
   function watchForSearchForm(adjustButtonOverflow, addAdditionalInputs) {
@@ -226,7 +266,7 @@
       
       rowOfSearchOptions.insertAdjacentHTML("afterend", `
         <div style="text-align: right;">
-          <button data-sort="" id="ski-course-search-course-id-sort-btn" class="Button">Sort by Canvas Course ID - Descending</button>
+          <button data-sort="" id="ski-course-search-course-id-sort-btn" class="Button">Sort by Course ID - Descending</button>
         </div>
       `);
 
@@ -240,7 +280,14 @@
       stateSelect.addEventListener("change", () => {
         const selectedState = document.getElementById("ski-course-search-state-select")?.value;
         const newUrl = new URL(window.location);
-        newUrl.searchParams.set("published", selectedState);
+        if (selectedState) {
+          newUrl.searchParams.set("published", selectedState);
+        } else {
+          if (newUrl.searchParams.has("published")) {
+            newUrl.searchParams.delete("published");
+          }
+        }
+        
         window.location.href = newUrl;
       });
 
@@ -249,10 +296,10 @@
         if (url.searchParams.get("sort") == "course_id") {
           if (url.searchParams.get("order") == "desc") {
             canvasIdSortButton.dataset.sort = "desc";
-            canvasIdSortButton.innerText = "Sort by Canvas Course ID - Ascending";
+            canvasIdSortButton.innerText = "Sort by Course ID - Ascending";
           } else {
             canvasIdSortButton.dataset.sort = "";
-            canvasIdSortButton.innerText = "Sort by Canvas Course ID - Descending";
+            canvasIdSortButton.innerText = "Sort by Course ID - Descending";
           }
         }
       }
@@ -263,14 +310,14 @@
           const newUrl = new URL(window.location);
           if (sortOrder == "desc") {
             canvasIdSortButton.dataset.sort = "";
-            canvasIdSortButton.innerText = "Sort by Canvas Course ID - Ascending";
+            canvasIdSortButton.innerText = "Sort by Course ID - Ascending";
             newUrl.searchParams.set("sort", "course_id");
             if (newUrl.searchParams.has("order")) {
               newUrl.searchParams.delete("order");
             }
           } else {
             canvasIdSortButton.dataset.sort = "desc";
-            canvasIdSortButton.innerText = "Sort by Canvas Course ID - Descending";
+            canvasIdSortButton.innerText = "Sort by Course ID - Descending";
             newUrl.searchParams.set("sort", "course_id");
             newUrl.searchParams.set("order", "desc");
           }

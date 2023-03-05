@@ -60,6 +60,8 @@
             <div class="ic-Form-control">
               <label for="ski-account-select" class="ic-Label">Select Account to Use Below</label>
               <select id="ski-account-select" class="ic-Input"></select>
+              <div class="ski-loading-indicator" id="ski-global-nav-admin-account-loading" style="width: 2rem; height: 2rem; border-width: 0.5rem;" title="Loading manageable accounts">
+              </div>
             </div>
             <hr role='presentation'>
 
@@ -72,6 +74,8 @@
                   <optgroup label="Future Terms"></optgroup>
                   <optgroup label="Past Terms"></optgroup>
                 </select>
+                <div class="ski-loading-indicator" id="ski-global-nav-admin-term-loading" style="width: 2rem; height: 2rem; border-width: 0.5rem;" title="Loading terms">
+                </div>
               </div>
               <div class="ic-Form-control">
                 <select id="ski-course-search-by-select" class="ic-Input">
@@ -166,11 +170,17 @@
         `
         );
 
+        const accountLoadingIndicator = document.getElementById("ski-global-nav-admin-account-loading");
+        accountLoadingIndicator.style.display = "block";
         await loadAccountSelect();
+        accountLoadingIndicator.style.display = "none";
 
         updateVisibleElements();
-
+        
+        const termLoadingIndicator = document.getElementById("ski-global-nav-admin-term-loading");
+        termLoadingIndicator.style.display = "block";
         loadTermsSelect();
+        termLoadingIndicator.style.display = "none";
 
         loadRoleSelect();
 

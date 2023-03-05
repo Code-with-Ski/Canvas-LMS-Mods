@@ -35,3 +35,17 @@ a.ski-sticky-link-handler::before {
   visibility: hidden; 
   pointer-events: none;
 }
+
+.ski-loading-indicator {
+  border: 1rem solid #f3f3f3; /* Light grey */
+  border-top: 1rem solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 8rem;
+  height: 8rem;
+  animation: ski-spin-loading-indicator 2s linear infinite;
+}
+
+@keyframes ski-spin-loading-indicator {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

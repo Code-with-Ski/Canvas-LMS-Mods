@@ -25,7 +25,11 @@ Options will also be updated to allow the user to enable/disable certain customi
 - Global
   - Enable full-width for body
 
-- Account
+- Global Nav (All Users)
+  - Enable indicator on the global nav when on the test server
+  - Enable indicator on the global nav when on the beta server
+
+- Account (User)
   - Profile
     - Enable "View Grades" button on the profile
 
@@ -52,11 +56,21 @@ Options will also be updated to allow the user to enable/disable certain customi
     - Enable groups export to CSV button (Requires course admin permission) (Uses Canvas LMS API)
   - User
     - Enable access report export to CSV button
+  - SpeedGrader
+    - Enable converting text that resembles links (begins with http:// or https://) to a hyperlink in the comments
+    - Enable changing the draft comment indicator from "*" to the "DRAFT"
 
 - Admin
+  - Global Nav Admin Menu
+    - Enable quick access admin links for course search, people search, and some account links (Uses Canvas LMS API)
   - Course Search
     - Prevents input for "Show only blueprint courses" from filling to the end of the page in desktop view
+    - Add additional search inputs (published/unpublished, sort by Canvas course id)
     - Add the course code to the course search results (Uses Canvas LMS API)
+    - Add concluded icon to course names in search results, if the course is concluded (Uses Canvas LMS API)
+    - Convert subaccount name in search results to link to the course search for that subaccount (*Requires manage account settings permission) (Uses Canvas LMS API)
+    - Convert number of students in search results to link to people in course
+    - Add a "View Grades" button to the course search results
   - People
     - User Account Details
       - Course enrollments box

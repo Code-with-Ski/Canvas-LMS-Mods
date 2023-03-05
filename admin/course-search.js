@@ -36,7 +36,7 @@
 
   function getCurrentCourses() {
     let courses = {}
-    const url = new URL(`${window.location.origin}/api/v1${window.location.pathname}/courses${window.location.search || "?"}`);
+    const url = new URL(`${window.location.protocol}//${window.location.hostname}/api/v1${window.location.pathname}/courses${window.location.search || "?"}`);
     const searchParams = url.searchParams.keys();
     for (let param of searchParams) {
       if (url.searchParams.get(param) === "") {
@@ -66,7 +66,7 @@
 
   function getCourse(courseId) {
     let course = {}
-    const url = new URL(`${window.location.origin}/api/v1${window.location.pathname}/courses/${courseId}`);
+    const url = new URL(`${window.location.protocol}//${window.location.hostname}/api/v1${window.location.pathname}/courses/${courseId}`);
     return fetch(url)
     .then(response => {
       return response.json();
@@ -82,7 +82,7 @@
 
   function getPermissions() {
     let userPermissions = {}
-    const url = new URL(`${window.location.origin}/api/v1/accounts/self/permissions`);
+    const url = new URL(`${window.location.protocol}//${window.location.hostname}/api/v1/accounts/self/permissions`);
     return fetch(url)
     .then(response => {
       return response.json();
@@ -110,7 +110,7 @@
         const loadedSearchTable = document.querySelector("div#content > div > table");
         if (loadedSearchTable) {
           observer.disconnect();
-            const tableObserver = new MutationObserver(async (mutations) => {
+          const tableObserver = new MutationObserver(async (mutations) => {
             for (let mutationRecord of mutations) {
               let newNodes = mutationRecord.addedNodes;
               for (let newNode of newNodes) {

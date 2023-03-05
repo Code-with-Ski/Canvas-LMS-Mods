@@ -1,8 +1,14 @@
-#right_side div.comment span.draft-marker {
+body.ski-speedgrader-draft-comment-indicator
+  #right_side
+  div.comment
+  span.draft-marker {
   visibility: hidden;
 }
 
-#right_side div.comment span.draft-marker::after {
+body.ski-speedgrader-draft-comment-indicator
+  #right_side
+  div.comment
+  span.draft-marker::after {
   content: "DRAFT";
   border: 1px solid #9d261d;
   padding: 5px;

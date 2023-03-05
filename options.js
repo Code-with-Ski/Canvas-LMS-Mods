@@ -40,6 +40,7 @@ function saveOptions() {
 
   // Course - SpeedGrader settings
   const isSpeedGraderCommentHyperlinksEnabled = document.getElementById("course-speedgrader-make-links-in-comments-clickable").checked;
+  const isSpeedGraderDraftCommentIndicatorReplaced = document.getElementById("course-speedgrader-draft-comment-indicator").checked;
 
   // Admin - Courses settings
   const isBlueprintInputFillPrevent = document.getElementById("admin-courses-blueprint-input-prevent-fill").checked;
@@ -118,6 +119,7 @@ function saveOptions() {
     courseGroupsExportEnabled: isGroupsExportButtonEnabled,
     courseUserAccessExportEnabled: isCourseUserAccessReportButtonEnabled,
     courseSpeedGraderCommentsWithHyperlinksEnabled: isSpeedGraderCommentHyperlinksEnabled,
+    courseSpeedGraderDraftCommentIndicator: isSpeedGraderDraftCommentIndicatorReplaced,
     adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
     adminCoursesSubaccountLink: isAdminCoursesSubaccountLinkEnabled,
     adminCoursesConcludedIcon: isCourseConcludedIconEnabled,
@@ -182,6 +184,7 @@ function restoreOptions() {
     courseGroupsExportEnabled: true,
     courseUserAccessExportEnabled: true,
     courseSpeedGraderCommentsWithHyperlinksEnabled: true,
+    courseSpeedGraderDraftCommentIndicator: true,
     adminCoursesBlueprintInputPreventFill: true,
     adminCoursesAdditionalSearchInputs: true,
     adminCoursesCourseCode: true,
@@ -254,6 +257,7 @@ function restoreOptions() {
 
     // Course - SpeedGrader settings
     document.getElementById("course-speedgrader-make-links-in-comments-clickable").checked = items.courseSpeedGraderCommentsWithHyperlinksEnabled;
+    document.getElementById("course-speedgrader-draft-comment-indicator").checked = items.courseSpeedGraderDraftCommentIndicator;
 
     // Admin - Courses settings
     document.getElementById("admin-courses-blueprint-input-prevent-fill").checked = items.adminCoursesBlueprintInputPreventFill;

@@ -3,6 +3,11 @@ function saveOptions() {
   // Global settings
   const isGlobalFullWidthEnabled = document.getElementById("global-body-full-width").checked;
 
+  // Global Nav settings
+  const isGlobalNavAdminQuickAccessEnabled = document.getElementById("admin-global-nav-quick-access-enabled").checked;
+  const isGlobalNavTestIndicatorEnabled = document.getElementById("global-nav-test-server-indicator").checked;
+  const isGlobalNavBetaIndicatorEnabled = document.getElementById("global-nav-beta-server-indicator").checked;
+
   // Account - Profile settings
   const isAccountProfileGradesButtonEnabled = document.getElementById("account-profile-grades-button").checked;
 
@@ -33,9 +38,18 @@ function saveOptions() {
   // Course - User Access Report settings
   const isCourseUserAccessReportButtonEnabled = document.getElementById("course-user-access-report-export").checked;
 
+  // Course - SpeedGrader settings
+  const isSpeedGraderCommentHyperlinksEnabled = document.getElementById("course-speedgrader-make-links-in-comments-clickable").checked;
+  const isSpeedGraderDraftCommentIndicatorReplaced = document.getElementById("course-speedgrader-draft-comment-indicator").checked;
+
   // Admin - Courses settings
   const isBlueprintInputFillPrevent = document.getElementById("admin-courses-blueprint-input-prevent-fill").checked;
   const isCourseCodeEnabled = document.getElementById("admin-courses-course-code").checked;
+  const isCourseConcludedIconEnabled = document.getElementById("admin-courses-concluded-icon").checked;
+  const isAdminCoursesSubaccountLinkEnabled = document.getElementById("admin-courses-subaccount-link").checked;
+  const isPeopleLinkEnabled = document.getElementById("admin-courses-people-link").checked;
+  const isAdminCoursesViewGradesButtonEnabled = document.getElementById("admin-courses-view-grades-button").checked;
+  const isAdditionalSearchEnabled = document.getElementById("admin-courses-additional-search-inputs").checked;
 
   // Admin - Users settings
   const isCourseListResizable = document.getElementById("admin-users-enrollments-resizable").checked;
@@ -87,6 +101,9 @@ function saveOptions() {
 
   chrome.storage.sync.set({
     globalBodyFullWidth: isGlobalFullWidthEnabled,
+    globalNavAdminQuickAccess: isGlobalNavAdminQuickAccessEnabled,
+    globalNavTestIndicator: isGlobalNavTestIndicatorEnabled,
+    globalNavBetaIndicator: isGlobalNavBetaIndicatorEnabled,
     accountProfileGradesButton: isAccountProfileGradesButtonEnabled,
     dashboardAddAllCoursesButton: isDashboardAddAllCoursesButton,
     dashboardShowCourseGrades: isDashboardCourseGradesShown,
@@ -101,8 +118,15 @@ function saveOptions() {
     coursePeopleSortEnabled: isCoursePeopleSortEnabled,
     courseGroupsExportEnabled: isGroupsExportButtonEnabled,
     courseUserAccessExportEnabled: isCourseUserAccessReportButtonEnabled,
+    courseSpeedGraderCommentsWithHyperlinksEnabled: isSpeedGraderCommentHyperlinksEnabled,
+    courseSpeedGraderDraftCommentIndicator: isSpeedGraderDraftCommentIndicatorReplaced,
     adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
+    adminCoursesSubaccountLink: isAdminCoursesSubaccountLinkEnabled,
+    adminCoursesConcludedIcon: isCourseConcludedIconEnabled,
+    adminCoursesPeopleLink: isPeopleLinkEnabled,
     adminCoursesCourseCode: isCourseCodeEnabled,
+    adminCoursesGradesButton: isAdminCoursesViewGradesButtonEnabled,
+    adminCoursesAdditionalSearchInputs: isAdditionalSearchEnabled,
     adminUsersEnrollmentsResizable: isCourseListResizable,
     adminUsersEnrollmentsDefaultHeight: enrollmentCourseListDefaultSize,
     adminUsersEnrollmentsSort: isSortCourseEnrollments,
@@ -142,6 +166,9 @@ function saveOptions() {
 function restoreOptions() {
   chrome.storage.sync.get({
     globalBodyFullWidth: true,
+    globalNavAdminQuickAccess: true,
+    globalNavTestIndicator: true,
+    globalNavBetaIndicator: true,
     accountProfileGradesButton: true,
     dashboardAddAllCoursesButton: true,
     dashboardShowCourseGrades: true,
@@ -156,8 +183,15 @@ function restoreOptions() {
     coursePeopleSortEnabled: true,
     courseGroupsExportEnabled: true,
     courseUserAccessExportEnabled: true,
+    courseSpeedGraderCommentsWithHyperlinksEnabled: true,
+    courseSpeedGraderDraftCommentIndicator: true,
     adminCoursesBlueprintInputPreventFill: true,
+    adminCoursesAdditionalSearchInputs: true,
     adminCoursesCourseCode: true,
+    adminCoursesConcludedIcon: true,
+    adminCoursesSubaccountLink: true,
+    adminCoursesPeopleLink: true,
+    adminCoursesGradesButton: true,
     adminUsersEnrollmentsResizable: true,
     adminUsersEnrollmentsDefaultHeight: 400,
     adminUsersEnrollmentsSort: true,
@@ -185,6 +219,11 @@ function restoreOptions() {
   }, function(items) {
     // Global settings
     document.getElementById("global-body-full-width").checked = items.globalBodyFullWidth;
+
+    // Global Nav settings
+    document.getElementById("admin-global-nav-quick-access-enabled").checked = items.globalNavAdminQuickAccess,
+    document.getElementById("global-nav-test-server-indicator").checked = items.globalNavTestIndicator;
+    document.getElementById("global-nav-beta-server-indicator").checked = items.globalNavBetaIndicator;
 
     // Account - Profile settings
     document.getElementById("account-profile-grades-button").checked = items.accountProfileGradesButton;
@@ -216,9 +255,18 @@ function restoreOptions() {
     // Course - User Access Report settings
     document.getElementById("course-user-access-report-export").checked = items.courseUserAccessExportEnabled;
 
+    // Course - SpeedGrader settings
+    document.getElementById("course-speedgrader-make-links-in-comments-clickable").checked = items.courseSpeedGraderCommentsWithHyperlinksEnabled;
+    document.getElementById("course-speedgrader-draft-comment-indicator").checked = items.courseSpeedGraderDraftCommentIndicator;
+
     // Admin - Courses settings
     document.getElementById("admin-courses-blueprint-input-prevent-fill").checked = items.adminCoursesBlueprintInputPreventFill;
     document.getElementById("admin-courses-course-code").checked = items.adminCoursesCourseCode;
+    document.getElementById("admin-courses-concluded-icon").checked = items.adminCoursesConcludedIcon;
+    document.getElementById("admin-courses-subaccount-link").checked = items.adminCoursesSubaccountLink;
+    document.getElementById("admin-courses-people-link").checked = items.adminCoursesPeopleLink;
+    document.getElementById("admin-courses-view-grades-button").checked = items.adminCoursesGradesButton;
+    document.getElementById("admin-courses-additional-search-inputs").checked = items.adminCoursesAdditionalSearchInputs;
 
     // Admin - Users settings
     document.getElementById("admin-users-enrollments-resizable").checked = items.adminUsersEnrollmentsResizable;

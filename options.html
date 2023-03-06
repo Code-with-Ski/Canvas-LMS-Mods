@@ -15,7 +15,20 @@
     </details>
 
     <details>
-      <summary>Account</summary>
+      <summary>Global Navigation Customizations</summary>
+      <label>
+        <input type="checkbox" id="global-nav-test-server-indicator" checked />
+        Enable indicator in the global navigation when on the test server.
+      </label>
+      <label>
+        <input type="checkbox" id="global-nav-beta-server-indicator" checked />
+        Enable indicator in the global navigation when on the beta server.
+      </label>
+      <p>*Refer to Admin settings for customizations for Admin menu customizations in global navigation.</p>
+    </details>
+
+    <details>
+      <summary>Account (User)</summary>
       <details>
         <summary>Profile</summary>
         <label>
@@ -102,10 +115,33 @@
           Enable user access report export to CSV button
         </label>
       </details>
+      <details>
+        <summary>SpeedGrader</summary>
+        <label>
+          <input type="checkbox" id="course-speedgrader-make-links-in-comments-clickable" checked />
+          Enable showing link text in comments as a hyperlink
+        </label>
+        <label>
+          <input type="checkbox" id="course-speedgrader-draft-comment-indicator" checked />
+          Replace draft comment indicator (*) with the word DRAFT
+        </label>
+      </details>
     </details>
 
     <details>
       <summary>Admin</summary>
+      <details>
+        <summary>Admin - Global Nav Menu</summary>
+        <label>
+          <input
+            type="checkbox"
+            id="admin-global-nav-quick-access-enabled"
+            checked
+          />
+          Add quick access search and links for accounts in Admin Global Nav menu
+        </label>
+      </details>
+
       <details>
         <summary>Admin - Courses</summary>
         <label>
@@ -118,8 +154,44 @@
           empty space
         </label>
         <label>
+          <input
+            type="checkbox"
+            id="admin-courses-additional-search-inputs"
+            checked
+          />
+          Add additional search inputs (published/unpublished, sort by Canvas course id)
+        </label>
+        <label>
           <input type="checkbox" id="admin-courses-course-code" checked />
           Add course code to course search results
+        </label>
+        <label>
+          <input type="checkbox" id="admin-courses-concluded-icon" checked />
+          Add concluded icon to course names in search results, if the course is concluded
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            id="admin-courses-subaccount-link"
+            checked
+          />
+          Convert subaccount name in search results to link to the course search for that subaccount (*Requires manage account settings permission)
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            id="admin-courses-people-link"
+            checked
+          />
+          Convert number of students in search results to link to people in course
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            id="admin-courses-view-grades-button"
+            checked
+          />
+          Add a "View Grades" button to the course search results
         </label>
       </details>
 

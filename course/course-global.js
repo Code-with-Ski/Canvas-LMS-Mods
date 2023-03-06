@@ -24,6 +24,7 @@
     const courseMenu = document.getElementById("sticky-container");
     if (courseMenu) {
       courseMenu.style.top = "4.5rem";
+      courseMenu.style.maxHeight = "calc(100vh - 4.5rem)";
     }
   }
 })();

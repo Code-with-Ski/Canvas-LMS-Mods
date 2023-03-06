@@ -36,7 +36,7 @@
 
   function getCurrentCourses() {
     let courses = {}
-    const url = new URL(`${window.location.protocol}//${window.location.hostname}/api/v1${window.location.pathname}/courses${window.location.search || "?"}`);
+    const url = new URL(`${window.location.protocol}//${window.location.hostname}/api/v1${window.location.pathname}/courses${(window.location.search).length > 0 ? window.location.search : "?"}`);
     const searchParams = url.searchParams.keys();
     for (let param of searchParams) {
       if (url.searchParams.get(param) === "") {

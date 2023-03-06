@@ -548,7 +548,6 @@
         roleSets[baseRoleType].push(role);
       }
     }
-    console.log(roleSets);
     const roleSelect = document.getElementById("ski-user-role-select");
     if (roleSelect) {
       let roleSelectOptions = `
@@ -562,7 +561,6 @@
         }
       }
       roleSelectOptions += `</optgroup>`;
-      console.log(roleSelectOptions);
       roleSelect.innerHTML = roleSelectOptions;
     }
   }

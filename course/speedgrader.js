@@ -11,7 +11,6 @@
       },
       function (items) {
         if (items.courseSpeedGraderCommentsWithHyperlinksEnabled) {
-          //setTimeout(() => convertLinkText(), 10000);
           watchForComments();
         }
         if (items.courseSpeedGraderDraftCommentIndicator) {

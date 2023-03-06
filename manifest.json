@@ -1,7 +1,7 @@
 {
   "name": "Canvas LMS Mods (Basic)",
   "description": "This provides modifications to the Canvas LMS to improve the user experience visually and functionally.",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "version_name": "2.0.1",
   "manifest_version": 3,
   "permissions": ["storage"],

@@ -275,7 +275,8 @@
         </div>
       `);
       
-      rowOfSearchOptions.insertAdjacentHTML("afterend", `
+      const searchForm = document.querySelector("div#content form");
+      searchForm.insertAdjacentHTML("afterend", `
         <div style="text-align: right;">
           <button data-sort="" id="ski-course-search-course-id-sort-btn" class="Button">Sort by Course ID - Descending</button>
         </div>

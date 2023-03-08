@@ -171,6 +171,9 @@
         );
 
         const accountLoadingIndicator = document.getElementById("ski-global-nav-admin-account-loading");
+        if (!accountLoadingIndicator) {
+          return;
+        }
         accountLoadingIndicator.style.display = "block";
         await loadAccountSelect();
         accountLoadingIndicator.style.display = "none";
@@ -178,6 +181,9 @@
         updateVisibleElements();
         
         const termLoadingIndicator = document.getElementById("ski-global-nav-admin-term-loading");
+        if (!termLoadingIndicator) {
+          return;
+        }
         termLoadingIndicator.style.display = "block";
         loadTermsSelect();
         termLoadingIndicator.style.display = "none";
@@ -382,7 +388,10 @@
   }
 
   async function loadAccountSelect() {
-    const manageableAccounts = await getManageableAccounts();
+    let manageableAccounts = await getManageableAccounts();
+    if (manageableAccounts.length == 0) {
+      manageableAccounts = await getAccounts();
+    }
     manageableAccounts.sort((a, b) => {
       const parentIdA = a.parent_account_id;
       const parentIdB = b.parent_account_id;
@@ -427,21 +436,30 @@
     }
 
     const accountSelect = document.getElementById("ski-account-select");
-    for (let accountId in nestedAccounts) {
-      const account = nestedAccounts[accountId];
-      addAccountOption(accountSelect, account.details, 0);
+    if (accountSelect) {
+      for (let accountId in nestedAccounts) {
+        const account = nestedAccounts[accountId];
+        addAccountOption(accountSelect, account.details, 0);
 
-      let children = account.children;
-      if (children.length > 0) {
-        addChildrenOptions(accountSelect, children, 1, nestedAccounts);
+        let children = account.children;
+        if (children.length > 0) {
+          addChildrenOptions(accountSelect, children, 1, nestedAccounts);
+        }
       }
     }
+    
   }
 
   function getManageableAccounts() {
     const manageableAccounts = [];
     const url = `/api/v1/manageable_accounts?per_page=100`;
     return paginatedRequest(url, manageableAccounts);
+  }
+
+  function getAccounts() {
+    const accounts = [];
+    const url = `/api/v1/accounts?per_page=100`;
+    return paginatedRequest(url, accounts);
   }
 
   async function loadTermsSelect() {
@@ -682,7 +700,7 @@
       indentation += "> ";
     }
 
-    selectMenu.insertAdjacentHTML(
+    selectMenu?.insertAdjacentHTML(
       "beforeend",
       `
       <option value="${account.id}">${indentation}${account.name}</option>
@@ -708,7 +726,7 @@
   }
 
   function addTermOption(termSelectGroup, term) {
-    termSelectGroup.insertAdjacentHTML(
+    termSelectGroup?.insertAdjacentHTML(
       "beforeend",
       `
       <option value="${term.id}">${term.name}</option>

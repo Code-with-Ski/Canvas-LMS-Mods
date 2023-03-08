@@ -51,7 +51,6 @@
             }
             if (isSisAccountIdShown) {
               requestNum++;
-              console.log(requestNum);
               await new Promise(r => setTimeout(r, requestNum * 10));
               fetch(`/api/v1/accounts/${canvasId}`)
                 .then(response => response.json())

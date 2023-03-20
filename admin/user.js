@@ -8,6 +8,7 @@
       adminUsersEnrollmentsSort: true,
       adminUsersEnrollmentsFilter: true,
       adminUsersEnrollmentsCourseCode: true,
+      adminUsersEnrollmentsCanvasId: true,
       adminUsersAccountsResizable: true,
       adminUsersAccountsDefaultHeight: 100,
       adminUsersAccountsRoles: true,
@@ -34,6 +35,9 @@
         }
         if (items.adminUsersEnrollmentsCourseCode) {
           addCourseCodeToEnrollmentsList(coursesList);
+        }
+        if (items.adminUsersEnrollmentsCanvasId) {
+          addCanvasIdToEnrollmentsList(coursesList);
         }
       }
 
@@ -373,6 +377,30 @@
       });
     }
   }
+
+
+  /*
+    Takes in the list of course enrollments.
+    For each enrollment in the list of course enrollments,
+    it will add the Canvas ID to the shown details.
+  */
+  function addCanvasIdToEnrollmentsList(coursesList) {
+    const coursesListItems = [...coursesList.querySelectorAll("li")];
+    if (coursesListItems) {
+      coursesListItems.forEach(async (listItem) => {
+        const courseNameLink = listItem.querySelector("a[href*='/courses/']");
+        if (courseNameLink) {
+          const canvasIdSpan = courseNameLink.parentElement.querySelector("span.ski-canvas-id");
+          if (!canvasIdSpan) {
+            const canvasCourseCode = courseNameLink.href.match(/\/courses\/[0-9]+\//)[0].replace("courses", "").replaceAll("/", "");
+            const courseName = courseNameLink.querySelector("span.name");
+            courseName.insertAdjacentHTML("afterend", `<span class="ski-canvas-id subtitle" style="word-break: break-word; font-style: italic;">Canvas Course ID: ${canvasCourseCode}</span>`);
+          }
+        }
+      });
+    }
+  }
+
 
   /*
     Adds a link to view the user's grades in their current courses

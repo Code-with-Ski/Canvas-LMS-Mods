@@ -58,6 +58,7 @@ function saveOptions() {
   const isSortCourseEnrollments = document.getElementById("admin-users-enrollments-sort").checked;
   const isAddCourseEnrollmentFilters = document.getElementById("admin-users-enrollments-filter").checked;
   const isShowCourseCodeInEnrollments = document.getElementById("admin-users-enrollments-course-code").checked;
+  const isShowCanvasIdInEnrollments = document.getElementById("admin-users-enrollments-canvas-id").checked;
 
   const isAccountListResizable = document.getElementById("admin-users-accounts-resizable").checked;
   let accountListDefaultSize = Number.parseInt(document.getElementById("admin-users-accounts-default-height").value);
@@ -132,6 +133,7 @@ function saveOptions() {
     adminUsersEnrollmentsSort: isSortCourseEnrollments,
     adminUsersEnrollmentsFilter: isAddCourseEnrollmentFilters,
     adminUsersEnrollmentsCourseCode: isShowCourseCodeInEnrollments,
+    adminUsersEnrollmentsCanvasId: isShowCanvasIdInEnrollments,
     adminUsersAccountsResizable: isAccountListResizable,
     adminUsersAccountsDefaultHeight: accountListDefaultSize,
     adminUsersAccountsRoles: isShowAdminRoles,
@@ -197,6 +199,7 @@ function restoreOptions() {
     adminUsersEnrollmentsSort: true,
     adminUsersEnrollmentsFilter: true,
     adminUsersEnrollmentsCourseCode: true,
+    adminUsersEnrollmentsCanvasId: true,
     adminUsersAccountsResizable: true,
     adminUsersAccountsDefaultHeight: 100,
     adminUsersAccountsRoles: true,
@@ -274,6 +277,7 @@ function restoreOptions() {
     document.getElementById("admin-users-enrollments-sort").checked = items.adminUsersEnrollmentsSort;
     document.getElementById("admin-users-enrollments-filter").checked = items.adminUsersEnrollmentsFilter;
     document.getElementById("admin-users-enrollments-course-code").checked = items.adminUsersEnrollmentsCourseCode;
+    document.getElementById("admin-users-enrollments-canvas-id").checked = items.adminUsersEnrollmentsCanvasId;
 
     document.getElementById("admin-users-accounts-resizable").checked = items.adminUsersAccountsResizable;
     document.getElementById("admin-users-accounts-default-height").value = items.adminUsersAccountsDefaultHeight;

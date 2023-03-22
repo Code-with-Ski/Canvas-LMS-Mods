@@ -39,7 +39,8 @@
   async function hasCoursePermission(permissionKey) {
     let permissions = [];
     const courseId = window.location.pathname.split("/")[2];
-    const url = `/api/v1/courses/${courseId}/permissions`;
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+    const url = `${baseUrl}/api/v1/courses/${courseId}/permissions`;
 
     const fetches = [];
     fetches.push(
@@ -346,7 +347,8 @@
   async function loadSectionNames() {
     let sections = [];
     const courseId = window.location.pathname.split("/")[2];
-    const url = `/api/v1/courses/${courseId}/sections`;
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+    const url = `${baseUrl}/api/v1/courses/${courseId}/sections`;
 
     // TODO Handle pagination
     const fetches = [];

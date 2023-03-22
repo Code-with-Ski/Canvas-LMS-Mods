@@ -36,7 +36,8 @@
 
   function getCurrentCourses() {
     let courses = {}
-    const url = new URL(`${window.location.protocol}//${window.location.hostname}/api/v1${window.location.pathname}/courses${(window.location.search).length > 0 ? window.location.search : "?"}`);
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+    const url = new URL(`${baseUrl}/api/v1${window.location.pathname}/courses${(window.location.search).length > 0 ? window.location.search : "?"}`);
     const searchParams = url.searchParams.keys();
     for (let param of searchParams) {
       if (url.searchParams.get(param) === "") {
@@ -66,7 +67,8 @@
 
   function getCourse(courseId) {
     let course = {}
-    const url = new URL(`${window.location.protocol}//${window.location.hostname}/api/v1${window.location.pathname}/courses/${courseId}`);
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+    const url = new URL(`${baseUrl}/api/v1${window.location.pathname}/courses/${courseId}`);
     return fetch(url)
     .then(response => {
       return response.json();
@@ -82,7 +84,8 @@
 
   function getPermissions() {
     let userPermissions = {}
-    const url = new URL(`${window.location.protocol}//${window.location.hostname}/api/v1/accounts/self/permissions`);
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+    const url = new URL(`${baseUrl}/api/v1/accounts/self/permissions`);
     return fetch(url)
     .then(response => {
       return response.json();

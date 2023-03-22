@@ -117,7 +117,8 @@
   */
   async function getCoursesOfUser(userId) {
     let courses = [];
-    const url = `/api/v1/users/${userId}/courses?include[]=total_scores&state[]=available&enrollment_state=active&per_page=100`;
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+    const url = `${baseUrl}/api/v1/users/${userId}/courses?include[]=total_scores&state[]=available&enrollment_state=active&per_page=100`;
 
     // TODO Handle pagination
     const fetches = [];

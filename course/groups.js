@@ -20,7 +20,8 @@
   async function hasCoursePermission(permissionKey) {
     let permissions = [];
     const courseId = window.location.pathname.split("/")[2];
-    const url = `/api/v1/courses/${courseId}/permissions`;
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+    const url = `${baseUrl}/api/v1/courses/${courseId}/permissions`;
 
     const fetches = [];
     fetches.push(
@@ -57,7 +58,8 @@
       for (let panel of groupsPanels) {
         const importButton = panel.querySelector("button.import-groups");
         if (importButton) {
-          const url = `/api/v1/group_categories/${panel.id.replace(
+          const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+          const url = `${baseUrl}/api/v1/group_categories/${panel.id.replace(
             "tab-",
             ""
           )}/export`;
@@ -75,7 +77,8 @@
               if (mutation.addedNodes.length > 0) {
                 const importButton = panel.querySelector("button.import-groups");
                 if (importButton) {
-                  const url = `/api/v1/group_categories/${panel.id.replace(
+                  const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+                  const url = `${baseUrl}/api/v1/group_categories/${panel.id.replace(
                     "tab-",
                     ""
                   )}/export`;

@@ -36,8 +36,7 @@
 
   function getCurrentCourses() {
     let courses = {}
-    const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
-    const url = new URL(`${baseUrl}/api/v1${window.location.pathname}/courses${(window.location.search).length > 0 ? window.location.search : "?"}`);
+    const url = new URL(`${window.location.protocol}//${window.location.hostname}/api/v1${window.location.pathname}/courses${(window.location.search).length > 0 ? window.location.search : "?"}`);
     const searchParams = url.searchParams.keys();
     for (let param of searchParams) {
       if (url.searchParams.get(param) === "") {
@@ -49,6 +48,14 @@
     if (!url.searchParams.has("sort")) {
       url.searchParams.set("sort", "sis_course_id");
     }
+    if (!url.searchParams.has("order")) {
+      url.searchParams.set("order", "asc");
+    }
+    if (!url.searchParams.has("search_by")) {
+      url.searchParams.set("search_by", "course");
+    }
+    url.searchParams.append("include[]", "ui_invoked");
+    url.searchParams.append("teacher_limit", 25);
     return fetch(url)
     .then(response => {
       return response.json();
@@ -67,8 +74,7 @@
 
   function getCourse(courseId) {
     let course = {}
-    const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
-    const url = new URL(`${baseUrl}/api/v1${window.location.pathname}/courses/${courseId}`);
+    const url = new URL(`${window.location.protocol}//${window.location.hostname}/api/v1${window.location.pathname}/courses/${courseId}`);
     return fetch(url)
     .then(response => {
       return response.json();
@@ -84,8 +90,7 @@
 
   function getPermissions() {
     let userPermissions = {}
-    const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
-    const url = new URL(`${baseUrl}/api/v1/accounts/self/permissions`);
+    const url = new URL(`${window.location.protocol}//${window.location.hostname}/api/v1/accounts/self/permissions`);
     return fetch(url)
     .then(response => {
       return response.json();
@@ -124,6 +129,11 @@
                     if (canvasCourseCode && !(canvasCourseCode in courses)) {
                       if (window.location.href != currentUrl) {
                         courses = await getCurrentCourses();
+                        currentUrl = window.location.href;
+                        if (!(canvasCourseCode in courses)) {
+                          const currentCourse = await getCourse(canvasCourseCode);
+                          courses[canvasCourseCode] = currentCourse;
+                        }
                       } else {
                         const currentCourse = await getCourse(canvasCourseCode);
                         courses[canvasCourseCode] = currentCourse;
@@ -191,7 +201,7 @@
         const concludedIcon = courseNameLink.querySelector("i.ski-course-concluded");
         if (!concludedIcon) {
           courseNameLink.insertAdjacentHTML("afterbegin", `
-            <i class="icon-line icon-lock" aria-hidden="true" class="ski-course-concluded" title="This course is concluded"></i>
+            <i class="icon-line icon-lock ski-course-concluded" aria-hidden="true" title="This course is concluded"></i>
           `);
         }
       }

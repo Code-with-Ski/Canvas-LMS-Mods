@@ -253,9 +253,8 @@
 
   function getPermissions(accountId = "self") {
     let userPermissions = {};
-    const url = new URL(
-      `${window.location.protocol}//${window.location.hostname}/api/v1/accounts/${accountId}/permissions`
-    );
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+    const url = `${baseUrl}/api/v1/accounts/${accountId}/permissions`;
     return fetch(url)
       .then((response) => {
         return response.json();
@@ -452,13 +451,15 @@
 
   function getManageableAccounts() {
     const manageableAccounts = [];
-    const url = `/api/v1/manageable_accounts?per_page=100`;
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+    const url = `${baseUrl}/api/v1/manageable_accounts?per_page=100`;
     return paginatedRequest(url, manageableAccounts);
   }
 
   function getAccounts() {
     const accounts = [];
-    const url = `/api/v1/accounts?per_page=100`;
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+    const url = `${baseUrl}/api/v1/accounts?per_page=100`;
     return paginatedRequest(url, accounts);
   }
 
@@ -547,7 +548,8 @@
 
   function getEnrollmentTerms() {
     const terms = [];
-    const url = `/api/v1/accounts/self/terms?per_page=100`;
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+    const url = `${baseUrl}/api/v1/accounts/self/terms?per_page=100`;
     return paginatedRequest(url, terms, "enrollment_terms");
   }
 
@@ -646,7 +648,8 @@
     const roles = [];
     const accountId = document.getElementById("ski-account-select")?.value;
     if (accountId) {
-      const url = `/api/v1/accounts/${accountId}/roles?show_inherited=true&per_page=100`;
+      const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+      const url = `${baseUrl}/api/v1/accounts/${accountId}/roles?show_inherited=true&per_page=100`;
       return paginatedRequest(url, roles);
     }
     return roles;

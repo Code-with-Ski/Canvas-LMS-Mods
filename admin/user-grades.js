@@ -53,8 +53,8 @@
   */
   async function getUser(userId) {
     let user = {};
-
-    const url = `/api/v1/users/${userId}`;
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+    const url = `${baseUrl}/api/v1/users/${userId}`;
 
     const fetches = [];
     fetches.push(

@@ -214,7 +214,8 @@
       }
 
       const PER_PAGE = 10;
-      url = `/api/v1/accounts/self/sis_imports?per_page=${PER_PAGE}`;
+      const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+      url = `${baseUrl}/api/v1/accounts/self/sis_imports?per_page=${PER_PAGE}`;
       checkedWorkflowStates.forEach(state => {
         url += `&workflow_state[]=${state.value}`;
       });

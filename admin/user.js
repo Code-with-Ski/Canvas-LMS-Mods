@@ -119,7 +119,8 @@
       requestNum++;
       await new Promise(r => setTimeout(r, requestNum * 20 + 10));
       const accountNumber = item.querySelector("a").href.split("/").pop();
-      const url = `/api/v1/accounts/${accountNumber}/admins?user_id[]=${userId}`; // TODO Update to be paginated
+      const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+      const url = `${baseUrl}/api/v1/accounts/${accountNumber}/admins?user_id[]=${userId}`; // TODO Update to be paginated
       fetch(url)
         .then(response => response.json())
         .then(data => {
@@ -362,7 +363,8 @@
           const courseCode = courseNameLink.parentElement.querySelector("span.ski-course-code");
           if (!courseCode) {
             const canvasCourseCode = courseNameLink.href.match(/\/courses\/[0-9]+\//)[0].replace("courses", "").replaceAll("/", "");
-            fetch(`/api/v1/courses/${canvasCourseCode}`)
+            const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+            fetch(`${baseUrl}/api/v1/courses/${canvasCourseCode}`)
               .then(response => response.json())
               .then(data => {
                 const courseCode = data["course_code"];

@@ -24,7 +24,8 @@
           accountLinks.insertAdjacentHTML("afterend", `<div style='color: var(--ic-brand-font-color-dark-lightened-15); font-size: 12px; font-size: 0.75rem;' class='ski-canvas-account-id'>Canvas Account ID: ${canvasId}</div>`);
         }
         if (isSisAccountIdShown) {
-          fetch(`/api/v1/accounts/${canvasId}`)
+          const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+          fetch(`${baseUrl}/api/v1/accounts/${canvasId}`)
             .then(response => response.json())
             .then(data => {
               let sisId = data["sis_account_id"];
@@ -52,7 +53,8 @@
             if (isSisAccountIdShown) {
               requestNum++;
               await new Promise(r => setTimeout(r, requestNum * 10));
-              fetch(`/api/v1/accounts/${canvasId}`)
+              const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+              fetch(`${baseUrl}/api/v1/accounts/${canvasId}`)
                 .then(response => response.json())
                 .then(data => {
                   let sisId = data["sis_account_id"];

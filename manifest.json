@@ -1,8 +1,8 @@
 {
   "name": "Canvas LMS Mods (Basic)",
   "description": "This provides modifications to the Canvas LMS to improve the user experience visually and functionally.",
-  "version": "2.1.0",
-  "version_name": "2.1.0",
+  "version": "2.2.0",
+  "version_name": "2.2.0",
   "manifest_version": 3,
   "permissions": ["storage"],
   "host_permissions": [
@@ -28,7 +28,8 @@
     "https://canvas.gwu.edu/*",
     "https://canvas.qub.ac.uk/*",
     "https://canvas.gu.se/*",
-    "https://canvas.wu.ac.at/*"
+    "https://canvas.wu.ac.at/*",
+    "https://cilearn.csuci.edu/*"
   ],
   "content_scripts": [
     {
@@ -55,7 +56,8 @@
         "https://canvas.gwu.edu/*",
         "https://canvas.qub.ac.uk/*",
         "https://canvas.gu.se/*",
-        "https://canvas.wu.ac.at/*"
+        "https://canvas.wu.ac.at/*",
+        "https://cilearn.csuci.edu/*"
       ],
       "js": [
         "global/global.js",
@@ -105,7 +107,8 @@
         "https://canvas.gwu.edu/profile",
         "https://canvas.qub.ac.uk/profile",
         "https://canvas.gu.se/profile",
-        "https://canvas.wu.ac.at/profile"
+        "https://canvas.wu.ac.at/profile",
+        "https://cilearn.csuci.edu/profile"
       ],
       "js": ["account/profile.js"]
     },
@@ -133,7 +136,8 @@
         "https://canvas.gwu.edu/",
         "https://canvas.qub.ac.uk/",
         "https://canvas.gu.se/",
-        "https://canvas.wu.ac.at/"
+        "https://canvas.wu.ac.at/",
+        "https://cilearn.csuci.edu/"
       ],
       "js": ["dashboard/dashboard.js"]
     },
@@ -161,7 +165,8 @@
         "https://canvas.gwu.edu/courses",
         "https://canvas.qub.ac.uk/courses",
         "https://canvas.gu.se/courses",
-        "https://canvas.wu.ac.at/courses"
+        "https://canvas.wu.ac.at/courses",
+        "https://cilearn.csuci.edu/courses"
       ],
       "js": ["courses/all-courses.js"],
       "css": ["courses/all-courses.css"]
@@ -190,7 +195,8 @@
         "https://canvas.gwu.edu/courses/*",
         "https://canvas.qub.ac.uk/courses/*",
         "https://canvas.gu.se/courses/*",
-        "https://canvas.wu.ac.at/courses/*"
+        "https://canvas.wu.ac.at/courses/*",
+        "https://cilearn.csuci.edu/courses/*"
       ],
       "js": ["course/course-global.js"],
       "css": ["course/course-global.css"]
@@ -219,7 +225,8 @@
         "https://canvas.gwu.edu/courses/*/modules",
         "https://canvas.qub.ac.uk/courses/*/modules",
         "https://canvas.gu.se/courses/*/modules",
-        "https://canvas.wu.ac.at/courses/*/modules"
+        "https://canvas.wu.ac.at/courses/*/modules",
+        "https://cilearn.csuci.edu/courses/*/modules"
       ],
       "js": ["course/modules.js"]
     },
@@ -247,7 +254,8 @@
         "https://canvas.gwu.edu/courses/*/groups*",
         "https://canvas.qub.ac.uk/courses/*/groups*",
         "https://canvas.gu.se/courses/*/groups*",
-        "https://canvas.wu.ac.at/courses/*/groups*"
+        "https://canvas.wu.ac.at/courses/*/groups*",
+        "https://cilearn.csuci.edu/courses/*/groups*"
       ],
       "js": ["course/groups.js"]
     },
@@ -275,7 +283,8 @@
         "https://canvas.gwu.edu/courses/*/users",
         "https://canvas.qub.ac.uk/courses/*/users",
         "https://canvas.gu.se/courses/*/users",
-        "https://canvas.wu.ac.at/courses/*/users"
+        "https://canvas.wu.ac.at/courses/*/users",
+        "https://cilearn.csuci.edu/courses/*/users"
       ],
       "js": ["course/people.js"],
       "css": ["course/people.css"]
@@ -304,7 +313,8 @@
         "https://canvas.gwu.edu/courses/*/users/*/usage",
         "https://canvas.qub.ac.uk/courses/*/users/*/usage",
         "https://canvas.gu.se/courses/*/users/*/usage",
-        "https://canvas.wu.ac.at/courses/*/users/*/usage"
+        "https://canvas.wu.ac.at/courses/*/users/*/usage",
+        "https://cilearn.csuci.edu/courses/*/users/*/usage"
       ],
       "js": ["course/user-access-report.js"]
     },
@@ -332,7 +342,8 @@
         "https://canvas.gwu.edu/*/gradebook/speed_grader",
         "https://canvas.qub.ac.uk/*/gradebook/speed_grader",
         "https://canvas.gu.se/*/gradebook/speed_grader",
-        "https://canvas.wu.ac.at/*/gradebook/speed_grader"
+        "https://canvas.wu.ac.at/*/gradebook/speed_grader",
+        "https://cilearn.csuci.edu/*/gradebook/speed_grader"
       ],
       "css": ["course/speedgrader.css"],
       "js": ["course/speedgrader.js"]
@@ -361,7 +372,8 @@
         "https://canvas.gwu.edu/users/*",
         "https://canvas.qub.ac.uk/users/*",
         "https://canvas.gu.se/users/*",
-        "https://canvas.wu.ac.at/users/*"
+        "https://canvas.wu.ac.at/users/*",
+        "https://cilearn.csuci.edu/users/*"
       ],
       "js": ["admin/user.js"]
     },
@@ -389,7 +401,8 @@
         "https://canvas.gwu.edu/users/*/grades",
         "https://canvas.qub.ac.uk/users/*/grades",
         "https://canvas.gu.se/users/*/grades",
-        "https://canvas.wu.ac.at/users/*/grades"
+        "https://canvas.wu.ac.at/users/*/grades",
+        "https://cilearn.csuci.edu/*/grades"
       ],
       "js": ["admin/user-grades.js"]
     },
@@ -417,7 +430,8 @@
         "https://canvas.gwu.edu/accounts/*/users/*",
         "https://canvas.qub.ac.uk/accounts/*/users/*",
         "https://canvas.gu.se/accounts/*/users/*",
-        "https://canvas.wu.ac.at/accounts/*/users/*"
+        "https://canvas.wu.ac.at/accounts/*/users/*",
+        "https://cilearn.csuci.edu/accounts/*/users/*"
       ],
       "js": ["admin/user.js"]
     },
@@ -445,7 +459,8 @@
         "https://canvas.gwu.edu/accounts/*/avatars*",
         "https://canvas.qub.ac.uk/accounts/*/avatars*",
         "https://canvas.gu.se/accounts/*/avatars*",
-        "https://canvas.wu.ac.at/accounts/*/avatars*"
+        "https://canvas.wu.ac.at/accounts/*/avatars*",
+        "https://cilearn.csuci.edu/accounts/*/avatars*"
       ],
       "js": ["admin/user-profile-picture-review.js"]
     },
@@ -473,7 +488,8 @@
         "https://canvas.gwu.edu/accounts/*",
         "https://canvas.qub.ac.uk/accounts/*",
         "https://canvas.gu.se/accounts/*",
-        "https://canvas.wu.ac.at/accounts/*"
+        "https://canvas.wu.ac.at/accounts/*",
+        "https://cilearn.csuci.edu/accounts/*"
       ],
       "js": ["admin/course-search.js"],
       "css": ["admin/course-search.css"]
@@ -502,7 +518,8 @@
         "https://canvas.gwu.edu/*/terms",
         "https://canvas.qub.ac.uk/*/terms",
         "https://canvas.gu.se/*/terms",
-        "https://canvas.wu.ac.at/*/terms"
+        "https://canvas.wu.ac.at/*/terms",
+        "https://cilearn.csuci.edu/*/terms"
       ],
       "js": ["admin/terms.js"]
     },
@@ -530,7 +547,8 @@
         "https://canvas.gwu.edu/*/rubrics",
         "https://canvas.qub.ac.uk/*/rubrics",
         "https://canvas.gu.se/*/rubrics",
-        "https://canvas.wu.ac.at/*/rubrics"
+        "https://canvas.wu.ac.at/*/rubrics",
+        "https://cilearn.csuci.edu/*/rubrics"
       ],
       "js": ["admin/rubrics.js"]
     },
@@ -558,7 +576,8 @@
         "https://canvas.gwu.edu/*/question_banks",
         "https://canvas.qub.ac.uk/*/question_banks",
         "https://canvas.gu.se/*/question_banks",
-        "https://canvas.wu.ac.at/*/question_banks"
+        "https://canvas.wu.ac.at/*/question_banks",
+        "https://cilearn.csuci.edu/*/question_banks"
       ],
       "js": ["admin/question-banks.js"]
     },
@@ -586,7 +605,8 @@
         "https://canvas.gwu.edu/*/sub_accounts",
         "https://canvas.qub.ac.uk/*/sub_accounts",
         "https://canvas.gu.se/*/sub_accounts",
-        "https://canvas.wu.ac.at/*/sub_accounts"
+        "https://canvas.wu.ac.at/*/sub_accounts",
+        "https://cilearn.csuci.edu/*/sub_accounts"
       ],
       "js": ["admin/sub-accounts.js"]
     },
@@ -614,7 +634,8 @@
         "https://canvas.gwu.edu/*/sis_import",
         "https://canvas.qub.ac.uk/*/sis_import",
         "https://canvas.gu.se/*/sis_import",
-        "https://canvas.wu.ac.at/*/sis_import"
+        "https://canvas.wu.ac.at/*/sis_import",
+        "https://cilearn.csuci.edu/*/sis_import"
       ],
       "js": ["admin/sis-import.js"],
       "css": ["admin/sis-import.css"]

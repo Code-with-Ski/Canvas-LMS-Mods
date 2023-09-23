@@ -71,10 +71,18 @@ fieldset.ski-ui > legend {
   width: 1.5rem;
   height: 1.5rem;
   margin: 1rem auto;
-  animation: spin 2s linear infinite;
+  animation: ski-spin-loading-indicator 2s linear infinite;
 }
 
-@keyframes spin {
+@keyframes ski-spin-loading-indicator {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+.ski-drag-over {
+  background-color: lightgoldenrodyellow;
+}
+
+tr[draggable=true] {
+  cursor: move;
 }

@@ -11,28 +11,15 @@
   }
 
   function watchForEditableRubricRows() {
-    const contentDiv = document.getElementById("content");
-    if (!contentDiv) {
-      return;
-    }
-
-    const config = { childList: true, subtree: true};
-    const contentObserver = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        const addedNodes = [...mutation.addedNodes];
-        for (const addedNode of addedNodes) {
-          if (addedNode.classList?.contains("rubric_container") && addedNode.classList?.contains("editing")) {
-            makeTableRowsDraggable();
-          } else if (addedNode.nodeName == "TR") {
-            if (addedNode.parentNode.parentNode.parentNode.classList?.contains("editing")) {
-              makeTableRowDraggable(addedNode);
-            }
-          }
+    SkiMonitorChanges.watchForAddedNodesByParentId("content", (addedNode) => {
+      if (addedNode.classList?.contains("rubric_container") && addedNode.classList?.contains("editing")) {
+        makeTableRowsDraggable();
+      } else if (addedNode.nodeName == "TR") {
+        if (addedNode.parentNode.parentNode.parentNode.classList?.contains("editing")) {
+          makeTableRowDraggable(addedNode);
         }
       }
     });
-
-    contentObserver.observe(contentDiv, config);
   }
 
   function makeTableRowsDraggable() {
@@ -63,26 +50,26 @@
 
     const items = [...document.querySelectorAll("tr[draggable=true]")];
     for (const item of items) {
-      item.classList.remove("over");
+      item.classList.remove("ski-drag-over");
     }
   }
   
   function handleDragEnter(e) {
     dragCounter++;
-    this.classList.add("over");
+    this.classList.add("ski-drag-over");
   }
 
   function handleDragLeave(e) {
     dragCounter--;
     if (dragCounter <= 1) {
-      this.classList.remove("over");
+      this.classList.remove("ski-drag-over");
     }
   }
 
   function handleDragOver(e) {
     e.preventDefault();
     
-    this.classList.add("over");
+    this.classList.add("ski-drag-over");
     
     return false;
   }

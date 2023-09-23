@@ -33,6 +33,21 @@ class SkiMonitorChanges {
     }
   }
 
+  static watchForAddedNodesByParentId(parentId, callbackFunction, config = { childList: true, subtree: true}) {
+    this.watchForElementById(parentId, (parentElement) => {
+      const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          const addedNodes = [...mutation.addedNodes];
+          for (const addedNode of addedNodes) {
+            callbackFunction(addedNode);
+          }
+        }
+      });
+
+      observer.observe(parentElement, config);
+    });
+  }
+
   static waitForDocumentReady(callbackFunction) {
     if (document.readyState == "complete") {
       callbackFunction();

@@ -10,11 +10,20 @@ If you find this code and/or extension useful, I would appreciate your support s
 
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/default-blue.png)](https://www.buymeacoffee.com/codewithski)
 
+## Change to Host Permissions
+
+Originally, I planned to limit host permissions to Canvas LMS specific sites.  While this works well for institutions on the default domain provided by Instructure, it has become time consuming to continue to manage support for custom domains.  To make it easier for users to begin using the tool without the need to request an update to accomodate their institution's custom domain, I have updated the host permissions in the manifest file to work on any site.
+
+To ensure these features aren't accidentally applied to website that isn't the Canvas LMS, it is recommended that users update the settings on the extension to either activate by click or limit to specific sites.  [Install and manage extensions](https://support.google.com/chrome_webstore/answer/2664769?hl=en)
+
+If you would like to continue to keep the host permissions limited, you are welcome to make a copy of this repository and adjust the host permissions to be limited to your own domain.  If you have access to Developer mode in Google Chrome, you can then begin using your own local version of the extension.  [Loading an unpacked extension](https://developer.chrome.com/docs/extensions/mv3/getstarted/development-basics/#load-unpacked)
+*While I don't provide support for Microsoft Edge or Firefox at this time, you may be able to get it to work on those browsers too with little to no additional changes to the code.*
+
 ## Code Organization
 
-Customizations will be organized primarily by the page on which they will be used. This will allow for only loading the relevant script files when needed. It should also help with tracking down errors when reported.
+Customizations will be organized primarily by the page on which they will be used. This will help with only loading the relevant script files when needed. It should also help with tracking down errors when reported. Scripts that are re-used across multiple pages will be organized in their own folders to avoid repeating code for the same feature.
 
-Longer scripts and/or scripts that are re-used across multiple pages may be organized in their own files/folders in the future.
+I am in the process of re-factoring and re-organizing features to reduce repeated code. Common code is being extracted into the utils folder and will make it easier to add new features in the future and test/maintain existing features. I am also beginning to put each feature in its own folder and adding a README file to provide more information about the feature.
 
 ## Options
 
@@ -59,6 +68,10 @@ Options will also be updated to allow the user to enable/disable certain customi
   - SpeedGrader
     - Enable converting text that resembles links (begins with http:// or https://) to a hyperlink in the comments
     - Enable changing the draft comment indicator from "*" to the "DRAFT"
+  - Statistics
+    - Enable course reports
+  - Assignments
+    - Add export grades button to assignment page
 
 - Admin
   - Global Nav Admin Menu
@@ -109,3 +122,8 @@ Options will also be updated to allow the user to enable/disable certain customi
     - Show the Canvas Term ID
   - SIS Import
     - Enable SIS History Log (Uses Canvas LMS API)
+
+  Shared Features
+  - Rubrics
+    - Enabled drag-and-drop criteria rows when editing
+    - Add import rubric criteria option

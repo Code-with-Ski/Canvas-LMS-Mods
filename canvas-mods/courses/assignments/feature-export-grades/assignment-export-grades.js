@@ -2,7 +2,16 @@
 
 (() => {
   if (/^\/courses\/[0-9]+\/assignments\/[0-9]+$/.test(window.location.pathname)) {
-    watchForGradedRatioSpan();
+    chrome.storage.sync.get(
+      {
+        courseAssignmentExportGrades: true,
+      },
+      function (items) {
+        if (items.courseAssignmentExportGrades) {
+          watchForGradedRatioSpan();
+        }
+      }
+    );
   }
 
   function watchForGradedRatioSpan() {

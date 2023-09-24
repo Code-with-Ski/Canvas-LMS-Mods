@@ -7,7 +7,16 @@
   if (
     /^\/(course|account)s\/([0-9]+)\/rubrics/.test(window.location.pathname)
   ) {
-    watchForEditableRubricRows();
+    chrome.storage.sync.get(
+      {
+        rubricsDragDropCriteria: true,
+      },
+      function (items) {
+        if (items.rubricsDragDropCriteria) {
+          watchForEditableRubricRows();
+        }
+      }
+    );
   }
 
   function watchForEditableRubricRows() {

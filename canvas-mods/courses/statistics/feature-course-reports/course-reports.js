@@ -9,13 +9,17 @@
     chrome.storage.sync.get(
       {
         enableDetailedLogging: false,
+        courseStatisticsCourseReport: true,
       },
       function (items) {
         IS_DEBUG_DETAILED = items.enableDetailedLogging;
+
+        if (items.courseStatisticsCourseReport) {
+          currentCourseId = window.location.pathname.split("/")[2];
+          SkiMonitorChanges.watchForElementById("stats", addReports);
+        }
       }
     );
-    currentCourseId = window.location.pathname.split("/")[2];
-    SkiMonitorChanges.watchForElementById("stats", addReports);
   }
 
   async function addReports(statsDiv) {

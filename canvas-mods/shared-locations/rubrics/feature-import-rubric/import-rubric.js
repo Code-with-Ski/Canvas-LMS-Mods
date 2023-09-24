@@ -4,8 +4,17 @@
   if (
     /^\/(course|account)s\/([0-9]+)\/rubrics/.test(window.location.pathname)
   ) {
-    const importDialog = addImportDialog();
-    watchForEditRubricDialog(importDialog);
+    chrome.storage.sync.get(
+      {
+        rubricsImport: true,
+      },
+      function (items) {
+        if (items.rubricsImport) {
+          const importDialog = addImportDialog();
+          watchForEditRubricDialog(importDialog);
+        }
+      }
+    );
   }
 
   function watchForEditRubricDialog(importDialog) {

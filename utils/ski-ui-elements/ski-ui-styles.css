@@ -86,3 +86,20 @@ fieldset.ski-ui > legend {
 tr[draggable=true] {
   cursor: move;
 }
+
+.ski-dialog-header {
+  display: flex; 
+  justify-content: space-between; 
+  border-bottom: 1px solid #C7CDD1; 
+  padding: 1rem; 
+  margin: -1rem -1rem 1rem;
+}
+
+.ski-dialog-footer {
+  display: flex; 
+  justify-content: space-between; 
+  border-top: 1px solid #C7CDD1;
+  background-color: #F5F5F5;
+  padding: 1rem; 
+  margin: 1rem -1rem -1rem;
+}

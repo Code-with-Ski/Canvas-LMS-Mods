@@ -34,7 +34,7 @@ class SkiCanvasLmsApiCaller {
       const value = params[key];
       if (key.endsWith("[]") && value instanceof Array) {
         for (const item of value) {
-          url.searchParams.append(key, item);  
+          requestUrl.searchParams.append(key, item);  
         }
       } else {
         requestUrl.searchParams.append(key, value);

@@ -1,0 +1,5 @@
+# Assignment Export Grades
+
+This feature adds button(s) on the assignment page to export grades.  By default it will add the button "Export Grades" if it sees the ratio of graded assignment submissions on the right-hand side.  By clicking this button, it will get the submissions for the assignments and export the data in a CSV file.  It will include rubric scores too, if available.  All data for a single submission will be on one row.
+
+If it also sees a rubric on the assignment page, it will add a second button to "Export Grades by Criteria".  This will also get all the submissions for the assignment.  However, now each row will include the submission details and one of the criteria details at a time.  This will result in repeated submission details data, but avoids the need to keep scrolling to the right to view all of the criteria details.

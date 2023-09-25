@@ -1,0 +1,105 @@
+.ski-ui-screenreader-only {
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
+  height: 1px;
+  width: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;   
+}
+
+details.ski-ui {
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  padding: 0.5em 0.5em 0;
+}
+
+details.ski-ui > summary {
+  font-weight: bold;
+  margin: -0.5em -0.5em 0;
+  padding: 0.5em;
+}
+
+details.ski-ui[open] {
+  padding: 0.5em;
+}
+
+details.ski-ui[open] summary {
+  border-bottom: 1px solid #aaa;
+  margin-bottom: 0.5em;
+}
+
+div.ski-checkbox-inline {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding-left: 0;
+  margin-right: 0.75rem;
+}
+
+div.ski-checkbox-inline > input[type="checkbox"] {
+  position: static;
+  margin-top: 0;
+  margin-left: 0;
+  margin-right: 0.3125rem;
+}
+
+div.ski-checkbox-inline > label {
+  margin-bottom: 0;
+}
+
+fieldset.ski-ui {
+  margin-bottom: 1rem;
+}
+
+fieldset.ski-ui > legend {
+  font-size: 1rem;
+  font-weight: bold;
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.ski-loading-icon {
+  border: 0.5rem solid #c2bcbc;
+  border-top: 0.5rem solid #119db9;
+  border-bottom: 0.5rem solid #119db9;
+  border-radius: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 1rem auto;
+  animation: ski-spin-loading-indicator 2s linear infinite;
+}
+
+@keyframes ski-spin-loading-indicator {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.ski-drag-over {
+  background-color: lightgoldenrodyellow;
+}
+
+tr[draggable=true] {
+  cursor: move;
+}
+
+.ski-dialog-header {
+  display: flex; 
+  justify-content: space-between; 
+  border-bottom: 1px solid #C7CDD1; 
+  padding: 1rem; 
+  margin: -1rem -1rem 1rem;
+}
+
+.ski-dialog-footer {
+  display: flex; 
+  justify-content: space-between; 
+  border-top: 1px solid #C7CDD1;
+  background-color: #F5F5F5;
+  padding: 1rem; 
+  margin: 1rem -1rem -1rem;
+}

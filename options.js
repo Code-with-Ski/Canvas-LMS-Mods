@@ -42,6 +42,12 @@ function saveOptions() {
   const isSpeedGraderCommentHyperlinksEnabled = document.getElementById("course-speedgrader-make-links-in-comments-clickable").checked;
   const isSpeedGraderDraftCommentIndicatorReplaced = document.getElementById("course-speedgrader-draft-comment-indicator").checked;
 
+  // Course - Statistics settings
+  const isStatisticsCourseReportsEnabled = document.getElementById("course-statistics-course-reports").checked;
+
+  // Course - Assignments settings
+  const isAssignmentGradesExportButtonEnabled = document.getElementById("course-assignments-assignment-export-grades").checked;
+
   // Admin - Courses settings
   const isBlueprintInputFillPrevent = document.getElementById("admin-courses-blueprint-input-prevent-fill").checked;
   const isCourseCodeEnabled = document.getElementById("admin-courses-course-code").checked;
@@ -100,6 +106,10 @@ function saveOptions() {
   // Admin - SIS Import settings
   const isSisImportLogEnabled = document.getElementById("admin-sis-import-log").checked;
 
+  // Shared - Rubrics
+  const isRubricsDragDropCriteriaEnabled = document.getElementById("rubrics-drag-drop-criteria").checked;
+  const isRubricsImportCriteriaEnabled = document.getElementById("rubrics-import-criteria").checked;
+
   chrome.storage.sync.set({
     globalBodyFullWidth: isGlobalFullWidthEnabled,
     globalNavAdminQuickAccess: isGlobalNavAdminQuickAccessEnabled,
@@ -121,6 +131,8 @@ function saveOptions() {
     courseUserAccessExportEnabled: isCourseUserAccessReportButtonEnabled,
     courseSpeedGraderCommentsWithHyperlinksEnabled: isSpeedGraderCommentHyperlinksEnabled,
     courseSpeedGraderDraftCommentIndicator: isSpeedGraderDraftCommentIndicatorReplaced,
+    courseStatisticsCourseReport: isStatisticsCourseReportsEnabled,
+    courseAssignmentExportGrades: isAssignmentGradesExportButtonEnabled,
     adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
     adminCoursesSubaccountLink: isAdminCoursesSubaccountLinkEnabled,
     adminCoursesConcludedIcon: isCourseConcludedIconEnabled,
@@ -152,7 +164,9 @@ function saveOptions() {
     adminQuestionBanksSearch: isQuestionBanksSearchable,
     adminSubAccountsCanvasId: isCanvasAccountIdShown,
     adminSubAccountsSisId: isSisAccountIdShown,
-    adminSisImportLog: isSisImportLogEnabled
+    adminSisImportLog: isSisImportLogEnabled,
+    rubricsImport: isRubricsDragDropCriteriaEnabled,
+    rubricsDragDropCriteria: isRubricsImportCriteriaEnabled
   }, function() {
     // Update status to let user know options were saved.
     const status = document.getElementById("status");
@@ -187,6 +201,8 @@ function restoreOptions() {
     courseUserAccessExportEnabled: true,
     courseSpeedGraderCommentsWithHyperlinksEnabled: true,
     courseSpeedGraderDraftCommentIndicator: true,
+    courseStatisticsCourseReport: true,
+    courseAssignmentExportGrades: true,
     adminCoursesBlueprintInputPreventFill: true,
     adminCoursesAdditionalSearchInputs: true,
     adminCoursesCourseCode: true,
@@ -218,7 +234,9 @@ function restoreOptions() {
     adminQuestionBanksSearch: true,
     adminSubAccountsCanvasId: true,
     adminSubAccountsSisId: true,
-    adminSisImportLog: true
+    adminSisImportLog: true,
+    rubricsImport: true,
+    rubricsDragDropCriteria: true
   }, function(items) {
     // Global settings
     document.getElementById("global-body-full-width").checked = items.globalBodyFullWidth;
@@ -261,6 +279,12 @@ function restoreOptions() {
     // Course - SpeedGrader settings
     document.getElementById("course-speedgrader-make-links-in-comments-clickable").checked = items.courseSpeedGraderCommentsWithHyperlinksEnabled;
     document.getElementById("course-speedgrader-draft-comment-indicator").checked = items.courseSpeedGraderDraftCommentIndicator;
+
+    // Course - Statistics settings
+    document.getElementById("course-statistics-course-reports").checked = items.courseStatisticsCourseReport;
+
+    // Course - Assignments settings
+    document.getElementById("course-assignments-assignment-export-grades").checked = items.courseAssignmentExportGrades;
 
     // Admin - Courses settings
     document.getElementById("admin-courses-blueprint-input-prevent-fill").checked = items.adminCoursesBlueprintInputPreventFill;
@@ -315,6 +339,10 @@ function restoreOptions() {
 
     // Admin - SIS Imports settings
     document.getElementById("admin-sis-import-log").checked = items.adminSisImportLog;
+
+    // Shared - Rubrics
+    document.getElementById("rubrics-drag-drop-criteria").checked = items.rubricsDragDropCriteria;
+    document.getElementById("rubrics-import-criteria").checked = items.rubricsImport;
   });
 }
 

@@ -1,8 +1,8 @@
 {
   "name": "Canvas LMS Mods (Basic)",
   "description": "This provides modifications to the Canvas LMS to improve the user experience visually and functionally.",
-  "version": "3.1.0",
-  "version_name": "3.1.0",
+  "version": "3.2.0",
+  "version_name": "3.2.0",
   "manifest_version": 3,
   "permissions": ["storage"],
   "host_permissions": [
@@ -34,18 +34,22 @@
         "https://*.test.instructure.com/*"
       ],
       "js": [
-        "global/global-test.js"
+        "canvas-mods/shared-locations/global/feature-test-server-indicator/global-test.js"
       ],
-      "css": ["global/global-test.css"]
+      "css": [
+        "canvas-mods/shared-locations/global/feature-test-server-indicator/global-test.css"
+      ]
     },
     {
       "matches": [
         "https://*.beta.instructure.com/*"
       ],
       "js": [
-        "global/global-beta.js"
+        "canvas-mods/shared-locations/global/feature-beta-server-indicator/global-beta.js"
       ],
-      "css": ["global/global-beta.css"]
+      "css": [
+        "canvas-mods/shared-locations/global/feature-beta-server-indicator/global-beta.css"
+      ]
     },
     {
       "matches": [

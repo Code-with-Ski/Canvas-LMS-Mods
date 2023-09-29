@@ -79,8 +79,12 @@
       "matches": [
         "https://*/courses/*"
       ],
-      "js": ["course/course-global.js"],
-      "css": ["course/course-global.css"]
+      "js": [
+        "canvas-mods/courses/feature-sticky-course-header/sticky-course-header.js"
+      ],
+      "css": [
+        "canvas-mods/courses/feature-sticky-course-header/sticky-course-header.css"
+      ]
     },
     {
       "matches": [

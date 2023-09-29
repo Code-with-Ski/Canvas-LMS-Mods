@@ -13,12 +13,12 @@
   }
 
   /*
-    Adds a class to the course header ot make it sticky at the top
+    Adds a class to the course header to make it sticky at the top
   */
   function makeCourseHeaderSticky() {
     const courseHeader = document.querySelector("div.ic-app-nav-toggle-and-crumbs");
     if (courseHeader) {
-      courseHeader.classList.add("ski-comp-sticky-top");
+      courseHeader.classList.add("ski-ui-sticky-top");
     }
 
     const courseMenu = document.getElementById("sticky-container");

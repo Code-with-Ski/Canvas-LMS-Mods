@@ -103,3 +103,11 @@ tr[draggable=true] {
   padding: 1rem; 
   margin: 1rem -1rem -1rem;
 }
+
+html:not(.tox-fullscreen) div.ski-ui-sticky-top {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 98;
+  background-color: white;
+}

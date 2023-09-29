@@ -111,3 +111,12 @@ html:not(.tox-fullscreen) div.ski-ui-sticky-top {
   z-index: 98;
   background-color: white;
 }
+
+div#wrapper.ski-ui-sticky-container div#context_modules > div > a::before {
+  display: block; 
+  content: " "; 
+  margin-top: -4.5rem; 
+  height: 4.5rem; 
+  visibility: hidden; 
+  pointer-events: none;
+}

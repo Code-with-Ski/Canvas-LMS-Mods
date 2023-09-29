@@ -19,6 +19,7 @@
     const courseHeader = document.querySelector("div.ic-app-nav-toggle-and-crumbs");
     if (courseHeader) {
       courseHeader.classList.add("ski-ui-sticky-top");
+      courseHeader.parentElement.classList.add("ski-ui-sticky-container");
     }
 
     const courseMenu = document.getElementById("sticky-container");

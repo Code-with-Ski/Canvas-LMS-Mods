@@ -19,23 +19,6 @@ details.ski-comp[open] summary {
   margin-bottom: 0.5em;
 }
 
-html:not(.tox-fullscreen) div.ski-comp-sticky-top {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  z-index: 98;
-  background-color: white;
-}
-
-a.ski-sticky-link-handler::before { 
-  display: block; 
-  content: " "; 
-  margin-top: -4.5rem; 
-  height: 4.5rem; 
-  visibility: hidden; 
-  pointer-events: none;
-}
-
 .ski-loading-indicator {
   border: 1rem solid #f3f3f3; /* Light grey */
   border-top: 1rem solid #3498db; /* Blue */

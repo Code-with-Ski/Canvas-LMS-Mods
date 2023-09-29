@@ -34,10 +34,10 @@
         "https://*.test.instructure.com/*"
       ],
       "js": [
-        "canvas-mods/shared-locations/global/feature-test-server-indicator/global-test.js"
+        "canvas-mods/shared-locations/global/feature-test-server-indicator/test-server-indicator.js"
       ],
       "css": [
-        "canvas-mods/shared-locations/global/feature-test-server-indicator/global-test.css"
+        "canvas-mods/shared-locations/global/feature-test-server-indicator/test-server-indicator.css"
       ]
     },
     {
@@ -45,10 +45,10 @@
         "https://*.beta.instructure.com/*"
       ],
       "js": [
-        "canvas-mods/shared-locations/global/feature-beta-server-indicator/global-beta.js"
+        "canvas-mods/shared-locations/global/feature-beta-server-indicator/beta-server-indicator.js"
       ],
       "css": [
-        "canvas-mods/shared-locations/global/feature-beta-server-indicator/global-beta.css"
+        "canvas-mods/shared-locations/global/feature-beta-server-indicator/beta-server-indicator.css"
       ]
     },
     {
@@ -64,7 +64,9 @@
       "matches": [
         "https://*/profile"
       ],
-      "js": ["account/profile.js"]
+      "js": [
+        "canvas-mods/profile/feature-view-grades/profile-view-grades.js"
+      ]
     },
     {
       "matches": [

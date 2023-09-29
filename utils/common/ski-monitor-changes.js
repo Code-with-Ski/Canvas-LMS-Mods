@@ -33,6 +33,17 @@ class SkiMonitorChanges {
     }
   }
 
+  static watchForAttributeChangeOfElement(element, callbackFunction, conditionalFunctionToStopObserving = null) {
+    const observer = new MutationObserver((mutations) => {
+      callbackFunction(element);
+      
+      if (conditionalFunctionToStopObserving && conditionalFunctionToStopObserving(element)) {
+        observer.disconnect();
+      }
+    });
+    observer.observe(element, { attributes: true });
+  }
+
   static watchForAddedNodesByParentId(parentId, callbackFunction, config = { childList: true, subtree: true}) {
     this.watchForElementById(parentId, (parentElement) => {
       const observer = new MutationObserver((mutations) => {
@@ -40,6 +51,26 @@ class SkiMonitorChanges {
           const addedNodes = [...mutation.addedNodes];
           for (const addedNode of addedNodes) {
             callbackFunction(addedNode);
+          }
+        }
+      });
+
+      observer.observe(parentElement, config);
+    });
+  }
+
+  static watchForChangeOfNodesByParentId(parentId, addedNodeCallbackFunction, removedNodeCallbackFunction, config = { childList: true, subtree: true}) {
+    this.watchForElementById(parentId, (parentElement) => {
+      const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          const addedNodes = [...mutation.addedNodes];
+          for (const addedNode of addedNodes) {
+            addedNodeCallbackFunction(addedNode);
+          }
+
+          const removedNodes = [...mutation.removedNodes];
+          for (const removedNode of removedNodes) {
+            removedNodeCallbackFunction(removedNode);
           }
         }
       });

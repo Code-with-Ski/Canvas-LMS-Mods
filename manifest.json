@@ -80,17 +80,12 @@
         "https://*/courses/*"
       ],
       "js": [
-        "canvas-mods/courses/feature-sticky-course-header/sticky-course-header.js"
+        "canvas-mods/courses/feature-sticky-course-header/sticky-course-header.js",
+        "canvas-mods/courses/modules/feature-jump-to-module/jump-to-module.js"
       ],
       "css": [
         "canvas-mods/courses/feature-sticky-course-header/sticky-course-header.css"
       ]
-    },
-    {
-      "matches": [
-        "https://*/courses/*/modules"
-      ],
-      "js": ["course/modules.js"]
     },
     {
       "matches": [

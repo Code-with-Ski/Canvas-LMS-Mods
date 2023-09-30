@@ -19,13 +19,12 @@
         "*://*/*"
       ],
       "js": [
-        "global/global-nav.js",
         "utils/common/ski-canvas-lms-api-calls.js",
         "utils/common/ski-monitor-changes.js",
-        "canvas-mods/shared-locations/global/feature-full-width-body/full-width-body.js"
+        "canvas-mods/shared-locations/global/feature-full-width-body/full-width-body.js",
+        "canvas-mods/shared-locations/global/feature-admin-quick-access/feature-admin-quick-access-global-nav.js"
       ],
       "css": [
-        "global/global.css",
         "utils/ski-ui-elements/ski-ui-styles.css"
       ]
     },

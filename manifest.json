@@ -136,14 +136,20 @@
       "matches": [
         "*://*/courses/*/users/*/usage"
       ],
-      "js": ["course/user-access-report.js"]
+      "js": [
+        "canvas-mods/courses/users/usage/feature-export-access-report/feature-export-access-report.js"
+      ]
     },
     {
       "matches": [
         "*://*/courses/*/gradebook/speed_grader*"
       ],
-      "css": ["course/speedgrader.css"],
-      "js": ["course/speedgrader.js"]
+      "js": [
+        "course/speedgrader.js"
+      ],
+      "css": [
+        "course/speedgrader.css"
+      ]
     },
     {
       "matches": [

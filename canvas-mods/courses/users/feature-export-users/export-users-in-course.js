@@ -21,7 +21,7 @@
   async function getCoursePermissions() {
     const courseId = window.location.pathname.split("/")[2];
     const url = `/api/v1/courses/${courseId}/permissions`;
-    return (await SkiCanvasLmsApiCaller.getRequest(url)).results;
+    return (await SkiCanvasLmsApiCaller.getRequest(url))?.results;
   }
 
   /*

@@ -151,3 +151,15 @@ button.ski-ui-column-sort-btn[data-ski-sort-dir="asc"]::after {
 button.ski-ui-column-sort-btn[data-ski-sort-dir="desc"]::after {
   content: " ↓";
 }
+
+table thead td.ski-column-search-field {
+  padding: 7px;
+}
+
+.ski-course-title-search,
+.ski-course-nickname-search,
+.ski-course-term-filter,
+.ski-course-role-filter,
+.ski-course-published-filter {
+  max-width: 90%;
+}

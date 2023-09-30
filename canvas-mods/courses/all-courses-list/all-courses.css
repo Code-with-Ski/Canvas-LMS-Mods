@@ -1,14 +1,4 @@
-table thead td.ski-column-search-field {
-  padding: 7px;
-}
 
-.ski-course-title-search,
-.ski-course-nickname-search,
-.ski-course-term-filter,
-.ski-course-role-filter,
-.ski-course-published-filter {
-  max-width: 90%;
-}
 
 button.ski-courses-column-sort-btn {
   background: none;

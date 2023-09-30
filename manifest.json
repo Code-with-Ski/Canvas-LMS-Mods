@@ -72,8 +72,10 @@
       "matches": [
         "*://*/courses"
       ],
-      "js": ["courses/all-courses.js"],
-      "css": ["courses/all-courses.css"]
+      "js": [
+        "canvas-mods/courses/all-courses-list/feature-sort-columns/sort-columns-on-all-courses.js",
+        "canvas-mods/courses/all-courses-list/feature-filter-and-search/filter-and-search-on-all-courses.js"
+      ]
     },
     {
       "matches": [

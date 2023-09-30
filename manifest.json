@@ -145,10 +145,11 @@
         "*://*/courses/*/gradebook/speed_grader*"
       ],
       "js": [
-        "course/speedgrader.js"
+        "canvas-mods/courses/gradebook/speed_grader/feature-draft-comment-indicator/draft-comment-indicator.js",
+        "canvas-mods/courses/gradebook/speed_grader/feature-hyperlink-text-links-in-comments/hyperlink-text-links-in-comments.js"
       ],
       "css": [
-        "course/speedgrader.css"
+        "canvas-mods/courses/gradebook/speed_grader/feature-draft-comment-indicator/draft-comment-indicator.css"
       ]
     },
     {

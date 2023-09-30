@@ -7,14 +7,10 @@
     chrome.storage.sync.get(
       {
         courseSpeedGraderCommentsWithHyperlinksEnabled: true,
-        courseSpeedGraderDraftCommentIndicator: true,
       },
       function (items) {
         if (items.courseSpeedGraderCommentsWithHyperlinksEnabled) {
           watchForComments();
-        }
-        if (items.courseSpeedGraderDraftCommentIndicator) {
-          replaceDraftCommentIndicator();
         }
       }
     );
@@ -88,15 +84,6 @@
     comment.innerHTML = splitCommentText.join(" ");
     if (commentText.length > 0) {
       comment.classList.add("ski-links-converted");
-    }
-  }
-
-  function replaceDraftCommentIndicator() {
-    const body = document.body;
-    if (body) {
-      if (!body.classList.contains("ski-speedgrader-draft-comment-indicator")) {
-        body.classList.add("ski-speedgrader-draft-comment-indicator");
-      }
     }
   }
 })();

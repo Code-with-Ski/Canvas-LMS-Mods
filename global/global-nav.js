@@ -60,7 +60,7 @@
             <div class="ic-Form-control">
               <label for="ski-account-select" class="ic-Label">Select Account to Use Below</label>
               <select id="ski-account-select" class="ic-Input"></select>
-              <div class="ski-loading-indicator" id="ski-global-nav-admin-account-loading" style="width: 2rem; height: 2rem; border-width: 0.5rem;" title="Loading manageable accounts">
+              <div class="ski-loading-icon" id="ski-global-nav-admin-account-loading" style="width: 2rem; height: 2rem; border-width: 0.5rem;" title="Loading manageable accounts">
               </div>
             </div>
             <hr role='presentation'>
@@ -74,7 +74,7 @@
                   <optgroup label="Future Terms"></optgroup>
                   <optgroup label="Past Terms"></optgroup>
                 </select>
-                <div class="ski-loading-indicator" id="ski-global-nav-admin-term-loading" style="width: 2rem; height: 2rem; border-width: 0.5rem;" title="Loading terms">
+                <div class="ski-loading-icon" id="ski-global-nav-admin-term-loading" style="width: 2rem; height: 2rem; border-width: 0.5rem;" title="Loading terms">
                 </div>
               </div>
               <div class="ic-Form-control">

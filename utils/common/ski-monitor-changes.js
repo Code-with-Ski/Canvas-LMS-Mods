@@ -1,7 +1,7 @@
 "use strict";
 
 class SkiMonitorChanges {
-  static watchForElementByQuery(elementQuery, callbackFunction) {
+  static watchForElementByQuery(elementQuery, callbackFunction, config = { childList: true, subtree: true}) {
     const element = document.querySelector(elementQuery);
     if (element) {
       callbackFunction(element);
@@ -13,11 +13,11 @@ class SkiMonitorChanges {
           callbackFunction(newElement);
         }
       });
-      observer.observe(document.body, { childList: true });
+      observer.observe(document.body, config);
     }
   }
   
-  static watchForElementById(elementId, callbackFunction) {
+  static watchForElementById(elementId, callbackFunction, config = { childList: true, subtree: true}) {
     const element = document.getElementById(elementId);
     if (element) {
       callbackFunction(element);
@@ -29,7 +29,7 @@ class SkiMonitorChanges {
           callbackFunction(newElement);
         }
       });
-      observer.observe(document.body, { childList: true });
+      observer.observe(document.body, config);
     }
   }
 

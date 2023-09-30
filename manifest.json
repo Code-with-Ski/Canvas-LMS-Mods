@@ -129,8 +129,12 @@
       "matches": [
         "*://*/courses/*/users"
       ],
-      "js": ["course/people.js"],
-      "css": ["course/people.css"]
+      "js": [
+        "canvas-mods/courses/users/feature-export-users/export-users-in-course.js",
+        "canvas-mods/courses/users/feature-inactive-users-filter/inactive-users-filter.js",
+        "canvas-mods/courses/users/feature-section-filter/section-filter-in-course.js",
+        "canvas-mods/courses/users/feature-sort-users/sort-users-in-course.js"
+      ]
     },
     {
       "matches": [

@@ -19,10 +19,10 @@
         "https://*/*"
       ],
       "js": [
-        "global/global.js",
         "global/global-nav.js",
         "utils/common/ski-canvas-lms-api-calls.js",
-        "utils/common/ski-monitor-changes.js"
+        "utils/common/ski-monitor-changes.js",
+        "canvas-mods/shared-locations/global/feature-full-width-body/full-width-body.js"
       ],
       "css": [
         "global/global.css",

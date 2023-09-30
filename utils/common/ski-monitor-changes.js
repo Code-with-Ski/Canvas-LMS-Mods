@@ -46,17 +46,51 @@ class SkiMonitorChanges {
 
   static watchForAddedNodesByParentId(parentId, callbackFunction, config = { childList: true, subtree: true}) {
     this.watchForElementById(parentId, (parentElement) => {
-      const observer = new MutationObserver((mutations) => {
-        for (const mutation of mutations) {
-          const addedNodes = [...mutation.addedNodes];
-          for (const addedNode of addedNodes) {
+      this.watchForAddedNodesOfElement(parentElement, callbackFunction, config);
+    });
+  }
+
+  static watchForAddedNodesOfElement(element, callbackFunction, config = { childList: true, subtree: true}) {
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        const addedNodes = [...mutation.addedNodes];
+        for (const addedNode of addedNodes) {
+          callbackFunction(addedNode);
+        }
+      }
+    });
+
+    observer.observe(element, config);
+  }
+
+  static watchForAddedNodeOfElement(element, querySelectorToFind, callbackFunction, config = { childList: true, subtree: true}) {
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        const addedNodes = [...mutation.addedNodes];
+        for (const addedNode of addedNodes) {
+          if (element.querySelector(querySelectorToFind)) {
             callbackFunction(addedNode);
+            observer.disconnect();
+            return;
           }
         }
-      });
-
-      observer.observe(parentElement, config);
+      }
     });
+
+    observer.observe(element, config);
+  }
+
+  static watchForRemovedNodesOfElement(element, callbackFunction, config = { childList: true, subtree: true}) {
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        const removedNodes = [...mutation.removedNodes];
+        for (const removedNode of removedNodes) {
+          callbackFunction(removedNode);
+        }
+      }
+    });
+
+    observer.observe(element, config);
   }
 
   static watchForChangeOfNodesByParentId(parentId, addedNodeCallbackFunction, removedNodeCallbackFunction, config = { childList: true, subtree: true}) {

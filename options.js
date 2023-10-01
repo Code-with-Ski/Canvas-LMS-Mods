@@ -224,7 +224,7 @@ function restoreOptions() {
     adminUsersAvatarResizable: true,
     adminUsersAddGradesLink: true,
     adminUsersGradesPersonalized: true,
-    adminTermsSearch: true,
+    adminTermsSearch: false,
     adminTermsMoveAddTerm: true,
     adminTermsTermId: true,
     adminProfilePicturesResizable: true,

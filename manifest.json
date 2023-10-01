@@ -198,7 +198,9 @@
         "*://*/accounts/*/terms"
       ],
       "js": [
-        "admin/terms.js"
+        "canvas-mods/accounts/terms/feature-add-term-button-to-top/add-term-button-to-top.js",
+        "canvas-mods/accounts/terms/feature-show-term-id/show-term-id.js",
+        "canvas-mods/accounts/terms/feature-terms-search/terms-search.js"
       ]
     },
     {

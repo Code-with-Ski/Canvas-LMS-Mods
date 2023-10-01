@@ -179,7 +179,7 @@
         "*://*/accounts/*/avatars*"
       ],
       "js": [
-        "admin/user-profile-picture-review.js"
+        "canvas-mods/accounts/avatars/feature-resize-profile-review-images/resize-profile-review-images.js"
       ]
     },
     {

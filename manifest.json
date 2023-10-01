@@ -159,23 +159,16 @@
     },
     {
       "matches": [
-        "*://*/users/*"
-      ],
-      "js": [
-        "admin/user.js"
-      ]
-    },
-    {
-      "matches": [
         "*://*/users/*/grades"
       ],
       "js": [
-        "admin/user-grades.js"
+        "canvas-mods/users/grades/feature-update-user-info-on-grades/update-user-info-on-grades.js"
       ]
     },
     {
       "matches": [
-        "*://*/accounts/*/users/*"
+        "*://*/accounts/*/users/*",
+        "*://*/users/*"
       ],
       "js": [
         "admin/user.js"

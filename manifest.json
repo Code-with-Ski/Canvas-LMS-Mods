@@ -216,8 +216,9 @@
       "matches": [
         "*://*/accounts/*/sis_import"
       ],
-      "js": ["admin/sis-import.js"],
-      "css": ["admin/sis-import.css"]
+      "js": [
+        "canvas-mods/accounts/sis_import/feature-sis-import-log/sis-import-log.js"
+      ]
     },
     {
       "matches": [

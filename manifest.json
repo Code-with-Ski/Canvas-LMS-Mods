@@ -171,7 +171,11 @@
         "*://*/users/*"
       ],
       "js": [
-        "admin/user.js"
+        "canvas-mods/shared-locations/users/feature-add-view-grades-link/add-view-grades-link-user.js",
+        "canvas-mods/shared-locations/users/feature-enhance-accounts-list/enhance-accounts-list-user.js",
+        "canvas-mods/shared-locations/users/feature-enhance-courses-list/enhance-courses-list-user.js",
+        "canvas-mods/shared-locations/users/feature-enhance-groups-list/enhance-groups-list-user.js",
+        "canvas-mods/shared-locations/users/feature-resizeable-avatar/resizeable-avatar-user.js"
       ]
     },
     {
@@ -187,10 +191,8 @@
         "*://*/accounts/*"
       ],
       "js": [
-        "admin/course-search.js"
-      ],
-      "css": [
-        "admin/course-search.css"
+        "canvas-mods/accounts/home-courses-search/feature-enhance-search-form/enhance-search-form-courses.js",
+        "canvas-mods/accounts/home-courses-search/feature-enhance-search-results/enhance-search-results-courses.js"
       ]
     },
     {

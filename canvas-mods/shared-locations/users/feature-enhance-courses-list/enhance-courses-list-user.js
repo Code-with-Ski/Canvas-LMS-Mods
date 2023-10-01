@@ -9,13 +9,6 @@
       adminUsersEnrollmentsFilter: true,
       adminUsersEnrollmentsCourseCode: true,
       adminUsersEnrollmentsCanvasId: true,
-      adminUsersAccountsResizable: true,
-      adminUsersAccountsDefaultHeight: 100,
-      adminUsersAccountsRoles: true,
-      adminUsersGroupsResizable: true,
-      adminUsersGroupsDefaultHeight: 100,
-      adminUsersAvatarResizable: true,
-      adminUsersAddGradesLink: true,
     }, function (items) {
       // Update Courses List if available
       const coursesList = document.querySelector("div.courses ul");
@@ -40,102 +33,8 @@
           addCanvasIdToEnrollmentsList(coursesList);
         }
       }
-
-      // Update Accounts List if available
-      const accountsList = document.querySelector("div.accounts ul");
-      if (accountsList) {
-        accountsList.style.height = `${items.adminUsersAccountsDefaultHeight}px`;
-        if (items.adminUsersAccountsResizable) {
-          accountsList.style.maxHeight = "";
-          accountsList.style.resize = "vertical";
-        }
-        if (items.adminUsersAccountsRoles) {
-          updateAccountsListWithRoles(accountsList);
-        }
-      }
-
-      // Update Groups List if available
-      const groupsList = document.querySelector("div.groups ul");
-      if (groupsList) {
-        groupsList.style.height = `${items.adminUsersGroupsDefaultHeight}px`;
-        groupsList.style.maxWidth = "";
-        if (items.adminUsersGroupsResizable) {
-          groupsList.style.maxHeight = "";
-          groupsList.style.resize = "vertical";
-        }
-      }
-
-      // Make avatar clickable to resize if available
-      const avatarImgWrapper = document.querySelector("span.avatar_image");
-      if (items.adminUsersAvatarResizable && avatarImgWrapper) {
-        makeAvatarImageResizable(avatarImgWrapper);
-      }
-
-      if (items.adminUsersAddGradesLink) {
-        addGradesButton();
-      }
     });
   }
-
-  /*
-    This modifies the avatar img and its container so that it is manually resizable
-    and allows you to enlarge and shrink the image to defined sizes by clicking on it.
-  */
-  function makeAvatarImageResizable(avatarImgWrapper) {
-    avatarImgWrapper.style.display = "inline-block"
-    avatarImgWrapper.style.resize = "both"
-    avatarImgWrapper.style.overflow = "auto"
-    avatarImgWrapper.style.minWidth = "60px";
-    avatarImgWrapper.style.minHeight = "60px";
-    avatarImgWrapper.style.width = "60px";
-    avatarImgWrapper.style.height = "60px";
-
-    const imgSpan = avatarImgWrapper.querySelector("span.avatar");
-    imgSpan.style.width = "90%";
-    imgSpan.style.height = "90%";
-
-    imgSpan.addEventListener("click", () => {
-      if (parseInt(avatarImgWrapper.style.width) < 100) {
-        avatarImgWrapper.style.width = "180px";
-        avatarImgWrapper.style.height = "180px";
-      }
-      else {
-        avatarImgWrapper.style.width = "60px";
-        avatarImgWrapper.style.height = "60px";
-      }
-    });
-  }
-
-
-  /*
-    This goes through the list of accounts and adds in details about the 
-    account admin role and status the user has in each account
-  */
-  function updateAccountsListWithRoles(accountsList) {
-    const userId = window.location.pathname.split("/").pop();
-    const accountsListItems = [...accountsList.querySelectorAll("li")];
-    let requestNum = 0;
-    accountsListItems.forEach(async (item) => {
-      requestNum++;
-      await new Promise(r => setTimeout(r, requestNum * 20 + 10));
-      const accountNumber = item.querySelector("a").href.split("/").pop();
-      const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
-      const url = `${baseUrl}/api/v1/accounts/${accountNumber}/admins?user_id[]=${userId}`; // TODO Update to be paginated
-      fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          let adminRoleDetails = "";
-          data.forEach(adminRole => {
-            adminRoleDetails += `${adminRole['role']} [${adminRole['workflow_state']}]; `;
-          });
-          item.querySelector("a span.subtitle").textContent = adminRoleDetails;
-        })
-        .catch((error) => {
-          console.error(`Error: ${error}`);
-        })
-    });
-  }
-
 
   /*
     This creates a filter in the course enrollments section filled with the terms
@@ -400,24 +299,6 @@
           }
         }
       });
-    }
-  }
-
-
-  /*
-    Adds a link to view the user's grades in their current courses
-  */
-  function addGradesButton() {
-    const rightSide = document.getElementById("right-side");
-    if (rightSide) {
-      const userId = window.location.pathname.split("/").pop();
-      rightSide.insertAdjacentHTML("beforeend", `
-        <div>
-          <a href="/users/${userId}/grades" target="_blank" class="btn button-sidebar-wide">
-            <i class="icon-check-plus"></i> View Current Grades
-          </a>
-        </div>
-      `);
     }
   }
 })();

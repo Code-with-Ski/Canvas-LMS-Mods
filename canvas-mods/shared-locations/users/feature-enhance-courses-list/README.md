@@ -1,0 +1,3 @@
+# Enhance Courses List
+
+This feature adds improvements to the Courses section of the Enrollments on the user details page.  It makes the section resizeable and allows for a default height to be set. It also sorts the course enrollments to have active enrollments first and sorted by term. It will add in the course code and Canvas ID to each of the enrollments.  It also adds filters based on the term, enrollment state, and course state.

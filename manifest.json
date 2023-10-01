@@ -161,56 +161,76 @@
       "matches": [
         "*://*/users/*"
       ],
-      "js": ["admin/user.js"]
+      "js": [
+        "admin/user.js"
+      ]
     },
     {
       "matches": [
         "*://*/users/*/grades"
       ],
-      "js": ["admin/user-grades.js"]
+      "js": [
+        "admin/user-grades.js"
+      ]
     },
     {
       "matches": [
         "*://*/accounts/*/users/*"
       ],
-      "js": ["admin/user.js"]
+      "js": [
+        "admin/user.js"
+      ]
     },
     {
       "matches": [
         "*://*/accounts/*/avatars*"
       ],
-      "js": ["admin/user-profile-picture-review.js"]
+      "js": [
+        "admin/user-profile-picture-review.js"
+      ]
     },
     {
       "matches": [
         "*://*/accounts/*"
       ],
-      "js": ["admin/course-search.js"],
-      "css": ["admin/course-search.css"]
+      "js": [
+        "admin/course-search.js"
+      ],
+      "css": [
+        "admin/course-search.css"
+      ]
     },
     {
       "matches": [
         "*://*/accounts/*/terms"
       ],
-      "js": ["admin/terms.js"]
+      "js": [
+        "admin/terms.js"
+      ]
     },
     {
       "matches": [
         "*://*/accounts/*/rubrics"
       ],
-      "js": ["admin/rubrics.js"]
+      "js": [
+        "canvas-mods/accounts/rubrics/feature-search-rubrics/rubrics.js"
+      ]
     },
     {
       "matches": [
         "*://*/accounts/*/question_banks"
       ],
-      "js": ["admin/question-banks.js"]
+      "js": [
+        "canvas-mods/accounts/question_banks/feature-search-question-banks/search-question-banks.js"
+      ]
     },
     {
       "matches": [
         "*://*/accounts/*/sub_accounts"
       ],
-      "js": ["admin/sub-accounts.js"]
+      "js": [
+        "canvas-mods/accounts/sub_accounts/feature-show-ids/show-ids-sub-accounts.js"
+      ]
     },
     {
       "matches": [

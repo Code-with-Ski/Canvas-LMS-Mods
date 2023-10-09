@@ -10,28 +10,20 @@
     "https://*.beta.instructure.com/*",
     "https://*.test.instructure.com/*"
   ],
-  "optional_host_permissions": [
-    "*://*/*"
-  ],
+  "optional_host_permissions": ["*://*/*"],
   "content_scripts": [
     {
-      "matches": [
-        "*://*/*"
-      ],
+      "matches": ["*://*/*"],
       "js": [
         "utils/common/ski-canvas-lms-api-calls.js",
         "utils/common/ski-monitor-changes.js",
         "canvas-mods/shared-locations/global/feature-full-width-body/full-width-body.js",
         "canvas-mods/shared-locations/global/feature-admin-quick-access/feature-admin-quick-access-global-nav.js"
       ],
-      "css": [
-        "utils/ski-ui-elements/ski-ui-styles.css"
-      ]
+      "css": ["utils/ski-ui-elements/ski-ui-styles.css"]
     },
     {
-      "matches": [
-        "*://*.test.instructure.com/*"
-      ],
+      "matches": ["*://*.test.instructure.com/*"],
       "js": [
         "canvas-mods/shared-locations/global/feature-test-server-indicator/test-server-indicator.js"
       ],
@@ -40,9 +32,7 @@
       ]
     },
     {
-      "matches": [
-        "*://*.beta.instructure.com/*"
-      ],
+      "matches": ["*://*.beta.instructure.com/*"],
       "js": [
         "canvas-mods/shared-locations/global/feature-beta-server-indicator/beta-server-indicator.js"
       ],
@@ -51,53 +41,42 @@
       ]
     },
     {
-      "matches": [
-        "*://*/"
-      ],
+      "matches": ["*://*/"],
       "js": [
         "canvas-mods/dashboard-home/feature-all-courses-link/all-courses-link.js",
         "canvas-mods/dashboard-home/feature-grades-on-course-cards/grades-on-course-cards.js"
       ]
     },
     {
-      "matches": [
-        "*://*/profile"
-      ],
-      "js": [
-        "canvas-mods/profile/feature-view-grades/profile-view-grades.js"
-      ]
+      "matches": ["*://*/profile"],
+      "js": ["canvas-mods/profile/feature-view-grades/profile-view-grades.js"]
     },
     {
-      "matches": [
-        "*://*/courses"
-      ],
+      "matches": ["*://*/courses"],
       "js": [
         "canvas-mods/courses/all-courses-list/feature-sort-columns/sort-columns-on-all-courses.js",
         "canvas-mods/courses/all-courses-list/feature-filter-and-search/filter-and-search-on-all-courses.js"
       ]
     },
     {
-      "matches": [
-        "*://*/courses/*"
-      ],
+      "matches": ["*://*/courses/*"],
       "js": [
         "canvas-mods/courses/feature-sticky-course-header/sticky-course-header.js",
-        "canvas-mods/courses/modules/feature-jump-to-module/jump-to-module.js"
+        "canvas-mods/courses/modules/feature-jump-to-module/jump-to-module.js",
+        "canvas-mods/courses/course-home/feature-course-stats-button/course-stats-button.js"
       ],
       "css": [
         "canvas-mods/courses/feature-sticky-course-header/sticky-course-header.css"
       ]
     },
     {
-      "matches": [
-        "*://*/courses/*/assignments/*"
-      ],
-      "js": ["canvas-mods/courses/assignments/feature-export-grades/assignment-export-grades.js"]
+      "matches": ["*://*/courses/*/assignments/*"],
+      "js": [
+        "canvas-mods/courses/assignments/feature-export-grades/assignment-export-grades.js"
+      ]
     },
     {
-      "matches": [
-        "*://*/courses/*/statistics"
-      ],
+      "matches": ["*://*/courses/*/statistics"],
       "js": [
         "utils/ski-ui-elements/ski-table-elements/ski-table-config.js",
         "utils/ski-ui-elements/ski-table-elements/ski-table-heading-config.js",
@@ -114,22 +93,16 @@
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-submissions.js",
         "canvas-mods/courses/statistics/feature-course-reports/course-reports.js"
       ],
-      "css": [
-        "utils/ski-ui-elements/ski-table-elements/ski-table-elements.css"
-      ]
+      "css": ["utils/ski-ui-elements/ski-table-elements/ski-table-elements.css"]
     },
     {
-      "matches": [
-        "*://*/courses/*/groups*"
-      ],
+      "matches": ["*://*/courses/*/groups*"],
       "js": [
         "canvas-mods/courses/groups/feature-export-group-set/export-group-set.js"
       ]
     },
     {
-      "matches": [
-        "*://*/courses/*/users"
-      ],
+      "matches": ["*://*/courses/*/users"],
       "js": [
         "canvas-mods/courses/users/feature-export-users/export-users-in-course.js",
         "canvas-mods/courses/users/feature-inactive-users-filter/inactive-users-filter.js",
@@ -138,17 +111,13 @@
       ]
     },
     {
-      "matches": [
-        "*://*/courses/*/users/*/usage"
-      ],
+      "matches": ["*://*/courses/*/users/*/usage"],
       "js": [
         "canvas-mods/courses/users/usage/feature-export-access-report/feature-export-access-report.js"
       ]
     },
     {
-      "matches": [
-        "*://*/courses/*/gradebook/speed_grader*"
-      ],
+      "matches": ["*://*/courses/*/gradebook/speed_grader*"],
       "js": [
         "canvas-mods/courses/gradebook/speed_grader/feature-draft-comment-indicator/draft-comment-indicator.js",
         "canvas-mods/courses/gradebook/speed_grader/feature-hyperlink-text-links-in-comments/hyperlink-text-links-in-comments.js"
@@ -158,18 +127,13 @@
       ]
     },
     {
-      "matches": [
-        "*://*/users/*/grades"
-      ],
+      "matches": ["*://*/users/*/grades"],
       "js": [
         "canvas-mods/users/grades/feature-update-user-info-on-grades/update-user-info-on-grades.js"
       ]
     },
     {
-      "matches": [
-        "*://*/accounts/*/users/*",
-        "*://*/users/*"
-      ],
+      "matches": ["*://*/accounts/*/users/*", "*://*/users/*"],
       "js": [
         "canvas-mods/shared-locations/users/feature-add-view-grades-link/add-view-grades-link-user.js",
         "canvas-mods/shared-locations/users/feature-enhance-accounts-list/enhance-accounts-list-user.js",
@@ -179,26 +143,20 @@
       ]
     },
     {
-      "matches": [
-        "*://*/accounts/*/avatars*"
-      ],
+      "matches": ["*://*/accounts/*/avatars*"],
       "js": [
         "canvas-mods/accounts/avatars/feature-resize-profile-review-images/resize-profile-review-images.js"
       ]
     },
     {
-      "matches": [
-        "*://*/accounts/*"
-      ],
+      "matches": ["*://*/accounts/*"],
       "js": [
         "canvas-mods/accounts/home-courses-search/feature-enhance-search-form/enhance-search-form-courses.js",
         "canvas-mods/accounts/home-courses-search/feature-enhance-search-results/enhance-search-results-courses.js"
       ]
     },
     {
-      "matches": [
-        "*://*/accounts/*/terms"
-      ],
+      "matches": ["*://*/accounts/*/terms"],
       "js": [
         "canvas-mods/accounts/terms/feature-add-term-button-to-top/add-term-button-to-top.js",
         "canvas-mods/accounts/terms/feature-show-term-id/show-term-id.js",
@@ -206,42 +164,29 @@
       ]
     },
     {
-      "matches": [
-        "*://*/accounts/*/rubrics"
-      ],
-      "js": [
-        "canvas-mods/accounts/rubrics/feature-search-rubrics/rubrics.js"
-      ]
+      "matches": ["*://*/accounts/*/rubrics"],
+      "js": ["canvas-mods/accounts/rubrics/feature-search-rubrics/rubrics.js"]
     },
     {
-      "matches": [
-        "*://*/accounts/*/question_banks"
-      ],
+      "matches": ["*://*/accounts/*/question_banks"],
       "js": [
         "canvas-mods/accounts/question_banks/feature-search-question-banks/search-question-banks.js"
       ]
     },
     {
-      "matches": [
-        "*://*/accounts/*/sub_accounts"
-      ],
+      "matches": ["*://*/accounts/*/sub_accounts"],
       "js": [
         "canvas-mods/accounts/sub_accounts/feature-show-ids/show-ids-sub-accounts.js"
       ]
     },
     {
-      "matches": [
-        "*://*/accounts/*/sis_import"
-      ],
+      "matches": ["*://*/accounts/*/sis_import"],
       "js": [
         "canvas-mods/accounts/sis_import/feature-sis-import-log/sis-import-log.js"
       ]
     },
     {
-      "matches": [
-        "*://*/accounts/*/rubrics*",
-        "*://*/courses/*/rubrics*"
-      ],
+      "matches": ["*://*/accounts/*/rubrics*", "*://*/courses/*/rubrics*"],
       "js": [
         "canvas-mods/shared-locations/rubrics/feature-drag-and-drop-rubric-rows/drag-and-drop-rubric-rows.js",
         "canvas-mods/shared-locations/rubrics/feature-import-rubric/import-rubric.js"

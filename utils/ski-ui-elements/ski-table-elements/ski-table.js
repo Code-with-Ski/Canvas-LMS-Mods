@@ -141,7 +141,7 @@ class SkiTable {
     }
 
     const label = document.createElement("label");
-    label.for = `${this.#name}-show-hide-col-${columnNum}`;
+    label.setAttribute("for", `${this.#name}-show-hide-col-${columnNum}`);
     label.innerText = headingConfig.name;
 
     const formControl = document.createElement("div");

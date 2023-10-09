@@ -1,6 +1,6 @@
 class SkiReportCourseDiscussionReplies extends SkiReport {
   #currentCourseId = window.location.pathname.split("/")[2];
-  
+
   constructor() {
     super("Discussion Replies Report");
   }
@@ -19,6 +19,7 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
         new SkiTableHeadingConfig("Created At"),
         new SkiTableHeadingConfig("Updated At"),
         new SkiTableHeadingConfig("Message Type"),
+        new SkiTableHeadingConfig("# of Replies to Discussion"),
       ],
       []
     );
@@ -34,7 +35,9 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
     for (const discussion of discussions) {
       const discussionId = discussion.id;
       const fullDiscussion = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${this.#currentCourseId}/discussion_topics/${discussionId}/view`
+        `/api/v1/courses/${
+          this.#currentCourseId
+        }/discussion_topics/${discussionId}/view`
       );
 
       discussion.fullDiscussion = fullDiscussion;
@@ -63,17 +66,21 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
 
       const participantsDict = {};
       for (const participant of participants) {
-        participantsDict[participant.id] = participant.display_name;
+        participantsDict[participant.id] = {
+          name: participant.display_name,
+          replyCount: new ReplyCounter(),
+        };
       }
 
-      data.push(
-        ...this.#extractNestedRepliesData(
-          discussion.title,
-          participantsDict,
-          nestedReplies
-        )
+      const repliesData = this.#extractNestedRepliesData(
+        discussion.title,
+        participantsDict,
+        nestedReplies
       );
+
+      data.push(...repliesData);
     }
+
     return data;
   }
 
@@ -124,18 +131,19 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
         postedAtDateIso
       ),
       new SkiTableDataConfig("ORIGIN"),
+      new SkiTableDataConfig("N/A"),
     ];
   }
 
-  #extractNestedRepliesData(
-    discussionTitle,
-    participants,
-    nestedReplies
-  ) {
+  #extractNestedRepliesData(discussionTitle, participants, nestedReplies) {
     const nestedRepliesData = [];
     for (const reply of nestedReplies) {
       nestedRepliesData.push(
-        ...this.#extractDiscussionReplyData(discussionTitle, participants, reply)
+        ...this.#extractDiscussionReplyData(
+          discussionTitle,
+          participants,
+          reply
+        )
       );
     }
     return nestedRepliesData;
@@ -147,7 +155,8 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
     const authorId = reply.user_id;
     let authorName = "Unknown";
     if (participants.hasOwnProperty(authorId)) {
-      authorName = participants[authorId];
+      authorName = participants[authorId]["name"];
+      participants[authorId]["replyCount"].addReply();
     }
 
     let createdAtDate = reply.created_at;
@@ -188,6 +197,7 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
         updatedAtDateIso
       ),
       new SkiTableDataConfig("REPLY"),
+      new SkiTableDataConfig(participants[authorId]["replyCount"]),
     ]);
 
     if (reply.hasOwnProperty("replies")) {
@@ -201,5 +211,19 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
     }
 
     return replyData;
+  }
+}
+
+class ReplyCounter {
+  constructor() {
+    this.replyCount = 0;
+  }
+
+  addReply() {
+    this.replyCount++;
+  }
+
+  toString() {
+    return this.replyCount;
   }
 }

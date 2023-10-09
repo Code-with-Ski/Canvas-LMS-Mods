@@ -38,22 +38,36 @@ class SkiReport {
   }
 
   addForm(table) {
+    const form = this.createForm(table);
+    this.#reportContainer.appendChild(form);
+  }
+
+  createForm(table) {
     const div = document.createElement("div");
     div.classList.add("ski-report-form");
 
+    this.addFormElements(table, div);
+
+    return div;
+  }
+
+  addFormElements(table, formContainer) {
+    const loadAllButton = this.createLoadAllButton(table, formContainer);
+    formContainer.appendChild(loadAllButton);
+  }
+
+  createLoadAllButton(table, formContainer) {
     const loadAllButton = document.createElement("button");
     loadAllButton.innerText = "Load All";
     loadAllButton.classList.add("btn", "btn-primary");
     loadAllButton.addEventListener("click", async () => {
-      await this.loadResults(table);
+      await this.loadResults(table, formContainer);
     });
 
-    div.appendChild(loadAllButton);
-
-    this.#reportContainer.appendChild(div);
+    return loadAllButton;
   }
 
-  async loadData(table) {
+  async loadData(table, formContainer) {
     throw new Error("loadData is an abstract function and must be defined");
   }
 
@@ -94,12 +108,12 @@ class SkiReport {
     loadingIndicator.style.display = "none";
   }
 
-  async loadResults(table) {
+  async loadResults(table, formContainer) {
     window.requestAnimationFrame(async () => {
       const disabledElements = this.disableInteractiveElements();
       this.enableLoading();
       window.requestAnimationFrame(async () => {
-        await this.loadData(table);
+        await this.loadData(table, formContainer);
         this.disableLoading();
         this.enableInteractiveElements(disabledElements);
       });

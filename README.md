@@ -54,6 +54,7 @@ Options will also be updated to allow the user to enable/disable certain customi
 - Course
   - Global for Course
     - Enable sticky course header
+    - Enable course statistics button on home
   - Modules
     - Enable "Jump to Module" selection
   - People/Users

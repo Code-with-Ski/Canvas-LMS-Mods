@@ -103,3 +103,69 @@ tr[draggable=true] {
   padding: 1rem; 
   margin: 1rem -1rem -1rem;
 }
+
+html:not(.tox-fullscreen) div.ski-ui-sticky-top {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 98;
+  background-color: white;
+}
+
+div#wrapper.ski-ui-sticky-container div#context_modules > div.context_module {
+  scroll-margin-top: 4.5rem;
+}
+
+table.roster.ski-ui-inactive-hide tr.ski-ui-inactive-user {
+  display: none;
+}
+
+.ski-ui-hide {
+  display: none;
+}
+
+button.ski-ui-column-sort-btn {
+  background: none;
+  color: darkblue;
+  color: var(--ic-link-color);
+  border: none;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+button.ski-ui-column-sort-btn::after {
+  content: " ↕";
+}
+
+button.ski-ui-column-sort-btn[data-ski-sort-dir="asc"],
+button.ski-ui-column-sort-btn[data-ski-sort-dir="desc"] {
+  border: 1px solid;
+  border-radius: 5px;
+}
+
+button.ski-ui-column-sort-btn[data-ski-sort-dir="asc"]::after {
+  content: " ↑";
+}
+
+button.ski-ui-column-sort-btn[data-ski-sort-dir="desc"]::after {
+  content: " ↓";
+}
+
+table thead td.ski-column-search-field {
+  padding: 7px;
+}
+
+.ski-course-title-search,
+.ski-course-nickname-search,
+.ski-course-term-filter,
+.ski-course-role-filter,
+.ski-course-published-filter {
+  max-width: 90%;
+}
+
+.ski-course-view-grades:hover,
+.ski-course-view-grades:focus {
+  background-color: rgba(45, 59, 69, 0.1) !important;
+  border-width: 0.05rem !important;
+}

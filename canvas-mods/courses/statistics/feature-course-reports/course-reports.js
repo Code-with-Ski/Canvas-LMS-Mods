@@ -49,12 +49,12 @@
       addReport(customReportsDiv, SkiReportCourseAnnouncements);
       addReport(customReportsDiv, SkiReportCoursePages);
       addReport(customReportsDiv, SkiReportCourseModulesProgress);
+      addReport(customReportsDiv, SkiReportCourseEnrollments);
     }
   }
 
   function addReport(container, ReportConstructor) {
     const report = new ReportConstructor();
-    console.log(report);
     
     const details = document.createElement("details");
     details.classList.add("ski-ui");

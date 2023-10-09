@@ -22,6 +22,7 @@ function saveOptions() {
 
   // Course - Global settings
   const isCourseGlobalStickyHeaderEnabled = document.getElementById("course-global-sticky-header").checked;
+  const isCourseStatisticsButtonOnHomeEnabled = document.getElementById("course-statistics-button-on-home").checked;
 
   // Course - Modules settings
   const isCourseModulesJumpToEnabled = document.getElementById("course-modules-jump-to").checked;
@@ -122,6 +123,7 @@ function saveOptions() {
     allCoursesSearchFields: areSearchesEnabled,
     allCoursesColumnSorts: areColumnSortsEnabled,
     courseGlobalStickyHeader: isCourseGlobalStickyHeaderEnabled,
+    courseStatisticsButtonOnHome: isCourseStatisticsButtonOnHomeEnabled,
     courseModulesJumpToEnabled: isCourseModulesJumpToEnabled,
     coursePeopleExportEnabled: isCoursePeopleExportEnabled,
     coursePeopleInactiveFilter: isCoursePeopleInactiveFilterEnabled,
@@ -192,6 +194,7 @@ function restoreOptions() {
     allCoursesSearchFields: true,
     allCoursesColumnSorts: true,
     courseGlobalStickyHeader: true,
+    courseStatisticsButtonOnHome: true,
     courseModulesJumpToEnabled: true,
     coursePeopleExportEnabled: true,
     coursePeopleInactiveFilter: true,
@@ -224,7 +227,7 @@ function restoreOptions() {
     adminUsersAvatarResizable: true,
     adminUsersAddGradesLink: true,
     adminUsersGradesPersonalized: true,
-    adminTermsSearch: true,
+    adminTermsSearch: false,
     adminTermsMoveAddTerm: true,
     adminTermsTermId: true,
     adminProfilePicturesResizable: true,
@@ -260,6 +263,7 @@ function restoreOptions() {
 
     // Course - Global settings
     document.getElementById("course-global-sticky-header").checked = items.courseGlobalStickyHeader;
+    document.getElementById("course-statistics-button-on-home").checked = items.courseStatisticsButtonOnHome;
 
     // Course - Modules settings
     document.getElementById("course-modules-jump-to").checked = items.courseModulesJumpToEnabled;

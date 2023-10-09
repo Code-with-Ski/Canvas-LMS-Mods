@@ -91,6 +91,7 @@
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-pages.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-quizzes.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-submissions.js",
+        "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-enrollments.js",
         "canvas-mods/courses/statistics/feature-course-reports/course-reports.js"
       ],
       "css": ["utils/ski-ui-elements/ski-table-elements/ski-table-elements.css"]

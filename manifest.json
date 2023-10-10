@@ -1,8 +1,8 @@
 {
   "name": "Canvas LMS Mods (Basic)",
   "description": "This provides modifications to the Canvas LMS to improve the user experience visually and functionally.",
-  "version": "3.2.0",
-  "version_name": "3.2.0",
+  "version": "4.0.0",
+  "version_name": "4.0.0",
   "manifest_version": 3,
   "permissions": ["storage"],
   "host_permissions": [
@@ -70,9 +70,29 @@
       ]
     },
     {
+      "matches": ["*://*/courses/*/assignments"],
+      "js": [
+        "canvas-mods/courses/assignments/feature-load-assignment-details/load-assignment-details.js"
+      ]
+    },
+    {
       "matches": ["*://*/courses/*/assignments/*"],
       "js": [
-        "canvas-mods/courses/assignments/feature-export-grades/assignment-export-grades.js"
+        "canvas-mods/courses/assignments/feature-export-grades/assignment-export-grades.js",
+        "canvas-mods/courses/assignments/feature-rubric-use-for-grading-notification/rubric-use-for-grading-notification.js",
+        "canvas-mods/courses/assignments/feature-load-assignment-details/load-assignment-details.js"
+      ]
+    },
+    {
+      "matches": ["*://*/courses/*/quizzes"],
+      "js": [
+        "canvas-mods/courses/quizzes/feature-load-quiz-details/load-quiz-details.js"
+      ]
+    },
+    {
+      "matches": ["*://*/courses/*/discussion_topics"],
+      "js": [
+        "canvas-mods/courses/discussion-topics/feature-load-discussion-details/load-discussion-details.js"
       ]
     },
     {
@@ -190,7 +210,9 @@
       "matches": ["*://*/accounts/*/rubrics*", "*://*/courses/*/rubrics*"],
       "js": [
         "canvas-mods/shared-locations/rubrics/feature-drag-and-drop-rubric-rows/drag-and-drop-rubric-rows.js",
-        "canvas-mods/shared-locations/rubrics/feature-import-rubric/import-rubric.js"
+        "canvas-mods/shared-locations/rubrics/feature-import-rubric/import-rubric.js",
+        "canvas-mods/shared-locations/rubrics/feature-load-rubric-details/load-rubric-details.js",
+        "canvas-mods/shared-locations/rubrics/feature-load-rubric-associations/load-rubric-associations.js"
       ]
     }
   ],

@@ -4,7 +4,7 @@ The purpose of this repository is to provide a browser extension to use with Can
 
 This is currently being designed as a Chrome browser extension, but additional versions for other browsers may be developed in the future. The target audience for the initial version will be admin users as customizations will target the admin area of Canvas first.
 
-This will continue to grow in functionality. If you notice issues, please submit an issue and it will be investigated for consideration.  Suggestions for new features may be considered if they are low-code. Users are encouraged to continue to submit feature requests to Instructure in the Canvas Community to try to get them added as native features, especially for more advanced requests.
+This will continue to grow in functionality. If you notice issues, please submit an issue and it will be investigated for consideration. Suggestions for new features may be considered if they are low-code. Users are encouraged to continue to submit feature requests to Instructure in the Canvas Community to try to get them added as native features, especially for more advanced requests.
 
 If you find this code and/or extension useful, I would appreciate your support so that I can continue to maintain and enhance this project.
 
@@ -12,12 +12,12 @@ If you find this code and/or extension useful, I would appreciate your support s
 
 ## Change to Host Permissions
 
-Originally, I planned to limit host permissions to Canvas LMS specific sites.  While this works well for institutions on the default domain provided by Instructure, it has become time consuming to continue to manage support for custom domains.  To make it easier for users to begin using the tool without the need to request an update to accomodate their institution's custom domain, I have updated the host permissions in the manifest file to work on any site.  
+Originally, I planned to limit host permissions to Canvas LMS specific sites. While this works well for institutions on the default domain provided by Instructure, it has become time consuming to continue to manage support for custom domains. To make it easier for users to begin using the tool without the need to request an update to accomodate their institution's custom domain, I have updated the host permissions in the manifest file to work on any site.
 
-By default, the Instructure hosted Canvas LMS domains should work upon installation.  To ensure these features aren't accidentally applied to website that isn't the Canvas LMS, all other domains are permitted as optional.  To use this extension with a custom domain, you will need to update the settings on the extension to list it as a specific approved site or when clicked.  [Install and manage extensions](https://support.google.com/chrome_webstore/answer/2664769?hl=en)
+By default, the Instructure hosted Canvas LMS domains should work upon installation. To ensure these features aren't accidentally applied to website that isn't the Canvas LMS, all other domains are permitted as optional. To use this extension with a custom domain, you will need to update the settings on the extension to list it as a specific approved site or when clicked. [Install and manage extensions](https://support.google.com/chrome_webstore/answer/2664769?hl=en)
 
-If you would like to continue to keep the host permissions limited, you are welcome to make a copy of this repository and adjust the host permissions to be limited to your own domain.  If you have access to Developer mode in Google Chrome, you can then begin using your own local version of the extension.  [Loading an unpacked extension](https://developer.chrome.com/docs/extensions/mv3/getstarted/development-basics/#load-unpacked)
-*While I don't provide support for Microsoft Edge or Firefox at this time, you may be able to get it to work on those browsers too with little to no additional changes to the code.*
+If you would like to continue to keep the host permissions limited, you are welcome to make a copy of this repository and adjust the host permissions to be limited to your own domain. If you have access to Developer mode in Google Chrome, you can then begin using your own local version of the extension. [Loading an unpacked extension](https://developer.chrome.com/docs/extensions/mv3/getstarted/development-basics/#load-unpacked)
+_While I don't provide support for Microsoft Edge or Firefox at this time, you may be able to get it to work on those browsers too with little to no additional changes to the code._
 
 ## Code Organization
 
@@ -27,31 +27,37 @@ I am in the process of re-factoring and re-organizing features to reduce repeate
 
 ## Options
 
-Options will also be updated to allow the user to enable/disable certain customizations and adjust default values.  This is to help avoid potential conflicts with any local Canvas customizations and to allow the user some choice in the applied mods.
+Options will also be updated to allow the user to enable/disable certain customizations and adjust default values. This is to help avoid potential conflicts with any local Canvas customizations and to allow the user some choice in the applied mods.
 
 ## Current Customizations Available
 
 - Global
+
   - Enable full-width for body
 
 - Global Nav (All Users)
+
   - Enable indicator on the global nav when on the test server
   - Enable indicator on the global nav when on the beta server
 
 - Account (User)
+
   - Profile
     - Enable "View Grades" button on the profile
 
 - All Courses
+
   - Enable filters on enrollment lists (Term, Enrolled as, Published)
   - Enable search bars on enrollment lists (Course, Nickname)
   - Enable column sorts on enrollment lists
 
 - Dashboard
+
   - Enable "See all courses" button on the dashboard
   - Show current course grade on course cards for student enrollments (Uses Canvas LMS API)
 
 - Course
+
   - Global for Course
     - Enable sticky course header
     - Enable course statistics button on home
@@ -68,13 +74,14 @@ Options will also be updated to allow the user to enable/disable certain customi
     - Enable access report export to CSV button
   - SpeedGrader
     - Enable converting text that resembles links (begins with http:// or https://) to a hyperlink in the comments
-    - Enable changing the draft comment indicator from "*" to the "DRAFT"
+    - Enable changing the draft comment indicator from "\*" to the "DRAFT"
   - Statistics
     - Enable course reports
   - Assignments
     - Add export grades button to assignment page
 
 - Admin
+
   - Global Nav Admin Menu
     - Enable quick access admin links for course search, people search, and some account links (Uses Canvas LMS API)
   - Course Search
@@ -82,7 +89,7 @@ Options will also be updated to allow the user to enable/disable certain customi
     - Add additional search inputs (published/unpublished, sort by Canvas course id)
     - Add the course code to the course search results (Uses Canvas LMS API)
     - Add concluded icon to course names in search results, if the course is concluded (Uses Canvas LMS API)
-    - Convert subaccount name in search results to link to the course search for that subaccount (*Requires manage account settings permission) (Uses Canvas LMS API)
+    - Convert subaccount name in search results to link to the course search for that subaccount (\*Requires manage account settings permission) (Uses Canvas LMS API)
     - Convert number of students in search results to link to people in course
     - Add a "View Grades" button to the course search results
   - People
@@ -125,6 +132,8 @@ Options will also be updated to allow the user to enable/disable certain customi
     - Enable SIS History Log (Uses Canvas LMS API)
 
   Shared Features
+
   - Rubrics
     - Enabled drag-and-drop criteria rows when editing
     - Add import rubric criteria option
+    - On individual rubric, add rubric associations report

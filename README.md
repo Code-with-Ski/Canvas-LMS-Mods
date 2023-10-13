@@ -79,6 +79,7 @@ Options will also be updated to allow the user to enable/disable certain customi
     - Enable course reports
   - Assignments
     - Add export grades button to assignment page
+    - Add rubric used for grading indicator
 
 - Admin
 

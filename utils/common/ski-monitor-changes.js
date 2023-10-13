@@ -1,7 +1,11 @@
 "use strict";
 
 class SkiMonitorChanges {
-  static watchForElementByQuery(elementQuery, callbackFunction, config = { childList: true, subtree: true}) {
+  static watchForElementByQuery(
+    elementQuery,
+    callbackFunction,
+    config = { childList: true, subtree: true }
+  ) {
     const element = document.querySelector(elementQuery);
     if (element) {
       callbackFunction(element);
@@ -16,8 +20,12 @@ class SkiMonitorChanges {
       observer.observe(document.body, config);
     }
   }
-  
-  static watchForElementById(elementId, callbackFunction, config = { childList: true, subtree: true}) {
+
+  static watchForElementById(
+    elementId,
+    callbackFunction,
+    config = { childList: true, subtree: true }
+  ) {
     const element = document.getElementById(elementId);
     if (element) {
       callbackFunction(element);
@@ -33,24 +41,39 @@ class SkiMonitorChanges {
     }
   }
 
-  static watchForAttributeChangeOfElement(element, callbackFunction, conditionalFunctionToStopObserving = null) {
+  static watchForAttributeChangeOfElement(
+    element,
+    callbackFunction,
+    conditionalFunctionToStopObserving = null
+  ) {
     const observer = new MutationObserver((mutations) => {
       callbackFunction(element);
-      
-      if (conditionalFunctionToStopObserving && conditionalFunctionToStopObserving(element)) {
+
+      if (
+        conditionalFunctionToStopObserving &&
+        conditionalFunctionToStopObserving(element)
+      ) {
         observer.disconnect();
       }
     });
     observer.observe(element, { attributes: true });
   }
 
-  static watchForAddedNodesByParentId(parentId, callbackFunction, config = { childList: true, subtree: true}) {
+  static watchForAddedNodesByParentId(
+    parentId,
+    callbackFunction,
+    config = { childList: true, subtree: true }
+  ) {
     this.watchForElementById(parentId, (parentElement) => {
       this.watchForAddedNodesOfElement(parentElement, callbackFunction, config);
     });
   }
 
-  static watchForAddedNodesOfElement(element, callbackFunction, config = { childList: true, subtree: true}) {
+  static watchForAddedNodesOfElement(
+    element,
+    callbackFunction,
+    config = { childList: true, subtree: true }
+  ) {
     const observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         const addedNodes = [...mutation.addedNodes];
@@ -63,7 +86,12 @@ class SkiMonitorChanges {
     observer.observe(element, config);
   }
 
-  static watchForAddedNodeOfElement(element, querySelectorToFind, callbackFunction, config = { childList: true, subtree: true}) {
+  static watchForAddedNodeOfElement(
+    element,
+    querySelectorToFind,
+    callbackFunction,
+    config = { childList: true, subtree: true }
+  ) {
     const observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         const addedNodes = [...mutation.addedNodes];
@@ -80,7 +108,11 @@ class SkiMonitorChanges {
     observer.observe(element, config);
   }
 
-  static watchForRemovedNodesOfElement(element, callbackFunction, config = { childList: true, subtree: true}) {
+  static watchForRemovedNodesOfElement(
+    element,
+    callbackFunction,
+    config = { childList: true, subtree: true }
+  ) {
     const observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         const removedNodes = [...mutation.removedNodes];
@@ -93,7 +125,12 @@ class SkiMonitorChanges {
     observer.observe(element, config);
   }
 
-  static watchForChangeOfNodesByParentId(parentId, addedNodeCallbackFunction, removedNodeCallbackFunction, config = { childList: true, subtree: true}) {
+  static watchForChangeOfNodesByParentId(
+    parentId,
+    addedNodeCallbackFunction,
+    removedNodeCallbackFunction,
+    config = { childList: true, subtree: true }
+  ) {
     this.watchForElementById(parentId, (parentElement) => {
       const observer = new MutationObserver((mutations) => {
         for (const mutation of mutations) {
@@ -119,5 +156,16 @@ class SkiMonitorChanges {
     } else {
       window.addEventListener("load", callbackFunction);
     }
+  }
+
+  static watchForElementChanges(
+    element,
+    callbackFunction,
+    config = { childList: true, subtree: true }
+  ) {
+    const observer = new MutationObserver((mutations) => {
+      callbackFunction(element);
+    });
+    observer.observe(element, config);
   }
 }

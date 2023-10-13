@@ -91,6 +91,9 @@ function saveOptions() {
   const isAssignmentGradesExportButtonEnabled = document.getElementById(
     "course-assignments-assignment-export-grades"
   ).checked;
+  const isRubricUsedForGradingIndicatorEnabled = document.getElementById(
+    "course-assignments-assignment-rubric-grading-indicator"
+  ).checked;
 
   // Admin - Courses settings
   const isBlueprintInputFillPrevent = document.getElementById(
@@ -256,6 +259,8 @@ function saveOptions() {
         isSpeedGraderDraftCommentIndicatorReplaced,
       courseStatisticsCourseReport: isStatisticsCourseReportsEnabled,
       courseAssignmentExportGrades: isAssignmentGradesExportButtonEnabled,
+      courseAssignmentRubricUsedForGradingCheck:
+        isRubricUsedForGradingIndicatorEnabled,
       adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
       adminCoursesSubaccountLink: isAdminCoursesSubaccountLinkEnabled,
       adminCoursesConcludedIcon: isCourseConcludedIconEnabled,
@@ -331,6 +336,7 @@ function restoreOptions() {
       courseSpeedGraderDraftCommentIndicator: true,
       courseStatisticsCourseReport: true,
       courseAssignmentExportGrades: true,
+      courseAssignmentRubricUsedForGradingCheck: true,
       adminCoursesBlueprintInputPreventFill: true,
       adminCoursesAdditionalSearchInputs: true,
       adminCoursesCourseCode: true,
@@ -443,6 +449,9 @@ function restoreOptions() {
       document.getElementById(
         "course-assignments-assignment-export-grades"
       ).checked = items.courseAssignmentExportGrades;
+      document.getElementById(
+        "course-assignments-assignment-rubric-grading-indicator"
+      ).checked = items.courseAssignmentRubricUsedForGradingCheck;
 
       // Admin - Courses settings
       document.getElementById(

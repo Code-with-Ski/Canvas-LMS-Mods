@@ -88,6 +88,9 @@ function saveOptions() {
   ).checked;
 
   // Course - Assignments settings
+  const isAssignmentsLoadDetailsEnabled = document.getElementById(
+    "course-assignments-load-details"
+  ).checked;
   const isAssignmentGradesExportButtonEnabled = document.getElementById(
     "course-assignments-assignment-export-grades"
   ).checked;
@@ -258,6 +261,7 @@ function saveOptions() {
       courseSpeedGraderDraftCommentIndicator:
         isSpeedGraderDraftCommentIndicatorReplaced,
       courseStatisticsCourseReport: isStatisticsCourseReportsEnabled,
+      courseAssignmentsLoadDetails: isAssignmentsLoadDetailsEnabled,
       courseAssignmentExportGrades: isAssignmentGradesExportButtonEnabled,
       courseAssignmentRubricUsedForGradingCheck:
         isRubricUsedForGradingIndicatorEnabled,
@@ -335,6 +339,7 @@ function restoreOptions() {
       courseSpeedGraderCommentsWithHyperlinksEnabled: true,
       courseSpeedGraderDraftCommentIndicator: true,
       courseStatisticsCourseReport: true,
+      courseAssignmentsLoadDetails: true,
       courseAssignmentExportGrades: true,
       courseAssignmentRubricUsedForGradingCheck: true,
       adminCoursesBlueprintInputPreventFill: true,
@@ -446,6 +451,8 @@ function restoreOptions() {
         items.courseStatisticsCourseReport;
 
       // Course - Assignments settings
+      document.getElementById("course-assignments-load-details").checked =
+        items.courseAssignmentsLoadDetails;
       document.getElementById(
         "course-assignments-assignment-export-grades"
       ).checked = items.courseAssignmentExportGrades;

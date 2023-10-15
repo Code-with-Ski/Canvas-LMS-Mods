@@ -201,10 +201,10 @@ function saveOptions() {
 
   // Admin - Terms settings
   const isTermsSearchable =
-    document.getElementById("admin-terms-search").checked;
+    document.getElementById("admin-terms-search").checked; // [DEPRECATED]
   const isAddTermMoved = document.getElementById(
     "admin-terms-move-add-term"
-  ).checked;
+  ).checked; // [DEPRECATED]
   const isTermIdShown = document.getElementById("admin-terms-term-id").checked;
 
   // Admin - Question Banks settings
@@ -291,8 +291,8 @@ function saveOptions() {
       adminUsersAvatarResizable: isAvatarImgResizable,
       adminUsersAddGradesLink: isAdminUsersGradesLinkEnabled,
       adminUsersGradesPersonalized: isAdminUsersGradesPersonalized,
-      adminTermsSearch: isTermsSearchable,
-      adminTermsMoveAddTerm: isAddTermMoved,
+      adminTermsSearch: isTermsSearchable, // [DEPRECATED]
+      adminTermsMoveAddTerm: isAddTermMoved, // [DEPRECATED]
       adminTermsTermId: isTermIdShown,
       adminProfilePicturesResizable: isProfileAvatarImgResizable,
       adminProfilePicturesDefaultHeight: profileImageDefaultSize,
@@ -370,8 +370,8 @@ function restoreOptions() {
       adminUsersAvatarResizable: true,
       adminUsersAddGradesLink: true,
       adminUsersGradesPersonalized: true,
-      adminTermsSearch: false,
-      adminTermsMoveAddTerm: true,
+      adminTermsSearch: false, // [DEPRECATED]
+      adminTermsMoveAddTerm: false, // [DEPRECATED]
       adminTermsTermId: true,
       adminProfilePicturesResizable: true,
       adminProfilePicturesDefaultHeight: "200px",
@@ -547,9 +547,9 @@ function restoreOptions() {
 
       // Admin - Terms settings
       document.getElementById("admin-terms-search").checked =
-        items.adminTermsSearch;
+        items.adminTermsSearch; // [DEPRECATED]
       document.getElementById("admin-terms-move-add-term").checked =
-        items.adminTermsMoveAddTerm;
+        items.adminTermsMoveAddTerm; // [DEPRECATED]
       document.getElementById("admin-terms-term-id").checked =
         items.adminTermsTermId;
 

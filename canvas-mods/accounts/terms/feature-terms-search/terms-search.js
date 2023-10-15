@@ -2,7 +2,7 @@
   if (/^\/accounts\/[0-9]+\/terms/.test(window.location.pathname)) {
     chrome.storage.sync.get(
       {
-        adminTermsSearch: true,
+        adminTermsSearch: false,
       },
       function (items) {
         if (items.adminTermsSearch) {

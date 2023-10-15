@@ -1,7 +1,9 @@
 "use strict";
 
 (() => {
-  if (/^\/courses\/[0-9]+\/assignments\/[0-9]+$/.test(window.location.pathname)) {
+  if (
+    /^\/courses\/[0-9]+\/assignments\/[0-9]+$/.test(window.location.pathname)
+  ) {
     chrome.storage.sync.get(
       {
         courseAssignmentExportGrades: true,
@@ -15,14 +17,22 @@
   }
 
   function watchForGradedRatioSpan() {
-    SkiMonitorChanges.watchForElementById("ratio_of_submissions_graded", addExportGradesButton);
+    SkiMonitorChanges.watchForElementById(
+      "ratio_of_submissions_graded",
+      addExportGradesButton
+    );
   }
 
   function addExportGradesButton(gradedRatioSpan) {
     const exportGrades = createExportGradesButton();
-    gradedRatioSpan.parentElement.insertAdjacentElement("afterend", exportGrades);
+    gradedRatioSpan.parentElement.insertAdjacentElement(
+      "afterend",
+      exportGrades
+    );
 
-    const rubric = document.querySelector("div.rubric_container.rubric div.rubric_title");
+    const rubric = document.querySelector(
+      "div.rubric_container.rubric div.rubric_title"
+    );
     if (rubric) {
       const exportGradesByCriteria = createExportGradesByCriteriaButton();
       exportGrades.insertAdjacentElement("afterend", exportGradesByCriteria);
@@ -40,14 +50,21 @@
     button.addEventListener("click", async () => {
       button.disabled = true;
       const params = {
-        "per_page": 100,
-        "include[]": ["submission_comments", "rubric_assessment", "assignment", "course", "user", "read_status"]
-      }
+        per_page: 100,
+        "include[]": [
+          "submission_comments",
+          "rubric_assessment",
+          "assignment",
+          "course",
+          "user",
+          "read_status",
+        ],
+      };
       const submissions = await getSubmissions(courseId, assignmentId, params);
       const [exportData, maxNumOfCriteria] = extractDataForExport(submissions);
       downloadDataAsCSV(exportData, maxNumOfCriteria);
       button.disabled = false;
-    })
+    });
 
     return button;
   }
@@ -57,19 +74,30 @@
     button.innerText = "Export Grades by Criteria";
     button.classList.add("btn", "button-sidebar-wide");
 
-    const courseId = (document.location.pathname).split("/courses/")[1].split("/")[0];
-    const assignmentId = (document.location.pathname).split("/assignments/")[1].split("?")[0];
+    const courseId = document.location.pathname
+      .split("/courses/")[1]
+      .split("/")[0];
+    const assignmentId = document.location.pathname
+      .split("/assignments/")[1]
+      .split("?")[0];
     button.addEventListener("click", async () => {
       button.disabled = true;
       const params = {
-        "per_page": 100,
-        "include[]": ["submission_comments", "rubric_assessment", "assignment", "course", "user", "read_status"]
-      }
+        per_page: 100,
+        "include[]": [
+          "submission_comments",
+          "rubric_assessment",
+          "assignment",
+          "course",
+          "user",
+          "read_status",
+        ],
+      };
       const submissions = await getSubmissions(courseId, assignmentId, params);
       const exportData = extractDataForExportByCriteria(submissions);
       downloadDataAsCSV(exportData, 1);
       button.disabled = false;
-    })
+    });
 
     return button;
   }
@@ -97,17 +125,26 @@
         submission.submitted_at,
         submission.graded_at,
         submission.submission_type,
-        submission.comments ? [...(submission.comments).map((comment) => { return `${comment.comment} [Author: ${comment?.author?.display_name}]`})].join("; ") : "",
+        submission.comments
+          ? [
+              ...submission.comments.map((comment) => {
+                return `${comment.comment} [Author: ${comment?.author?.display_name}]`;
+              }),
+            ].join("; ")
+          : "",
         submission.grade,
-        submission.score
-      ]
+        submission.score,
+      ];
 
       const rubric = submission.assignment.rubric;
-      if (!rubric) { continue; }
+      if (!rubric) {
+        data.push(rowData);
+        continue;
+      }
 
       maxNumOfCriteria = Math.max(maxNumOfCriteria, rubric.length);
 
-      const rubricDict = {}
+      const rubricDict = {};
       for (const criteria of rubric) {
         rubricDict[criteria.id] = criteria;
       }
@@ -118,20 +155,25 @@
       rowData.push(rubricSettings.points_possible);
 
       const rubricAssessment = submission.rubric_assessment;
-      const hasRubricAssessment = !!rubricAssessment
-      rowData.push(hasRubricAssessment)
-      if (!hasRubricAssessment) { continue; }
+      const hasRubricAssessment = !!rubricAssessment;
+      rowData.push(hasRubricAssessment);
+      if (!hasRubricAssessment) {
+        data.push(rowData);
+        continue;
+      }
 
       for (const criteriaId of Object.keys(rubricAssessment)) {
-        const criteriaRating = rubricAssessment[criteriaId]
-        const criteriaDetails = rubricDict[criteriaId]
-        rowData.push(criteriaId)
-        rowData.push(criteriaDetails.outcome_id || criteriaDetails.learning_outcome_id)
-        rowData.push(criteriaDetails.description)
-        rowData.push(criteriaDetails.long_description)
-        rowData.push(criteriaDetails.points)
-        rowData.push(criteriaRating.points)
-        rowData.push(criteriaRating.comments)
+        const criteriaRating = rubricAssessment[criteriaId];
+        const criteriaDetails = rubricDict[criteriaId];
+        rowData.push(criteriaId);
+        rowData.push(
+          criteriaDetails.outcome_id || criteriaDetails.learning_outcome_id
+        );
+        rowData.push(criteriaDetails.description);
+        rowData.push(criteriaDetails.long_description);
+        rowData.push(criteriaDetails.points);
+        rowData.push(criteriaRating.points);
+        rowData.push(criteriaRating.comments);
       }
 
       data.push(rowData);
@@ -163,17 +205,26 @@
         submission.submitted_at,
         submission.graded_at,
         submission.submission_type,
-        submission.comments ? [...(submission.comments).map((comment) => { return `${comment.comment} [Author: ${comment?.author?.display_name}]`})].join("; ") : "",
+        submission.comments
+          ? [
+              ...submission.comments.map((comment) => {
+                return `${comment.comment} [Author: ${comment?.author?.display_name}]`;
+              }),
+            ].join("; ")
+          : "",
         submission.grade,
-        submission.score
-      ]
+        submission.score,
+      ];
 
       const rubric = submission.assignment.rubric;
-      if (!rubric) { continue; }
+      if (!rubric) {
+        data.push(rowData);
+        continue;
+      }
 
       maxNumOfCriteria = Math.max(maxNumOfCriteria, rubric.length);
 
-      const rubricDict = {}
+      const rubricDict = {};
       for (const criteria of rubric) {
         rubricDict[criteria.id] = criteria;
       }
@@ -184,22 +235,27 @@
       rowData.push(rubricSettings.points_possible);
 
       const rubricAssessment = submission.rubric_assessment;
-      const hasRubricAssessment = !!rubricAssessment
-      rowData.push(hasRubricAssessment)
-      if (!hasRubricAssessment) { continue; }
+      const hasRubricAssessment = !!rubricAssessment;
+      rowData.push(hasRubricAssessment);
+      if (!hasRubricAssessment) {
+        data.push(rowData);
+        continue;
+      }
 
       for (const criteriaId of Object.keys(rubricAssessment)) {
-        const rowDataCopy = [...rowData]
-        const criteriaRating = rubricAssessment[criteriaId]
-        const criteriaDetails = rubricDict[criteriaId]
-        rowDataCopy.push(criteriaId)
-        rowDataCopy.push(criteriaDetails.outcome_id || criteriaDetails.learning_outcome_id)
-        rowDataCopy.push(criteriaDetails.description)
-        rowDataCopy.push(criteriaDetails.long_description)
-        rowDataCopy.push(criteriaDetails.points)
-        rowDataCopy.push(criteriaRating.points)
-        rowDataCopy.push(criteriaRating.comments)
-        data.push(rowDataCopy)
+        const rowDataCopy = [...rowData];
+        const criteriaRating = rubricAssessment[criteriaId];
+        const criteriaDetails = rubricDict[criteriaId];
+        rowDataCopy.push(criteriaId);
+        rowDataCopy.push(
+          criteriaDetails.outcome_id || criteriaDetails.learning_outcome_id
+        );
+        rowDataCopy.push(criteriaDetails.description);
+        rowDataCopy.push(criteriaDetails.long_description);
+        rowDataCopy.push(criteriaDetails.points);
+        rowDataCopy.push(criteriaRating.points);
+        rowDataCopy.push(criteriaRating.comments);
+        data.push(rowDataCopy);
       }
     }
 
@@ -207,7 +263,9 @@
   }
 
   function cleanData(data) {
-    if (typeof data !== "string") { return data; }
+    if (typeof data !== "string") {
+      return data;
+    }
     // Remove multiple spaces and new line characters to avoid breaking CSV
     data = data.replace(/(\r\n|\n|\r)/gm, "").replace(/(\s\s)/gm, " ");
     // Escape double-quote with double-double-quote
@@ -241,25 +299,25 @@
       "rubric_id",
       "rubric_title",
       "rubric_points_possible",
-      "has_rubric_assessment"
+      "has_rubric_assessment",
     ];
     if (maxNumOfCriteria == 1) {
-      headerRow.push(`criteria_id`)
-      headerRow.push(`outcome_id`)
-      headerRow.push(`description`)
-      headerRow.push(`long_desc`)
-      headerRow.push(`points_possible`)
-      headerRow.push(`score`)
-      headerRow.push(`comment`)
+      headerRow.push(`criteria_id`);
+      headerRow.push(`outcome_id`);
+      headerRow.push(`description`);
+      headerRow.push(`long_desc`);
+      headerRow.push(`points_possible`);
+      headerRow.push(`score`);
+      headerRow.push(`comment`);
     } else {
       for (let i = 1; i <= maxNumOfCriteria; i++) {
-        headerRow.push(`criteria_id_${i}`)
-        headerRow.push(`outcome_id_${i}`)
-        headerRow.push(`description_${i}`)
-        headerRow.push(`long_desc_${i}`)
-        headerRow.push(`points_possible_${i}`)
-        headerRow.push(`score_${i}`)
-        headerRow.push(`comment_${i}`)
+        headerRow.push(`criteria_id_${i}`);
+        headerRow.push(`outcome_id_${i}`);
+        headerRow.push(`description_${i}`);
+        headerRow.push(`long_desc_${i}`);
+        headerRow.push(`points_possible_${i}`);
+        headerRow.push(`score_${i}`);
+        headerRow.push(`comment_${i}`);
       }
     }
     csv.push(headerRow.join(","));
@@ -275,7 +333,9 @@
     const csvString = csv.join("\n");
 
     // Download it
-    const filename = `export_grades_${maxNumOfCriteria == 1 ? "by_criteria_": ""}${new Date().toLocaleString()}.csv`;
+    const filename = `export_grades_${
+      maxNumOfCriteria == 1 ? "by_criteria_" : ""
+    }${new Date().toLocaleString()}.csv`;
     const link = document.createElement("a");
     link.style.display = "none";
     link.setAttribute("target", "_blank");
@@ -289,7 +349,7 @@
     document.body.removeChild(link);
   }
 
-  async function getSubmissions(courseId, assignmentId, params={}) {
+  async function getSubmissions(courseId, assignmentId, params = {}) {
     const endPointUrl = `/api/v1/courses/${courseId}/assignments/${assignmentId}/submissions`;
     const submissions = await SkiCanvasLmsApiCaller.getRequestAllPages(
       endPointUrl,

@@ -98,6 +98,11 @@ function saveOptions() {
     "course-assignments-assignment-rubric-grading-indicator"
   ).checked;
 
+  // Course - Discussions settings
+  const isDiscussionGradeExportEnabled = document.getElementById(
+    "course-discussions-discussion-export-grades"
+  ).checked;
+
   // Admin - Courses settings
   const isBlueprintInputFillPrevent = document.getElementById(
     "admin-courses-blueprint-input-prevent-fill"
@@ -264,6 +269,7 @@ function saveOptions() {
       courseAssignmentExportGrades: isAssignmentGradesExportButtonEnabled,
       courseAssignmentRubricUsedForGradingCheck:
         isRubricUsedForGradingIndicatorEnabled,
+      courseDiscussionExportGrades: isDiscussionGradeExportEnabled,
       adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
       adminCoursesSubaccountLink: isAdminCoursesSubaccountLinkEnabled,
       adminCoursesConcludedIcon: isCourseConcludedIconEnabled,
@@ -342,6 +348,7 @@ function restoreOptions() {
       courseAssignmentsLoadDetails: true,
       courseAssignmentExportGrades: true,
       courseAssignmentRubricUsedForGradingCheck: true,
+      courseDiscussionExportGrades: true,
       adminCoursesBlueprintInputPreventFill: true,
       adminCoursesAdditionalSearchInputs: true,
       adminCoursesCourseCode: true,
@@ -460,6 +467,11 @@ function restoreOptions() {
       document.getElementById(
         "course-assignments-assignment-rubric-grading-indicator"
       ).checked = items.courseAssignmentRubricUsedForGradingCheck;
+
+      // Course - Discussions settings
+      document.getElementById(
+        "course-discussions-discussion-export-grades"
+      ).checked = items.courseDiscussionExportGrades;
 
       // Admin - Courses settings
       document.getElementById(

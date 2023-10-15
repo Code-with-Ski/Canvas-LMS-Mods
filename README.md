@@ -76,11 +76,13 @@ Options will also be updated to allow the user to enable/disable certain customi
     - Enable converting text that resembles links (begins with http:// or https://) to a hyperlink in the comments
     - Enable changing the draft comment indicator from "\*" to the "DRAFT"
   - Statistics
-    - Enable course reports
+    - Enable course reports (Uses Canvas LMS API)
   - Assignments
-    - Add load assignment details button on assignments page
-    - Add export grades button to assignment page
-    - Add rubric used for grading indicator
+    - Add load assignment details button on assignments page (Uses Canvas LMS API)
+    - Add export grades button to assignment page (Uses Canvas LMS API)
+    - Add rubric used for grading indicator (Uses Canvas LMS API)
+  - Discussions
+    - Add export grades button to discussion page (Uses Canvas LMS API)
 
 - Admin
 
@@ -127,8 +129,8 @@ Options will also be updated to allow the user to enable/disable certain customi
     - Enable show Canvas account ID
     - Enable show SIS account ID (Uses Canvas LMS API)
   - Terms
-    - Add a search ability to the terms
-    - Move the add term button to the top of the terms table
+    - [DEPRECATED] Add a search ability to the terms
+    - [DEPRECATED] Move the add term button to the top of the terms table
     - Show the Canvas Term ID
   - SIS Import
     - Enable SIS History Log (Uses Canvas LMS API)
@@ -137,5 +139,5 @@ Options will also be updated to allow the user to enable/disable certain customi
 
   - Rubrics
     - Enabled drag-and-drop criteria rows when editing
-    - Add import rubric criteria option
-    - On individual rubric, add rubric associations report
+    - Add import rubric criteria option (Uses Canvas LMS API)
+    - On individual rubric, add rubric associations report (Uses Canvas LMS API)

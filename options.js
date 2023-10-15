@@ -202,11 +202,6 @@ function saveOptions() {
   ).checked;
   const isTermIdShown = document.getElementById("admin-terms-term-id").checked;
 
-  // Admin - Rubrics settings
-  const isRubricsSearchable = document.getElementById(
-    "admin-rubrics-search"
-  ).checked;
-
   // Admin - Question Banks settings
   const isQuestionBanksSearchable = document.getElementById(
     "admin-question-banks-search"
@@ -231,6 +226,10 @@ function saveOptions() {
   ).checked;
   const isRubricsImportCriteriaEnabled = document.getElementById(
     "rubrics-import-criteria"
+  ).checked;
+  const isRubricsSearchable = document.getElementById("rubrics-search").checked;
+  const isRubricsLoadDetailsEnabled = document.getElementById(
+    "rubrics-load-details"
   ).checked;
   const isRubricReportEnabled =
     document.getElementById("rubric-report").checked;
@@ -292,13 +291,14 @@ function saveOptions() {
       adminProfilePicturesResizable: isProfileAvatarImgResizable,
       adminProfilePicturesDefaultHeight: profileImageDefaultSize,
       adminProfilePicturesSquare: isRoundedSquare,
-      adminRubricsSearch: isRubricsSearchable,
       adminQuestionBanksSearch: isQuestionBanksSearchable,
       adminSubAccountsCanvasId: isCanvasAccountIdShown,
       adminSubAccountsSisId: isSisAccountIdShown,
       adminSisImportLog: isSisImportLogEnabled,
       rubricsImport: isRubricsDragDropCriteriaEnabled,
       rubricsDragDropCriteria: isRubricsImportCriteriaEnabled,
+      rubricsSearch: isRubricsSearchable,
+      rubricsLoadDetails: isRubricsLoadDetailsEnabled,
       rubricDetailsReport: isRubricReportEnabled,
     },
     function () {
@@ -369,13 +369,14 @@ function restoreOptions() {
       adminProfilePicturesResizable: true,
       adminProfilePicturesDefaultHeight: "200px",
       adminProfilePicturesSquare: true,
-      adminRubricsSearch: true,
       adminQuestionBanksSearch: true,
       adminSubAccountsCanvasId: true,
       adminSubAccountsSisId: true,
       adminSisImportLog: true,
       rubricsImport: true,
       rubricsDragDropCriteria: true,
+      rubricsSearch: true,
+      rubricsLoadDetails: true,
       rubricDetailsReport: true,
     },
     function (items) {
@@ -522,10 +523,6 @@ function restoreOptions() {
       document.getElementById("admin-profile-pictures-square").checked =
         items.adminProfilePicturesSquare;
 
-      // Admin - Rubrics settings
-      document.getElementById("admin-rubrics-search").checked =
-        items.adminRubricsSearch;
-
       // Admin - Question Banks settings
       document.getElementById("admin-question-banks-search").checked =
         items.adminQuestionBanksSearch;
@@ -553,6 +550,10 @@ function restoreOptions() {
         items.rubricsDragDropCriteria;
       document.getElementById("rubrics-import-criteria").checked =
         items.rubricsImport;
+      document.getElementById("rubrics-search").checked =
+        items.adminRubricsSearch;
+      document.getElementById("rubrics-load-details").checked =
+        items.rubricsLoadDetails;
       document.getElementById("rubric-report").checked =
         items.rubricDetailsReport;
     }

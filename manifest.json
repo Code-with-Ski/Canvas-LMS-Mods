@@ -92,15 +92,9 @@
       ]
     },
     {
-      "matches": ["*://*/courses/*/quizzes"],
+      "matches": ["*://*/courses/*/discussion_topics/*"],
       "js": [
-        "canvas-mods/courses/quizzes/feature-load-quiz-details/load-quiz-details.js"
-      ]
-    },
-    {
-      "matches": ["*://*/courses/*/discussion_topics"],
-      "js": [
-        "canvas-mods/courses/discussion-topics/feature-load-discussion-details/load-discussion-details.js"
+        "canvas-mods/courses/discussion-topics/feature-export-grades/discussion-export-grades.js"
       ]
     },
     {
@@ -187,10 +181,6 @@
       ]
     },
     {
-      "matches": ["*://*/accounts/*/rubrics"],
-      "js": ["canvas-mods/accounts/rubrics/feature-search-rubrics/rubrics.js"]
-    },
-    {
       "matches": ["*://*/accounts/*/question_banks"],
       "js": [
         "canvas-mods/accounts/question_banks/feature-search-question-banks/search-question-banks.js"
@@ -218,6 +208,7 @@
         "canvas-mods/shared-locations/rubrics/feature-drag-and-drop-rubric-rows/drag-and-drop-rubric-rows.js",
         "canvas-mods/shared-locations/rubrics/feature-import-rubric/import-rubric.js",
         "canvas-mods/shared-locations/rubrics/feature-load-rubric-details/load-rubric-details.js",
+        "canvas-mods/shared-locations/rubrics/feature-search-rubrics/search-rubrics.js",
         "canvas-mods/shared-locations/rubrics/feature-load-rubric-associations/load-rubric-associations.js"
       ]
     }

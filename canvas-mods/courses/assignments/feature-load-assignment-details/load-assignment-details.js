@@ -8,19 +8,22 @@
     chrome.storage.sync.get(
       {
         courseAssignmentsLoadDetails: true,
+        courseAssignmentsLoadDetailsTurnitin: true,
       },
       function (items) {
         if (items.courseAssignmentsLoadDetails) {
           SkiMonitorChanges.watchForElementByQuery(
             "#settingsMountPoint ul.ui-menu",
-            addLoadDetailsItem
+            (menu) => {
+              addLoadDetailsItem(menu, items.courseAssignmentsLoadDetails);
+            }
           );
         }
       }
     );
   }
 
-  function addLoadDetailsItem(menu) {
+  function addLoadDetailsItem(menu, includeTurnitinDetails) {
     const listItem = document.createElement("li");
     listItem.setAttribute("role", "presentation");
     listItem.classList.add("ui-menu-item");
@@ -36,7 +39,7 @@
     `;
     link.addEventListener("click", async () => {
       menu.removeChild(listItem);
-      await loadAssignmentDetails();
+      await loadAssignmentDetails(includeTurnitinDetails);
       menu.insertAdjacentElement("beforeend", listItem);
     });
 
@@ -45,12 +48,14 @@
     menu.insertAdjacentElement("beforeend", listItem);
   }
 
-  async function loadAssignmentDetails() {
+  async function loadAssignmentDetails(includeTurnitinDetails) {
+    const courseId = window.location.pathname.split("/")[2];
+
     const assignmentRows = [
       ...document.querySelectorAll(".assignment-list .ig-row"),
     ];
     if (assignmentRows) {
-      const assignments = await getAssignments();
+      const assignments = await getAssignments(courseId);
       const assignmentsDict = {};
       for (const assignment of assignments) {
         assignmentsDict[assignment.id] = assignment;
@@ -147,7 +152,6 @@
         }
 
         if (rubric) {
-          const courseId = window.location.pathname.split("/")[2];
           if (useRubricForGrading) {
             rubricMessageContainer.innerHTML = `
               <span class="text-info">
@@ -183,18 +187,64 @@
           `;
         }
         rowInfo.appendChild(rubricMessageContainer);
+
+        if (includeTurnitinDetails) {
+          let turnitinMessageContainer =
+            row.querySelector(".ski-turnitin-info");
+          if (!turnitinMessageContainer) {
+            turnitinMessageContainer = document.createElement("div");
+            turnitinMessageContainer.classList.add("ski-turnitin-info");
+            turnitinMessageContainer.style.fontSize = "0.75rem";
+          }
+          if (
+            submissionTypes.includes("online_text_entry") ||
+            submissionTypes.includes("online_upload")
+          ) {
+            const assignmentWithWebHookInfo = await getAssignment(
+              courseId,
+              rowAssignmentId,
+              { "include[]": "webhook_info" }
+            );
+
+            if (
+              assignmentWithWebHookInfo?.turnitin_enabled ||
+              assignmentWithWebHookInfo?.tool_proxy_name?.startsWith("Turnitin")
+            ) {
+              turnitinMessageContainer.innerHTML = `
+                <span class="text-info">Turnitin enabled</span>
+              `;
+            } else {
+              turnitinMessageContainer.innerHTML = `
+                <span class="text-warning">
+                  <i class="icon-line icon-warning" style="font-size: 0.75rem;"></i> Turnitin not enabled
+                </span>
+              `;
+            }
+          } else {
+            turnitinMessageContainer.innerHTML = ``;
+          }
+          rowInfo.appendChild(turnitinMessageContainer);
+        }
       }
     }
   }
 
-  async function getAssignments() {
-    const courseId = window.location.pathname.split("/")[2];
+  async function getAssignments(courseId) {
     const endPointUrl = `/api/v1/courses/${courseId}/assignments`;
     const assignments = await SkiCanvasLmsApiCaller.getRequestAllPages(
       endPointUrl,
       { per_page: 50 }
     );
     return assignments;
+  }
+
+  async function getAssignment(courseId, assignmentId, params) {
+    const endPointUrl = `/api/v1/courses/${courseId}/assignments/${assignmentId}`;
+    const assignment = await SkiCanvasLmsApiCaller.getRequestAllPages(
+      endPointUrl,
+      params
+    );
+    return assignment;
   }
 
   async function getExternalTools() {

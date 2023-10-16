@@ -79,6 +79,7 @@ Options will also be updated to allow the user to enable/disable certain customi
     - Enable course reports (Uses Canvas LMS API)
   - Assignments
     - Add load assignment details button on assignments page (Uses Canvas LMS API)
+    - Include Turnitin check with assignment details (Uses Canvas LMS API)
     - Add export grades button to assignment page (Uses Canvas LMS API)
     - Add rubric used for grading indicator (Uses Canvas LMS API)
   - Discussions

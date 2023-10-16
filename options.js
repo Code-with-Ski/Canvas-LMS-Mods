@@ -91,6 +91,9 @@ function saveOptions() {
   const isAssignmentsLoadDetailsEnabled = document.getElementById(
     "course-assignments-load-details"
   ).checked;
+  const isAssignmentsLoadDetailsEnabledWithTurnitin = document.getElementById(
+    "course-assignments-load-details-turnitin"
+  ).checked;
   const isAssignmentGradesExportButtonEnabled = document.getElementById(
     "course-assignments-assignment-export-grades"
   ).checked;
@@ -266,6 +269,8 @@ function saveOptions() {
         isSpeedGraderDraftCommentIndicatorReplaced,
       courseStatisticsCourseReport: isStatisticsCourseReportsEnabled,
       courseAssignmentsLoadDetails: isAssignmentsLoadDetailsEnabled,
+      courseAssignmentsLoadDetailsTurnitin:
+        isAssignmentsLoadDetailsEnabledWithTurnitin,
       courseAssignmentExportGrades: isAssignmentGradesExportButtonEnabled,
       courseAssignmentRubricUsedForGradingCheck:
         isRubricUsedForGradingIndicatorEnabled,
@@ -346,6 +351,7 @@ function restoreOptions() {
       courseSpeedGraderDraftCommentIndicator: true,
       courseStatisticsCourseReport: true,
       courseAssignmentsLoadDetails: true,
+      courseAssignmentsLoadDetailsTurnitin: true,
       courseAssignmentExportGrades: true,
       courseAssignmentRubricUsedForGradingCheck: true,
       courseDiscussionExportGrades: true,
@@ -461,6 +467,9 @@ function restoreOptions() {
       // Course - Assignments settings
       document.getElementById("course-assignments-load-details").checked =
         items.courseAssignmentsLoadDetails;
+      document.getElementById(
+        "course-assignments-load-details-turnitin"
+      ).checked = items.courseAssignmentsLoadDetails;
       document.getElementById(
         "course-assignments-assignment-export-grades"
       ).checked = items.courseAssignmentExportGrades;

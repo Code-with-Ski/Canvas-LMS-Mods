@@ -71,13 +71,8 @@
             ];
             for (const exisitingNotification of exisitingNotifications) {
               exisitingNotification.innerHTML = `
-                <span class="text-info"><i class="icon-line icon-info"> Refresh page to update indicator</span>
+                <span class="text-info"><i class="icon-line icon-info"></i> Refresh page to update indicator</span>
               `;
-              const extraIcon =
-                exisitingNotification.parentElement.querySelector(
-                  ".ski-rubric-grading-notification > i"
-                );
-              extraIcon?.parentElement?.removeChild(extraIcon);
             }
           },
           () => {

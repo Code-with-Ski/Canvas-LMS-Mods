@@ -1,8 +1,8 @@
 {
   "name": "Canvas LMS Mods (Basic)",
   "description": "This provides modifications to the Canvas LMS to improve the user experience visually and functionally.",
-  "version": "3.2.0",
-  "version_name": "3.2.0",
+  "version": "4.0.0",
+  "version_name": "4.0.0",
   "manifest_version": 3,
   "permissions": ["storage"],
   "host_permissions": [
@@ -18,9 +18,17 @@
         "utils/common/ski-canvas-lms-api-calls.js",
         "utils/common/ski-monitor-changes.js",
         "canvas-mods/shared-locations/global/feature-full-width-body/full-width-body.js",
-        "canvas-mods/shared-locations/global/feature-admin-quick-access/feature-admin-quick-access-global-nav.js"
+        "canvas-mods/shared-locations/global/feature-admin-quick-access/feature-admin-quick-access-global-nav.js",
+        "utils/ski-ui-elements/ski-table-elements/ski-table-config.js",
+        "utils/ski-ui-elements/ski-table-elements/ski-table-heading-config.js",
+        "utils/ski-ui-elements/ski-table-elements/ski-table-data-config.js",
+        "utils/ski-ui-elements/ski-table-elements/ski-table.js",
+        "utils/ski-ui-elements/ski-report/ski-report.js"
       ],
-      "css": ["utils/ski-ui-elements/ski-ui-styles.css"]
+      "css": [
+        "utils/ski-ui-elements/ski-ui-styles.css",
+        "utils/ski-ui-elements/ski-table-elements/ski-table-elements.css"
+      ]
     },
     {
       "matches": ["*://*.test.instructure.com/*"],
@@ -70,19 +78,28 @@
       ]
     },
     {
+      "matches": ["*://*/courses/*/assignments"],
+      "js": [
+        "canvas-mods/courses/assignments/feature-load-assignment-details/load-assignment-details.js"
+      ]
+    },
+    {
       "matches": ["*://*/courses/*/assignments/*"],
       "js": [
-        "canvas-mods/courses/assignments/feature-export-grades/assignment-export-grades.js"
+        "canvas-mods/courses/assignments/feature-export-grades/assignment-export-grades.js",
+        "canvas-mods/courses/assignments/feature-rubric-use-for-grading-notification/rubric-use-for-grading-notification.js",
+        "canvas-mods/courses/assignments/feature-load-assignment-details/load-assignment-details.js"
+      ]
+    },
+    {
+      "matches": ["*://*/courses/*/discussion_topics/*"],
+      "js": [
+        "canvas-mods/courses/discussion-topics/feature-export-grades/discussion-export-grades.js"
       ]
     },
     {
       "matches": ["*://*/courses/*/statistics"],
       "js": [
-        "utils/ski-ui-elements/ski-table-elements/ski-table-config.js",
-        "utils/ski-ui-elements/ski-table-elements/ski-table-heading-config.js",
-        "utils/ski-ui-elements/ski-table-elements/ski-table-data-config.js",
-        "utils/ski-ui-elements/ski-table-elements/ski-table.js",
-        "utils/ski-ui-elements/ski-report/ski-report.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-announcements.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-assignments.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-discussion-replies.js",
@@ -93,8 +110,7 @@
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-submissions.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-enrollments.js",
         "canvas-mods/courses/statistics/feature-course-reports/course-reports.js"
-      ],
-      "css": ["utils/ski-ui-elements/ski-table-elements/ski-table-elements.css"]
+      ]
     },
     {
       "matches": ["*://*/courses/*/groups*"],
@@ -165,10 +181,6 @@
       ]
     },
     {
-      "matches": ["*://*/accounts/*/rubrics"],
-      "js": ["canvas-mods/accounts/rubrics/feature-search-rubrics/rubrics.js"]
-    },
-    {
       "matches": ["*://*/accounts/*/question_banks"],
       "js": [
         "canvas-mods/accounts/question_banks/feature-search-question-banks/search-question-banks.js"
@@ -187,10 +199,17 @@
       ]
     },
     {
-      "matches": ["*://*/accounts/*/rubrics*", "*://*/courses/*/rubrics*"],
+      "matches": [
+        "*://*/accounts/*/rubrics*", 
+        "*://*/courses/*/rubrics*"
+      ],
       "js": [
+        "utils/ski-ui-elements/ski-report/ski-report-rubric/ski-report-rubric-associations.js",
         "canvas-mods/shared-locations/rubrics/feature-drag-and-drop-rubric-rows/drag-and-drop-rubric-rows.js",
-        "canvas-mods/shared-locations/rubrics/feature-import-rubric/import-rubric.js"
+        "canvas-mods/shared-locations/rubrics/feature-import-rubric/import-rubric.js",
+        "canvas-mods/shared-locations/rubrics/feature-load-rubric-details/load-rubric-details.js",
+        "canvas-mods/shared-locations/rubrics/feature-search-rubrics/search-rubrics.js",
+        "canvas-mods/shared-locations/rubrics/feature-load-rubric-associations/load-rubric-associations.js"
       ]
     }
   ],

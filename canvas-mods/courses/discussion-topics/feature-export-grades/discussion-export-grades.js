@@ -2,51 +2,64 @@
 
 (() => {
   if (
-    /^\/courses\/[0-9]+\/assignments\/[0-9]+$/.test(window.location.pathname)
+    /^\/courses\/[0-9]+\/discussion_topics\/[0-9]+$/.test(
+      window.location.pathname
+    )
   ) {
     chrome.storage.sync.get(
       {
-        courseAssignmentExportGrades: true,
+        courseDiscussionExportGrades: true,
       },
       function (items) {
-        if (items.courseAssignmentExportGrades) {
-          watchForGradedRatioSpan();
+        if (items.courseDiscussionExportGrades) {
+          SkiMonitorChanges.watchForElementByQuery(
+            ".admin-links ul.ui-menu",
+            addExportGradesButton
+          );
         }
       }
     );
   }
 
-  function watchForGradedRatioSpan() {
-    SkiMonitorChanges.watchForElementById(
-      "ratio_of_submissions_graded",
-      addExportGradesButton
-    );
-  }
+  async function addExportGradesButton(menu) {
+    const splitPathname = document.location.pathname.split("/");
+    const courseId = splitPathname[2];
+    const discussionId = splitPathname[4].split("?")[0];
+    const discussion = await getDiscussion(courseId, discussionId);
+    const assignmentId = discussion?.assignment_id;
 
-  function addExportGradesButton(gradedRatioSpan) {
-    const exportGrades = createExportGradesButton();
-    gradedRatioSpan.parentElement.insertAdjacentElement(
-      "afterend",
-      exportGrades
-    );
+    if (assignmentId) {
+      const exportGrades = createExportGradesButton(courseId, assignmentId);
+      const item1 = document.createElement("li");
+      item1.classList.add("ui-menu-item");
+      item1.setAttribute("role", "presentation");
+      item1.appendChild(exportGrades);
+      menu.appendChild(item1);
 
-    const rubric = document.querySelector(
-      "div.rubric_container.rubric div.rubric_title"
-    );
-    if (rubric) {
-      const exportGradesByCriteria = createExportGradesByCriteriaButton();
-      exportGrades.insertAdjacentElement("afterend", exportGradesByCriteria);
+      const rubricLink = menu.querySelector(".rubric_dialog_trigger");
+      const rubricLinkText = rubricLink.innerText.trim();
+      const hasRubric = rubricLinkText != "Add Rubric";
+      if (hasRubric) {
+        const exportGradesByCriteria = createExportGradesByCriteriaButton(
+          courseId,
+          assignmentId
+        );
+        const item2 = document.createElement("li");
+        item2.classList.add("ui-menu-item");
+        item2.setAttribute("role", "presentation");
+        item2.appendChild(exportGradesByCriteria);
+        menu.appendChild(item2);
+      }
     }
   }
 
-  function createExportGradesButton() {
-    const button = document.createElement("button");
+  function createExportGradesButton(courseId, assignmentId) {
+    const button = document.createElement("a");
+    button.href = "#";
     button.innerText = "Export Grades";
-    button.classList.add("btn", "button-sidebar-wide");
+    button.classList.add("ui-corner-all");
+    button.setAttribute("role", "menuitem");
 
-    const splitPathname = document.location.pathname.split("/");
-    const courseId = splitPathname[2];
-    const assignmentId = splitPathname[4].split("?")[0];
     button.addEventListener("click", async () => {
       button.disabled = true;
       const params = {
@@ -69,17 +82,13 @@
     return button;
   }
 
-  function createExportGradesByCriteriaButton() {
-    const button = document.createElement("button");
+  function createExportGradesByCriteriaButton(courseId, assignmentId) {
+    const button = document.createElement("a");
+    button.href = "#";
     button.innerText = "Export Grades by Criteria";
-    button.classList.add("btn", "button-sidebar-wide");
+    button.classList.add("ui-corner-all");
+    button.setAttribute("role", "menuitem");
 
-    const courseId = document.location.pathname
-      .split("/courses/")[1]
-      .split("/")[0];
-    const assignmentId = document.location.pathname
-      .split("/assignments/")[1]
-      .split("?")[0];
     button.addEventListener("click", async () => {
       button.disabled = true;
       const params = {
@@ -95,7 +104,7 @@
       };
       const submissions = await getSubmissions(courseId, assignmentId, params);
       const exportData = extractDataForExportByCriteria(submissions);
-      downloadDataAsCSV(exportData, 1);
+      downloadDataAsCSV(exportData, 1, true);
       button.disabled = false;
     });
 
@@ -274,7 +283,7 @@
     return data;
   }
 
-  function downloadDataAsCSV(data, maxNumOfCriteria) {
+  function downloadDataAsCSV(data, maxNumOfCriteria, isByCriteria = false) {
     // Construct csv
     const csv = [];
     const headerRow = [
@@ -301,7 +310,7 @@
       "rubric_points_possible",
       "has_rubric_assessment",
     ];
-    if (maxNumOfCriteria == 1) {
+    if (isByCriteria) {
       headerRow.push(`criteria_id`);
       headerRow.push(`outcome_id`);
       headerRow.push(`description`);
@@ -334,7 +343,7 @@
 
     // Download it
     const filename = `export_grades_${
-      maxNumOfCriteria == 1 ? "by_criteria_" : ""
+      isByCriteria ? "by_criteria_" : ""
     }${new Date().toLocaleString()}.csv`;
     const link = document.createElement("a");
     link.style.display = "none";
@@ -347,6 +356,15 @@
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  }
+
+  async function getDiscussion(courseId, discussionId, params = {}) {
+    const endPointUrl = `/api/v1/courses/${courseId}/discussion_topics/${discussionId}`;
+    const discussion = await SkiCanvasLmsApiCaller.getRequestAllPages(
+      endPointUrl,
+      params
+    );
+    return discussion;
   }
 
   async function getSubmissions(courseId, assignmentId, params = {}) {

@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <link rel="stylesheet" href="options.css" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="options.css">
+    <title>Options | Canvas LMS Mods (Basic)</title>
   </head>
   <body>
     <h1>Enable/Disable Features and Customize Default Settings</h1>
@@ -141,9 +144,32 @@
       <details>
         <summary>Assignments</summary>
         <label>
+          <input type="checkbox" id="course-assignments-load-details" checked />
+          Enable load assignment details
+        </label>
+        <label>
+          <input type="checkbox" id="course-assignments-load-details-turnitin" checked />
+          Include Turnitin check when loading assignment details
+        </label>
+        <hr>
+        <p>Individual Assignment</p>
+        <label>
           <input type="checkbox" id="course-assignments-assignment-export-grades" checked />
           Enable export grades feature on assignment page
         </label>
+        <label>
+          <input type="checkbox" id="course-assignments-assignment-rubric-grading-indicator" checked />
+          Enable rubric used for grading indicator
+        </label>
+      </details>
+      <details>
+        <summary>Discussions</summary>
+        <hr>
+        <p>Individual Discussion</p>
+        <label>
+          <input type="checkbox" id="course-discussions-discussion-export-grades" checked />
+          Enable export grades
+        </label>        
       </details>
     </details>
 
@@ -354,14 +380,6 @@
       </details>
 
       <details>
-        <summary>Admin - Rubrics</summary>
-        <label>
-          <input type="checkbox" id="admin-rubrics-search" checked />
-          Enable search feature for rubrics
-        </label>
-      </details>
-
-      <details>
         <summary>Admin - QuestionBanks</summary>
         <label>
           <input type="checkbox" id="admin-question-banks-search" checked />
@@ -384,16 +402,16 @@
       <details>
         <summary>Admin - Terms</summary>
         <label>
-          <input type="checkbox" id="admin-terms-search" />
-          Enable search feature for terms
-        </label>
-        <label>
-          <input type="checkbox" id="admin-terms-move-add-term" checked />
-          Move Add Term button to the top of the terms table
-        </label>
-        <label>
           <input type="checkbox" id="admin-terms-term-id" checked />
           Show Canvas Term Id
+        </label>
+        <label>
+          <input type="checkbox" id="admin-terms-search" />
+          [DEPRECATED] Enable search feature for terms
+        </label>
+        <label>
+          <input type="checkbox" id="admin-terms-move-add-term" />
+          [DEPRECATED] Move Add Term button to the top of the terms table
         </label>
       </details>
 
@@ -417,6 +435,18 @@
         <label>
           <input type="checkbox" id="rubrics-import-criteria" checked />
           Enable import criteria details when editing
+        </label>
+        <label>
+          <input type="checkbox" id="rubrics-search" checked />
+          Enable search feature for rubrics
+        </label>
+        <label>
+          <input type="checkbox" id="rubrics-load-details" checked />
+          Enable rubrics load additional details
+        </label>
+        <label>
+          <input type="checkbox" id="rubric-report" checked />
+          Enable rubric details report on individual rubric
         </label>
       </details>
     </details>

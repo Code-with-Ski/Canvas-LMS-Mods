@@ -1,6 +1,6 @@
 class SkiReportCourseSubmissions extends SkiReport {
   #currentCourseId = window.location.pathname.split("/")[2];
-  
+
   constructor() {
     super("Submission Details");
   }
@@ -34,11 +34,94 @@ class SkiReportCourseSubmissions extends SkiReport {
     return table;
   }
 
-  async loadData(table) {
+  addFormElements(table, formContainer) {
+    // Assignment Selection
+    const assignmentSelection = this.createAssignmentSelection();
+    formContainer.appendChild(assignmentSelection);
+
+    // Adds Load All button
+    super.addFormElements(table, formContainer);
+  }
+
+  createAssignmentSelection() {
+    const assignmentSelectionFieldset = document.createElement("fieldset");
+    assignmentSelectionFieldset.classList.add("ski-ui");
+
+    const label = document.createElement("label");
+    label.innerText = "Select assignment to get submissions from:";
+    assignmentSelectionFieldset.appendChild(label);
+
+    const assignmentSelect = document.createElement("select");
+    assignmentSelect.classList.add("ski-ui", "ski-assignment-select");
+
+    const defaultAllOption = document.createElement("option");
+    defaultAllOption.value = "";
+    defaultAllOption.text = "All";
+    defaultAllOption.selected = true;
+    assignmentSelect.appendChild(defaultAllOption);
+
+    assignmentSelectionFieldset.appendChild(assignmentSelect);
+
+    this.addAssignmentOptions(assignmentSelect);
+
+    return assignmentSelectionFieldset;
+  }
+
+  async addAssignmentOptions(assignmentSelect) {
+    const courseId = window.location.pathname.split("/")[2];
     const assignments = await SkiCanvasLmsApiCaller.getRequestAllPages(
-      `/api/v1/courses/${this.#currentCourseId}/assignments`,
+      `/api/v1/courses/${courseId}/assignments`,
       { order_by: "due_at" }
     );
+
+    const assignmentsGroup = document.createElement("optgroup");
+    assignmentsGroup.label = "Assignments";
+    const discussionsGroup = document.createElement("optgroup");
+    discussionsGroup.label = "Discussions";
+    const quizzesGroup = document.createElement("optgroup");
+    quizzesGroup.label = "Quizzes";
+
+    for (const assignment of assignments) {
+      const option = document.createElement("option");
+      option.value = assignment.id;
+      option.text = `${assignment.name} *(ID: ${assignment.id})`;
+      if (assignment.hasOwnProperty("discussion_topic")) {
+        discussionsGroup.appendChild(option);
+      } else if (
+        assignment.hasOwnProperty("quiz_id") ||
+        assignment?.is_quiz_assignment
+      ) {
+        quizzesGroup.appendChild(option);
+      } else {
+        assignmentsGroup.appendChild(option);
+      }
+    }
+
+    assignmentSelect.appendChild(assignmentsGroup);
+    assignmentSelect.appendChild(discussionsGroup);
+    assignmentSelect.appendChild(quizzesGroup);
+  }
+
+  async loadData(table, formContainer) {
+    const selectedAssignmentId = formContainer.querySelector(
+      ".ski-assignment-select"
+    )?.value;
+    let assignments = [];
+    if (selectedAssignmentId) {
+      const assignment = await SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${
+          this.#currentCourseId
+        }/assignments/${selectedAssignmentId}`,
+        { order_by: "due_at" }
+      );
+      assignments.push(assignment);
+    } else {
+      assignments = await SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${this.#currentCourseId}/assignments`,
+        { order_by: "due_at" }
+      );
+    }
+
     const assignmentsDict = {};
     let maxRubricCriteria = 0;
     for (const assignment of assignments) {
@@ -55,16 +138,29 @@ class SkiReportCourseSubmissions extends SkiReport {
 
     const studentsDict = {};
     const students = await SkiCanvasLmsApiCaller.getRequestAllPages(
-      `/api/v1/courses/${this.#currentCourseId}/enrollments?type[]=StudentEnrollment`,
+      `/api/v1/courses/${
+        this.#currentCourseId
+      }/enrollments?type[]=StudentEnrollment`,
       {}
     );
     for (const student of students) {
       studentsDict[student.user_id] = student.user;
     }
 
-    const submissions = await SkiCanvasLmsApiCaller.getRequestAllPages(
-      `/api/v1/courses/${this.#currentCourseId}/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment`
-    );
+    let submissions = [];
+    if (selectedAssignmentId) {
+      submissions = await SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${
+          this.#currentCourseId
+        }/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment&assignment_ids[]=${selectedAssignmentId}`
+      );
+    } else {
+      submissions = await SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${
+          this.#currentCourseId
+        }/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment`
+      );
+    }
 
     const submissionsData = this.extractData(
       submissions,
@@ -179,31 +275,19 @@ class SkiReportCourseSubmissions extends SkiReport {
       new SkiTableHeadingConfig("Rubric Points Possible", true, true),
     ];
     for (let i = 1; i <= numOfCriteria; i++) {
-      rubricHeadings.push(new SkiTableHeadingConfig(
-        `Criteria ID ${i}`,
-        true,
-        true,
-      ));
-      rubricHeadings.push(new SkiTableHeadingConfig(
-        `Criteria Description ${i}`,
-        true,
-        true,
-      ));
-      rubricHeadings.push(new SkiTableHeadingConfig(
-        `Score ${i}`,
-        true,
-        true,
-      ));
-      rubricHeadings.push(new SkiTableHeadingConfig(
-        `Points Possible ${i}`,
-        true,
-        true,
-      ));
-      rubricHeadings.push(new SkiTableHeadingConfig(
-        `Comments ${i}`,
-        true,
-        true,
-      ));
+      rubricHeadings.push(
+        new SkiTableHeadingConfig(`Criteria ID ${i}`, true, true)
+      );
+      rubricHeadings.push(
+        new SkiTableHeadingConfig(`Criteria Description ${i}`, true, true)
+      );
+      rubricHeadings.push(new SkiTableHeadingConfig(`Score ${i}`, true, true));
+      rubricHeadings.push(
+        new SkiTableHeadingConfig(`Points Possible ${i}`, true, true)
+      );
+      rubricHeadings.push(
+        new SkiTableHeadingConfig(`Comments ${i}`, true, true)
+      );
     }
 
     table.appendColumnHeadings(rubricHeadings);

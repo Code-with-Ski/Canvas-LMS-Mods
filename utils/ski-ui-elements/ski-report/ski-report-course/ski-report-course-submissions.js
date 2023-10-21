@@ -193,7 +193,7 @@ class SkiReportCourseSubmissions extends SkiReport {
 
       this.updateLoadingMessage("success", "Finished loading data");
     } catch (error) {
-      console.log(error);
+      console.error(error);
       this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
     }
   }

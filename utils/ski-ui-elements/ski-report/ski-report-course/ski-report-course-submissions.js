@@ -82,6 +82,9 @@ class SkiReportCourseSubmissions extends SkiReport {
     quizzesGroup.label = "Quizzes";
 
     for (const assignment of assignments) {
+      if (!assignment?.published) {
+        continue;
+      }
       const option = document.createElement("option");
       option.value = assignment.id;
       option.text = `${assignment.name} *(ID: ${assignment.id})`;
@@ -103,72 +106,96 @@ class SkiReportCourseSubmissions extends SkiReport {
   }
 
   async loadData(table, formContainer) {
-    const selectedAssignmentId = formContainer.querySelector(
-      ".ski-assignment-select"
-    )?.value;
-    let assignments = [];
-    if (selectedAssignmentId) {
-      const assignment = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${
-          this.#currentCourseId
-        }/assignments/${selectedAssignmentId}`,
-        { order_by: "due_at" }
-      );
-      assignments.push(assignment);
-    } else {
-      assignments = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${this.#currentCourseId}/assignments`,
-        { order_by: "due_at" }
-      );
-    }
-
-    const assignmentsDict = {};
-    let maxRubricCriteria = 0;
-    for (const assignment of assignments) {
-      assignmentsDict[assignment.id] = assignment;
-      if (assignment.hasOwnProperty("rubric")) {
-        maxRubricCriteria = Math.max(
-          maxRubricCriteria,
-          assignment.rubric.length
+    try {
+      const selectedAssignmentId = formContainer.querySelector(
+        ".ski-assignment-select"
+      )?.value;
+      let assignments = [];
+      if (selectedAssignmentId) {
+        this.updateLoadingMessage("info", "Getting assignment details...");
+        const assignment = await SkiCanvasLmsApiCaller.getRequestAllPages(
+          `/api/v1/courses/${
+            this.#currentCourseId
+          }/assignments/${selectedAssignmentId}`,
+          { order_by: "due_at" }
+        );
+        assignments.push(assignment);
+      } else {
+        this.updateLoadingMessage("info", "Getting details of assignments...");
+        assignments = await SkiCanvasLmsApiCaller.getRequestAllPages(
+          `/api/v1/courses/${this.#currentCourseId}/assignments`,
+          { order_by: "due_at" }
         );
       }
-    }
 
-    this.#addRubricHeadings(table, maxRubricCriteria);
+      this.updateLoadingMessage(
+        "info",
+        "Determining maximum number of criteria for any associated rubrics..."
+      );
+      const assignmentsDict = {};
+      let maxRubricCriteria = 0;
+      for (const assignment of assignments) {
+        assignmentsDict[assignment.id] = assignment;
+        if (assignment.hasOwnProperty("rubric")) {
+          maxRubricCriteria = Math.max(
+            maxRubricCriteria,
+            assignment.rubric.length
+          );
+        }
+      }
 
-    const studentsDict = {};
-    const students = await SkiCanvasLmsApiCaller.getRequestAllPages(
-      `/api/v1/courses/${
-        this.#currentCourseId
-      }/enrollments?type[]=StudentEnrollment`,
-      {}
-    );
-    for (const student of students) {
-      studentsDict[student.user_id] = student.user;
-    }
+      this.#addRubricHeadings(table, maxRubricCriteria);
 
-    let submissions = [];
-    if (selectedAssignmentId) {
-      submissions = await SkiCanvasLmsApiCaller.getRequestAllPages(
+      this.updateLoadingMessage("info", "Getting enrolled students...");
+      const studentsDict = {};
+      const students = await SkiCanvasLmsApiCaller.getRequestAllPages(
         `/api/v1/courses/${
           this.#currentCourseId
-        }/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment&assignment_ids[]=${selectedAssignmentId}`
+        }/enrollments?type[]=StudentEnrollment`,
+        {}
       );
-    } else {
-      submissions = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${
-          this.#currentCourseId
-        }/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment`
+      for (const student of students) {
+        studentsDict[student.user_id] = student.user;
+      }
+
+      let submissions = [];
+      if (selectedAssignmentId) {
+        this.updateLoadingMessage(
+          "info",
+          "Getting submissions of assignment..."
+        );
+        submissions = await SkiCanvasLmsApiCaller.getRequestAllPages(
+          `/api/v1/courses/${
+            this.#currentCourseId
+          }/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment&assignment_ids[]=${selectedAssignmentId}`
+        );
+      } else {
+        this.updateLoadingMessage(
+          "info",
+          "Getting submissions for all assignments..."
+        );
+        submissions = await SkiCanvasLmsApiCaller.getRequestAllPages(
+          `/api/v1/courses/${
+            this.#currentCourseId
+          }/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment`
+        );
+      }
+
+      this.updateLoadingMessage("info", "Formatting data for table...");
+      const submissionsData = this.extractData(
+        submissions,
+        assignmentsDict,
+        studentsDict
       );
+
+      this.updateLoadingMessage("info", "Setting table data...");
+      table.setTableBody(submissionsData);
+
+      this.updateLoadingMessage("success", "Finished loading data");
+    } catch (error) {
+      console.log(error);
+      this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
     }
-
-    const submissionsData = this.extractData(
-      submissions,
-      assignmentsDict,
-      studentsDict
-    );
-
-    table.setTableBody(submissionsData);
   }
 
   extractData(submissions, assignments, students) {

@@ -31,7 +31,7 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
     // Discussion Selection
     const discussionSelection = this.createDiscussionSelection();
     formContainer.appendChild(discussionSelection);
-    
+
     // Adds Load All button
     super.addFormElements(table, formContainer);
   }
@@ -39,14 +39,14 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
   createDiscussionSelection() {
     const discussionSelectionFieldset = document.createElement("fieldset");
     discussionSelectionFieldset.classList.add("ski-ui");
-    
+
     const label = document.createElement("label");
     label.innerText = "Select discussion board to get replies from:";
     discussionSelectionFieldset.appendChild(label);
-    
+
     const discussionSelect = document.createElement("select");
     discussionSelect.classList.add("ski-ui", "ski-discussion-select");
-    
+
     const defaultAllOption = document.createElement("option");
     defaultAllOption.value = "";
     defaultAllOption.text = "All";
@@ -76,41 +76,64 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
   }
 
   async loadData(table, formContainer) {
-    const selectedDiscussionId = formContainer.querySelector("select.ski-discussion-select")?.value;
-    
-    let discussions = []
-    if (selectedDiscussionId) {
-      const discussion = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${this.#currentCourseId}/discussion_topics/${selectedDiscussionId}`,
-        {}
-      );
-      const fullDiscussion = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${
-          this.#currentCourseId
-        }/discussion_topics/${selectedDiscussionId}/view`
-      );
+    try {
+      const selectedDiscussionId = formContainer.querySelector(
+        "select.ski-discussion-select"
+      )?.value;
 
-      discussion.fullDiscussion = fullDiscussion;
-      discussions.push(discussion);
-    } else {
-      discussions = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${this.#currentCourseId}/discussion_topics`,
-        {}
-      );
-      for (const discussion of discussions) {
-        const discussionId = discussion.id;
+      let discussions = [];
+      if (selectedDiscussionId) {
+        this.updateLoadingMessage("info", "Getting discussion details...");
+        const discussion = await SkiCanvasLmsApiCaller.getRequestAllPages(
+          `/api/v1/courses/${
+            this.#currentCourseId
+          }/discussion_topics/${selectedDiscussionId}`,
+          {}
+        );
+        this.updateLoadingMessage("info", "Getting replies for discussion...");
         const fullDiscussion = await SkiCanvasLmsApiCaller.getRequestAllPages(
           `/api/v1/courses/${
             this.#currentCourseId
-          }/discussion_topics/${discussionId}/view`
+          }/discussion_topics/${selectedDiscussionId}/view`
         );
-  
-        discussion.fullDiscussion = fullDiscussion;
-      }
-    }
 
-    const discussionRepliesData = this.extractData(discussions);
-    table.setTableBody(discussionRepliesData);
+        discussion.fullDiscussion = fullDiscussion;
+        discussions.push(discussion);
+      } else {
+        this.updateLoadingMessage("info", "Getting all discussions...");
+        discussions = await SkiCanvasLmsApiCaller.getRequestAllPages(
+          `/api/v1/courses/${this.#currentCourseId}/discussion_topics`,
+          {}
+        );
+        const numOfDiscussions = discussions.length;
+        for (let i = 0; i < numOfDiscussions; i++) {
+          this.updateLoadingMessage(
+            "info",
+            `Getting replies for discussion (${
+              i + 1
+            } of ${numOfDiscussions})...`
+          );
+          const discussion = discussions[i];
+          const discussionId = discussion.id;
+          const fullDiscussion = await SkiCanvasLmsApiCaller.getRequestAllPages(
+            `/api/v1/courses/${
+              this.#currentCourseId
+            }/discussion_topics/${discussionId}/view`
+          );
+
+          discussion.fullDiscussion = fullDiscussion;
+        }
+      }
+
+      this.updateLoadingMessage("info", "Formatting data for table...");
+      const discussionRepliesData = this.extractData(discussions);
+
+      table.setTableBody(discussionRepliesData);
+      this.updateLoadingMessage("success", "Finished loading data");
+    } catch (error) {
+      console.error(error);
+      this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
+    }
   }
 
   extractData(discussions) {
@@ -134,7 +157,7 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
       for (const participant of participants) {
         participantsDict[participant.id] = {
           name: participant.display_name,
-          html_url: participant.html_url, 
+          html_url: participant.html_url,
           replyCount: new ReplyCounter(),
         };
       }
@@ -219,11 +242,7 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
     const nestedRepliesData = [];
     for (const reply of nestedReplies) {
       nestedRepliesData.push(
-        ...this.#extractDiscussionReplyData(
-          discussion,
-          participants,
-          reply
-        )
+        ...this.#extractDiscussionReplyData(discussion, participants, reply)
       );
     }
     return nestedRepliesData;

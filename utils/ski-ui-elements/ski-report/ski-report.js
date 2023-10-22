@@ -91,6 +91,7 @@ class SkiReport {
       `;
     } else if (messageType == "error") {
       messageWrapper.innerHTML = `
+        ${messageWrapper.innerHTML}
         <p class='text-error'><i class='icon-line icon-warning'></i> ${newMessage}</p>
       `;
     } else {

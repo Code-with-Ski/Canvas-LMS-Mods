@@ -39,6 +39,10 @@ class SkiReportCourseSubmissions extends SkiReport {
     const assignmentSelection = this.createAssignmentSelection();
     formContainer.appendChild(assignmentSelection);
 
+    // Submission State Selection
+    const submissionStateSelection = this.createSubmissionsStateFieldset();
+    formContainer.appendChild(submissionStateSelection);
+
     // Adds Load All button
     super.addFormElements(table, formContainer);
   }
@@ -49,10 +53,12 @@ class SkiReportCourseSubmissions extends SkiReport {
 
     const label = document.createElement("label");
     label.innerText = "Select assignment to get submissions from:";
+    label.setAttribute("for", `submission-report-assignment-select`);
     assignmentSelectionFieldset.appendChild(label);
 
     const assignmentSelect = document.createElement("select");
     assignmentSelect.classList.add("ski-ui", "ski-assignment-select");
+    assignmentSelect.id = "submission-report-assignment-select";
 
     const defaultAllOption = document.createElement("option");
     defaultAllOption.value = "";
@@ -105,8 +111,63 @@ class SkiReportCourseSubmissions extends SkiReport {
     assignmentSelect.appendChild(quizzesGroup);
   }
 
+  createSubmissionsStateFieldset() {
+    const submissionStateFieldset = document.createElement("fieldset");
+    submissionStateFieldset.classList.add(
+      "ski-ui",
+      "ski-submission-state-fieldset"
+    );
+    const legend = document.createElement("legend");
+    legend.innerText = "Submission States to Include:";
+    submissionStateFieldset.appendChild(legend);
+
+    const submissionStateOptions = [
+      "submitted",
+      "unsubmitted",
+      "graded",
+      "pending_review",
+    ];
+    for (const option of submissionStateOptions) {
+      const optionCheckbox = document.createElement("input");
+      optionCheckbox.type = "checkbox";
+      optionCheckbox.checked = "true";
+
+      optionCheckbox.value = option;
+      optionCheckbox.name = "submission-state";
+      optionCheckbox.id = `submission-report-submission-state-${option}`;
+
+      const label = document.createElement("label");
+      label.setAttribute("for", `submission-report-submission-state-${option}`);
+      label.innerText = option;
+
+      const optionContainer = document.createElement("div");
+      optionContainer.classList.add("ski-checkbox-inline");
+      optionContainer.appendChild(optionCheckbox);
+      optionContainer.appendChild(label);
+
+      submissionStateFieldset.appendChild(optionContainer);
+    }
+
+    return submissionStateFieldset;
+  }
+
   async loadData(table, formContainer) {
     try {
+      this.updateLoadingMessage(
+        "info",
+        "Getting selected submission states..."
+      );
+      const submissionStateCheckboxes = [
+        ...formContainer.querySelectorAll(
+          "input[name='submission-state']:checked"
+        ),
+      ];
+      if (submissionStateCheckboxes.length == 0) {
+        alert("At least one submission state must be checked");
+        this.updateLoadingMessage("error", "No submission states selected");
+        return;
+      }
+
       const selectedAssignmentId = formContainer.querySelector(
         ".ski-assignment-select"
       )?.value;
@@ -130,7 +191,7 @@ class SkiReportCourseSubmissions extends SkiReport {
 
       this.updateLoadingMessage(
         "info",
-        "Determining maximum number of criteria for any associated rubrics..."
+        "Determining maximum number of criteria for any associated rubric(s)..."
       );
       const assignmentsDict = {};
       let maxRubricCriteria = 0;
@@ -160,25 +221,33 @@ class SkiReportCourseSubmissions extends SkiReport {
 
       let submissions = [];
       if (selectedAssignmentId) {
-        this.updateLoadingMessage(
-          "info",
-          "Getting submissions of assignment..."
-        );
-        submissions = await SkiCanvasLmsApiCaller.getRequestAllPages(
-          `/api/v1/courses/${
-            this.#currentCourseId
-          }/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment&assignment_ids[]=${selectedAssignmentId}`
-        );
+        for (const checkbox of submissionStateCheckboxes) {
+          this.updateLoadingMessage(
+            "info",
+            `Getting ${checkbox.value} submissions of assignment...`
+          );
+          submissions = await SkiCanvasLmsApiCaller.getRequestAllPages(
+            `/api/v1/courses/${
+              this.#currentCourseId
+            }/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment&assignment_ids[]=${selectedAssignmentId}&workflow_state=${
+              checkbox.value
+            }`
+          );
+        }
       } else {
-        this.updateLoadingMessage(
-          "info",
-          "Getting submissions for all assignments..."
-        );
-        submissions = await SkiCanvasLmsApiCaller.getRequestAllPages(
-          `/api/v1/courses/${
-            this.#currentCourseId
-          }/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment`
-        );
+        for (const checkbox of submissionStateCheckboxes) {
+          this.updateLoadingMessage(
+            "info",
+            `Getting ${checkbox.value} submissions for all assignments...`
+          );
+          submissions = await SkiCanvasLmsApiCaller.getRequestAllPages(
+            `/api/v1/courses/${
+              this.#currentCourseId
+            }/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment&workflow_state=${
+              checkbox.value
+            }`
+          );
+        }
       }
 
       this.updateLoadingMessage("info", "Formatting data for table...");

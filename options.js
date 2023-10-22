@@ -106,6 +106,11 @@ function saveOptions() {
     "course-discussions-discussion-export-grades"
   ).checked;
 
+  // Course - Sections settings
+  const enableSectionsReports = document.getElementById(
+    "course-sections-section-course-report"
+  ).checked;
+
   // Admin - Courses settings
   const isBlueprintInputFillPrevent = document.getElementById(
     "admin-courses-blueprint-input-prevent-fill"
@@ -275,6 +280,7 @@ function saveOptions() {
       courseAssignmentRubricUsedForGradingCheck:
         isRubricUsedForGradingIndicatorEnabled,
       courseDiscussionExportGrades: isDiscussionGradeExportEnabled,
+      courseSectionsSectionReport: enableSectionsReports,
       adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
       adminCoursesSubaccountLink: isAdminCoursesSubaccountLinkEnabled,
       adminCoursesConcludedIcon: isCourseConcludedIconEnabled,
@@ -355,6 +361,7 @@ function restoreOptions() {
       courseAssignmentExportGrades: true,
       courseAssignmentRubricUsedForGradingCheck: true,
       courseDiscussionExportGrades: true,
+      courseSectionsSectionReport: true,
       adminCoursesBlueprintInputPreventFill: true,
       adminCoursesAdditionalSearchInputs: true,
       adminCoursesCourseCode: true,
@@ -481,6 +488,10 @@ function restoreOptions() {
       document.getElementById(
         "course-discussions-discussion-export-grades"
       ).checked = items.courseDiscussionExportGrades;
+
+      // Course - Sections settings
+      document.getElementById("course-sections-section-course-report").checked =
+        items.courseSectionsSectionReport;
 
       // Admin - Courses settings
       document.getElementById(

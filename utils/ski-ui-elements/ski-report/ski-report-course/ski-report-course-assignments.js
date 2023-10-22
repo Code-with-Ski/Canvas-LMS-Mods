@@ -1,6 +1,6 @@
 class SkiReportCourseAssignments extends SkiReport {
   #currentCourseId = window.location.pathname.split("/")[2];
-  
+
   constructor() {
     super("Assignment Details");
   }
@@ -28,12 +28,23 @@ class SkiReportCourseAssignments extends SkiReport {
   }
 
   async loadData(table) {
-    const assignments = await SkiCanvasLmsApiCaller.getRequestAllPages(
-      `/api/v1/courses/${this.#currentCourseId}/assignments`,
-      { order_by: "due_at" }
-    );
-    const extractedData = this.extractData(assignments);
-    table.setTableBody(extractedData);
+    try {
+      this.updateLoadingMessage("info", "Getting assignments...");
+      const assignments = await SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${this.#currentCourseId}/assignments`,
+        { order_by: "due_at" }
+      );
+
+      this.updateLoadingMessage("info", "Formatting data for table...");
+      const extractedData = this.extractData(assignments);
+
+      this.updateLoadingMessage("info", "Adding data to table...");
+      table.setTableBody(extractedData);
+      this.updateLoadingMessage("success", `Finished loading data`);
+    } catch (error) {
+      console.error(error);
+      this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
+    }
   }
 
   extractData(assignments) {

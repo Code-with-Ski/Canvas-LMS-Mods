@@ -63,6 +63,11 @@ fieldset.ski-ui > legend {
   margin-bottom: 0;
 }
 
+fieldset.ski-ui label + select {
+  display: block;
+  width: auto;
+}
+
 .ski-loading-icon {
   border: 0.5rem solid #c2bcbc;
   border-top: 0.5rem solid #119db9;

@@ -790,3 +790,54 @@ class SkiTable {
     }
   }
 }
+
+// Configurations for SkiTable
+class SkiTableConfig {
+  maxHeight;
+  hideableColumns;
+  showUnsorted;
+  isDownloadable;
+  pagination;
+
+  constructor(maxHeight="800px", hideableColumns=true, showUnsorted=false, isDownloadable=true, pagination=true) {
+    this.maxHeight = maxHeight;
+    this.hideableColumns = hideableColumns;
+    this.showUnsorted = showUnsorted;
+    this.isDownloadable = isDownloadable;
+    this.pagination = pagination;
+  }
+}
+
+
+// Configurations for table headings (th) in SkiTable
+class SkiTableHeadingConfig {
+  name;
+  isSortable;
+  isHidden;
+  isLocked;
+
+  constructor(name, isSortable=true, isHidden=false, isLocked=false) {
+    this.name = name;
+    this.isSortable = isSortable;
+    this.isHidden = isHidden;
+    this.isLocked = isLocked;
+  }
+}
+
+
+// Configurations for table data (td) in SkiTable
+class SkiTableDataConfig {
+  content;
+  sortValue;
+  primarySortType;  // Valid options to override basic string comparison ["dateISO", "number"]
+  downloadInfo;
+  styles;
+
+  constructor(content, sortValue=undefined, primarySortType=undefined, downloadInfo=undefined, styles={}) {
+    this.content = content;
+    this.sortValue = sortValue;
+    this.primarySortType = primarySortType;
+    this.downloadInfo = downloadInfo;
+    this.styles = styles;
+  }
+}

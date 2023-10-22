@@ -1,8 +1,15 @@
 class SkiReportCourseModulesProgress extends SkiReport {
   #currentCourseId = window.location.pathname.split("/")[2];
-  
+  #isSectionReport = window.location.pathname.includes("/sections/");
+  #currentSectionId;
+
   constructor() {
     super("Modules Progress Report");
+    if (this.#isSectionReport) {
+      this.#currentSectionId = window.location.pathname
+        .split("?")[0]
+        .split("/")[4];
+    }
   }
 
   createTable() {
@@ -28,45 +35,68 @@ class SkiReportCourseModulesProgress extends SkiReport {
   }
 
   async loadData(table) {
-    const students = await SkiCanvasLmsApiCaller.getRequestAllPages(
-      `/api/v1/courses/${this.#currentCourseId}/enrollments?type[]=StudentEnrollment`,
-      {}
-    );
+    try {
+      const context = this.#isSectionReport ? "sections" : "courses";
+      const contextId = this.#isSectionReport
+        ? this.#currentSectionId
+        : this.#currentCourseId;
 
-    for (const studentEnrollment of students) {
-      const studentId = studentEnrollment["user_id"];
-      const studentModulesProgress =
-        await SkiCanvasLmsApiCaller.getRequestAllPages(
-          `/api/v1/courses/${this.#currentCourseId}/modules?include[]=items&student_id=${studentId}`,
-          {}
+      this.updateLoadingMessage("info", "Getting enrolled students...");
+      const students = await SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/${context}/${contextId}/enrollments?type[]=StudentEnrollment`,
+        {}
+      );
+
+      const numOfStudents = students.length;
+      for (let i = 0; i < numOfStudents; i++) {
+        this.updateLoadingMessage(
+          "info",
+          `Getting module progress of student (${i + 1} of ${numOfStudents})...`
         );
-
-      let totalNumOfItemsWithRequirements = 0;
-      let totalNumOfItemsCompleted = 0;
-      for (const module of studentModulesProgress) {
-        const items = module.items;
-        let numOfItemsWithRequirements = items.filter((item) => {
-          return item.hasOwnProperty("completion_requirement");
-        }).length;
-        module.requiredItems = numOfItemsWithRequirements;
-        totalNumOfItemsWithRequirements += numOfItemsWithRequirements;
-
-        let numOfItemsCompleted = items.filter((item) => {
-          return (
-            item.hasOwnProperty("completion_requirement") &&
-            item.completion_requirement.completed
+        const studentEnrollment = students[i];
+        const studentId = studentEnrollment["user_id"];
+        const studentModulesProgress =
+          await SkiCanvasLmsApiCaller.getRequestAllPages(
+            `/api/v1/courses/${
+              this.#currentCourseId
+            }/modules?include[]=items&student_id=${studentId}`,
+            {}
           );
-        }).length;
-        module.completedItems = numOfItemsCompleted;
-        totalNumOfItemsCompleted += numOfItemsCompleted;
-      }
-      studentEnrollment.modulesProgress = studentModulesProgress;
-      studentEnrollment.requiredItems = totalNumOfItemsWithRequirements;
-      studentEnrollment.completedItems = totalNumOfItemsCompleted;
-    }
 
-    const modulesProgressData = this.extractData(students);
-    table.setTableBody(modulesProgressData);
+        let totalNumOfItemsWithRequirements = 0;
+        let totalNumOfItemsCompleted = 0;
+        for (const module of studentModulesProgress) {
+          const items = module.items;
+          let numOfItemsWithRequirements = items.filter((item) => {
+            return item.hasOwnProperty("completion_requirement");
+          }).length;
+          module.requiredItems = numOfItemsWithRequirements;
+          totalNumOfItemsWithRequirements += numOfItemsWithRequirements;
+
+          let numOfItemsCompleted = items.filter((item) => {
+            return (
+              item.hasOwnProperty("completion_requirement") &&
+              item.completion_requirement.completed
+            );
+          }).length;
+          module.completedItems = numOfItemsCompleted;
+          totalNumOfItemsCompleted += numOfItemsCompleted;
+        }
+        studentEnrollment.modulesProgress = studentModulesProgress;
+        studentEnrollment.requiredItems = totalNumOfItemsWithRequirements;
+        studentEnrollment.completedItems = totalNumOfItemsCompleted;
+      }
+
+      this.updateLoadingMessage("info", "Formatting data for table...");
+      const modulesProgressData = this.extractData(students);
+
+      this.updateLoadingMessage("info", "Adding data to table...");
+      table.setTableBody(modulesProgressData);
+      this.updateLoadingMessage("success", `Finished loading data`);
+    } catch (error) {
+      console.error(error);
+      this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
+    }
   }
 
   extractData(students) {
@@ -118,7 +148,9 @@ class SkiReportCourseModulesProgress extends SkiReport {
               undefined,
               {
                 backgroundColor:
-                  this.#determineModuleCompletionBackgroundColor(moduleCompletion),
+                  this.#determineModuleCompletionBackgroundColor(
+                    moduleCompletion
+                  ),
               }
             ),
             new SkiTableDataConfig(
@@ -128,7 +160,9 @@ class SkiReportCourseModulesProgress extends SkiReport {
               undefined,
               {
                 backgroundColor:
-                  this.#determineModuleCompletionBackgroundColor(totalCompletion),
+                  this.#determineModuleCompletionBackgroundColor(
+                    totalCompletion
+                  ),
               }
             ),
           ]);

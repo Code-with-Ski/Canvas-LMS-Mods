@@ -1,10 +1,12 @@
 class SkiReport {
-  #name
-  #reportContainer
+  #name;
+  #reportContainer;
 
   constructor(reportName) {
     if (this.constructor === SkiReport) {
-      throw new Error("SkiReport is an abstract class and cannot be instantiated");
+      throw new Error(
+        "SkiReport is an abstract class and cannot be instantiated"
+      );
     }
     this.#name = reportName;
     this.createReport();
@@ -54,6 +56,9 @@ class SkiReport {
   addFormElements(table, formContainer) {
     const loadAllButton = this.createLoadAllButton(table, formContainer);
     formContainer.appendChild(loadAllButton);
+
+    const loadingMessageContainer = this.createLoadingMessageContainer();
+    formContainer.appendChild(loadingMessageContainer);
   }
 
   createLoadAllButton(table, formContainer) {
@@ -67,6 +72,35 @@ class SkiReport {
     return loadAllButton;
   }
 
+  createLoadingMessageContainer() {
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("ski-ui-loading-message-wrapper");
+
+    return messageDiv;
+  }
+
+  updateLoadingMessage(messageType, newMessage = "") {
+    const messageWrapper = this.#reportContainer.querySelector(
+      ".ski-ui-loading-message-wrapper"
+    );
+    if (messageType == "clear") {
+      messageWrapper.innerHTML = "";
+    } else if (messageType == "success") {
+      messageWrapper.innerHTML = `
+        <p class='text-success'><i class='icon-line icon-check'></i> ${newMessage}</p>
+      `;
+    } else if (messageType == "error") {
+      messageWrapper.innerHTML = `
+        ${messageWrapper.innerHTML}
+        <p class='text-error'><i class='icon-line icon-warning'></i> ${newMessage}</p>
+      `;
+    } else {
+      messageWrapper.innerHTML = `
+        <p class='text-info'><i class='icon-line icon-info'></i> ${newMessage}</p>
+      `;
+    }
+  }
+
   async loadData(table, formContainer) {
     throw new Error("loadData is an abstract function and must be defined");
   }
@@ -76,7 +110,9 @@ class SkiReport {
   }
 
   disableInteractiveElements() {
-    const elements = [...this.#reportContainer.querySelectorAll("button, input, select")];
+    const elements = [
+      ...this.#reportContainer.querySelectorAll("button, input, select"),
+    ];
     const elementsToDisable = elements.filter((element) => {
       return element.disabled == false;
     });
@@ -93,7 +129,8 @@ class SkiReport {
   }
 
   enableLoading() {
-    const loadingIndicator = this.#reportContainer.querySelector(".ski-loading-icon");
+    const loadingIndicator =
+      this.#reportContainer.querySelector(".ski-loading-icon");
     if (!loadingIndicator) {
       return;
     }
@@ -101,7 +138,8 @@ class SkiReport {
   }
 
   disableLoading() {
-    const loadingIndicator = this.#reportContainer.querySelector(".ski-loading-icon");
+    const loadingIndicator =
+      this.#reportContainer.querySelector(".ski-loading-icon");
     if (!loadingIndicator) {
       return;
     }

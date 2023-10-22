@@ -128,6 +128,7 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
       this.updateLoadingMessage("info", "Formatting data for table...");
       const discussionRepliesData = this.extractData(discussions);
 
+      this.updateLoadingMessage("info", "Adding data to table...");
       table.setTableBody(discussionRepliesData);
       this.updateLoadingMessage("success", "Finished loading data");
     } catch (error) {

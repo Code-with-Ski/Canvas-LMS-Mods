@@ -31,12 +31,23 @@ class SkiReportCourseAnnouncements extends SkiReport {
   }
 
   async loadData(table) {
-    const discussions = await SkiCanvasLmsApiCaller.getRequestAllPages(
-      `/api/v1/courses/${this.#currentCourseId}/discussion_topics`,
-      { only_announcements: true }
-    );
-    const discussionsData = this.extractData(discussions);
-    table.setTableBody(discussionsData);
+    try {
+      this.updateLoadingMessage("info", "Getting announcements...");
+      const discussions = await SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${this.#currentCourseId}/discussion_topics`,
+        { only_announcements: true }
+      );
+
+      this.updateLoadingMessage("info", "Formatting data for table...");
+      const discussionsData = this.extractData(discussions);
+
+      this.updateLoadingMessage("info", "Adding data to table...");
+      table.setTableBody(discussionsData);
+      this.updateLoadingMessage("success", "Finished loading data");
+    } catch (error) {
+      console.error(error);
+      this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
+    }
   }
 
   extractData(discussions) {
@@ -78,7 +89,9 @@ class SkiReportCourseAnnouncements extends SkiReport {
         new SkiTableDataConfig(discussion.id, undefined, "number"),
         new SkiTableDataConfig(discussionTitleLink),
         new SkiTableDataConfig(discussion.message),
-        new SkiTableDataConfig(discussion.user_name ? discussion?.author?.id : "N/A"),
+        new SkiTableDataConfig(
+          discussion.user_name ? discussion?.author?.id : "N/A"
+        ),
         new SkiTableDataConfig(discussion.user_name),
         new SkiTableDataConfig(
           createdAtDate,

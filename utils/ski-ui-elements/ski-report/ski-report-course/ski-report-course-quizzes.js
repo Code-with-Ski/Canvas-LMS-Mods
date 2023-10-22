@@ -32,12 +32,23 @@ class SkiReportCourseQuizzes extends SkiReport {
   }
 
   async loadData(table) {
-    const quizzes = await SkiCanvasLmsApiCaller.getRequestAllPages(
-      `/api/v1/courses/${this.#currentCourseId}/all_quizzes`,
-      {}
-    );
-    const quizzesData = this.extractData(quizzes);
-    table.setTableBody(quizzesData);
+    try {
+      this.updateLoadingMessage("info", "Getting quizzes...");
+      const quizzes = await SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${this.#currentCourseId}/all_quizzes`,
+        {}
+      );
+
+      this.updateLoadingMessage("info", "Formatting data for table...");
+      const quizzesData = this.extractData(quizzes);
+
+      this.updateLoadingMessage("info", "Adding data to table...");
+      table.setTableBody(quizzesData);
+      this.updateLoadingMessage("success", `Finished loading data`);
+    } catch (error) {
+      console.error(error);
+      this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
+    }
   }
 
   extractData(quizzes) {

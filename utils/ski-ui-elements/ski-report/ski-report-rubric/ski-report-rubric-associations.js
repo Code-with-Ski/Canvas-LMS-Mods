@@ -28,14 +28,25 @@ class SkiReportRubricAssociations extends SkiReport {
   }
 
   async loadData(table) {
-    const rubricDetails = await SkiCanvasLmsApiCaller.getRequestAllPages(
-      `/api/v1/${this.#currentContext}/${this.#currentContextId}/rubrics/${
-        this.#currentRubricId
-      }`,
-      { "include[]": "associations" }
-    );
-    const data = this.extractData(rubricDetails);
-    table.setTableBody(data);
+    try {
+      this.updateLoadingMessage("info", "Getting rubric associations...");
+      const rubricDetails = await SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/${this.#currentContext}/${this.#currentContextId}/rubrics/${
+          this.#currentRubricId
+        }`,
+        { "include[]": "associations" }
+      );
+
+      this.updateLoadingMessage("info", "Formatting data for table...");
+      const data = this.extractData(rubricDetails);
+
+      this.updateLoadingMessage("info", "Adding data to table...");
+      table.setTableBody(data);
+      this.updateLoadingMessage("success", `Finished loading data`);
+    } catch (error) {
+      console.error(error);
+      this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
+    }
   }
 
   extractData(rubricDetails) {

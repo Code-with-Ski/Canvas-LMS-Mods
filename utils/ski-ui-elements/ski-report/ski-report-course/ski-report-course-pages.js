@@ -26,19 +26,32 @@ class SkiReportCoursePages extends SkiReport {
   }
 
   async loadData(table) {
-    const pages = await SkiCanvasLmsApiCaller.getRequestAllPages(
-      `/api/v1/courses/${this.#currentCourseId}/pages`,
-      {}
-    );
-    const extractedData = this.extractData(pages);
-    table.setTableBody(extractedData);
+    try {
+      this.updateLoadingMessage("info", "Getting pages...");
+      const pages = await SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${this.#currentCourseId}/pages`,
+        {}
+      );
+
+      this.updateLoadingMessage("info", "Formatting data for table...");
+      const extractedData = this.extractData(pages);
+
+      this.updateLoadingMessage("info", "Adding data to table...");
+      table.setTableBody(extractedData);
+      this.updateLoadingMessage("success", `Finished loading data`);
+    } catch (error) {
+      console.error(error);
+      this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
+    }
   }
 
   extractData(pages) {
     const data = [];
     for (const page of pages) {
       const pageTitleLink = document.createElement("a");
-      pageTitleLink.href = `/courses/${this.#currentCourseId}/pages/${page.url}`;
+      pageTitleLink.href = `/courses/${this.#currentCourseId}/pages/${
+        page.url
+      }`;
       pageTitleLink.target = "_blank";
       pageTitleLink.innerText = page.url;
 

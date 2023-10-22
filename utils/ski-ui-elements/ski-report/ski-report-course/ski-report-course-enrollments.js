@@ -1,6 +1,6 @@
 class SkiReportCourseEnrollments extends SkiReport {
   #currentCourseId = window.location.pathname.split("/")[2];
-  
+
   constructor() {
     super("Enrollment Report");
   }
@@ -47,7 +47,7 @@ class SkiReportCourseEnrollments extends SkiReport {
     // Enrollment State Fieldset
     const enrollmentStateFieldset = this.createEnrollmentStateFieldset();
     formContainer.appendChild(enrollmentStateFieldset);
-    
+
     // Adds Load All button
     super.addFormElements(table, formContainer);
   }
@@ -58,14 +58,14 @@ class SkiReportCourseEnrollments extends SkiReport {
     const legend = document.createElement("legend");
     legend.innerText = "Enrollment States to Include";
     enrollmentStateFieldset.appendChild(legend);
-    
+
     const enrollmentStateOptions = [
       "active",
       "invited",
       "inactive",
       "completed",
-      "deleted"
-    ]
+      "deleted",
+    ];
     for (const option of enrollmentStateOptions) {
       const optionCheckbox = document.createElement("input");
       optionCheckbox.type = "checkbox";
@@ -93,31 +93,61 @@ class SkiReportCourseEnrollments extends SkiReport {
   }
 
   async loadData(table, formContainer) {
-    const enrollmentStateCheckboxes = [...formContainer.querySelectorAll("input[name='enrollment-state']:checked")];
-    if (enrollmentStateCheckboxes.length == 0) { alert("At least one enrollment state must be checked"); return; }
-    
-    const sections = await SkiCanvasLmsApiCaller.getRequestAllPages(
-      `/api/v1/courses/${this.#currentCourseId}/sections`,
-      { per_page: 100 }
-    );
-    const sectionsDict = {};
-    for (const section of sections) {
-      sectionsDict[section.id] = section;
-    }
+    try {
+      this.updateLoadingMessage(
+        "info",
+        "Getting selected enrollment states..."
+      );
+      const enrollmentStateCheckboxes = [
+        ...formContainer.querySelectorAll(
+          "input[name='enrollment-state']:checked"
+        ),
+      ];
+      if (enrollmentStateCheckboxes.length == 0) {
+        alert("At least one enrollment state must be checked");
+        this.updateLoadingMessage("error", "No enrollment states selected");
+        return;
+      }
 
-    const enrollments = await SkiCanvasLmsApiCaller.getRequestAllPages(
-      `/api/v1/courses/${this.#currentCourseId}/enrollments`,
-      { per_page: 100, "state[]": [...enrollmentStateCheckboxes.map((input) => input.value)] }
-    );
-    const extractedData = this.extractData(enrollments, sectionsDict);
-    table.setTableBody(extractedData);
+      this.updateLoadingMessage("info", "Getting sections...");
+      const sections = await SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${this.#currentCourseId}/sections`,
+        { per_page: 100 }
+      );
+      const sectionsDict = {};
+      for (const section of sections) {
+        sectionsDict[section.id] = section;
+      }
+
+      this.updateLoadingMessage(
+        "info",
+        "Getting enrollments with selected states..."
+      );
+      const enrollments = await SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${this.#currentCourseId}/enrollments`,
+        {
+          per_page: 100,
+          "state[]": [...enrollmentStateCheckboxes.map((input) => input.value)],
+        }
+      );
+
+      this.updateLoadingMessage("info", "Formatting data for table...");
+      const extractedData = this.extractData(enrollments, sectionsDict);
+
+      this.updateLoadingMessage("info", "Adding data to table...");
+      table.setTableBody(extractedData);
+      this.updateLoadingMessage("success", `Finished loading data`);
+    } catch (error) {
+      console.error(error);
+      this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
+    }
   }
 
   extractData(enrollments, sections) {
     const data = [];
     for (const enrollment of enrollments) {
       const userId = enrollment.user_id;
-      
+
       const user = enrollment?.user;
       const userDisplayName = user?.short_name || user?.name;
       const userSortableName = user?.sortable_name;
@@ -187,7 +217,11 @@ class SkiReportCourseEnrollments extends SkiReport {
 
       const rowData = [
         new SkiTableDataConfig(enrollment.id, undefined, "number"),
-        new SkiTableDataConfig(enrollment.course_section_id, undefined, "number"),
+        new SkiTableDataConfig(
+          enrollment.course_section_id,
+          undefined,
+          "number"
+        ),
         new SkiTableDataConfig(enrollment?.sis_section_id),
         new SkiTableDataConfig(sections[enrollment.course_section_id].name),
         new SkiTableDataConfig(userId, undefined, "number"),
@@ -217,7 +251,11 @@ class SkiReportCourseEnrollments extends SkiReport {
           "dateISO",
           lastActivityAtDateIso
         ),
-        new SkiTableDataConfig(enrollment.total_activity_time, undefined, "number"),
+        new SkiTableDataConfig(
+          enrollment.total_activity_time,
+          undefined,
+          "number"
+        ),
         new SkiTableDataConfig(grades?.current_score, undefined, "number"),
         new SkiTableDataConfig(grades?.current_grade),
         new SkiTableDataConfig(grades?.final_score, undefined, "number"),

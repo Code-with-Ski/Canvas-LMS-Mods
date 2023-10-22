@@ -1,8 +1,15 @@
 class SkiReportCourseModulesProgress extends SkiReport {
   #currentCourseId = window.location.pathname.split("/")[2];
+  #isSectionReport = window.location.pathname.includes("/sections/");
+  #currentSectionId;
 
   constructor() {
     super("Modules Progress Report");
+    if (this.#isSectionReport) {
+      this.#currentSectionId = window.location.pathname
+        .split("?")[0]
+        .split("/")[4];
+    }
   }
 
   createTable() {
@@ -29,11 +36,14 @@ class SkiReportCourseModulesProgress extends SkiReport {
 
   async loadData(table) {
     try {
+      const context = this.#isSectionReport ? "sections" : "courses";
+      const contextId = this.#isSectionReport
+        ? this.#currentSectionId
+        : this.#currentCourseId;
+
       this.updateLoadingMessage("info", "Getting enrolled students...");
       const students = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${
-          this.#currentCourseId
-        }/enrollments?type[]=StudentEnrollment`,
+        `/api/v1/${context}/${contextId}/enrollments?type[]=StudentEnrollment`,
         {}
       );
 

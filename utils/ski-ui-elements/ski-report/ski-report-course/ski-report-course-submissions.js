@@ -1,8 +1,15 @@
 class SkiReportCourseSubmissions extends SkiReport {
   #currentCourseId = window.location.pathname.split("/")[2];
+  #isSectionReport = window.location.pathname.includes("/sections/");
+  #currentSectionId;
 
   constructor() {
     super("Submission Details");
+    if (this.#isSectionReport) {
+      this.#currentSectionId = window.location.pathname
+        .split("?")[0]
+        .split("/")[4];
+    }
   }
 
   createTable() {
@@ -220,19 +227,21 @@ class SkiReportCourseSubmissions extends SkiReport {
       }
 
       let submissions = [];
+      const submissionContext = this.#isSectionReport ? "sections" : "courses";
+      const submissionContextId = this.#isSectionReport
+        ? this.#currentSectionId
+        : this.#currentCourseId;
       if (selectedAssignmentId) {
         for (const checkbox of submissionStateCheckboxes) {
           this.updateLoadingMessage(
             "info",
             `Getting ${checkbox.value} submissions of assignment...`
           );
-          submissions = await SkiCanvasLmsApiCaller.getRequestAllPages(
-            `/api/v1/courses/${
-              this.#currentCourseId
-            }/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment&assignment_ids[]=${selectedAssignmentId}&workflow_state=${
-              checkbox.value
-            }`
-          );
+          const currentSubmissions =
+            await SkiCanvasLmsApiCaller.getRequestAllPages(
+              `/api/v1/${submissionContext}/${submissionContextId}/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment&assignment_ids[]=${selectedAssignmentId}&workflow_state=${checkbox.value}`
+            );
+          submissions.push(...currentSubmissions);
         }
       } else {
         for (const checkbox of submissionStateCheckboxes) {
@@ -240,13 +249,11 @@ class SkiReportCourseSubmissions extends SkiReport {
             "info",
             `Getting ${checkbox.value} submissions for all assignments...`
           );
-          submissions = await SkiCanvasLmsApiCaller.getRequestAllPages(
-            `/api/v1/courses/${
-              this.#currentCourseId
-            }/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment&workflow_state=${
-              checkbox.value
-            }`
-          );
+          const currentSubmissions =
+            await SkiCanvasLmsApiCaller.getRequestAllPages(
+              `/api/v1/${submissionContext}/${submissionContextId}/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment&workflow_state=${checkbox.value}`
+            );
+          submissions.push(...currentSubmissions);
         }
       }
 

@@ -1,8 +1,15 @@
 class SkiReportCourseEnrollments extends SkiReport {
   #currentCourseId = window.location.pathname.split("/")[2];
+  #isSectionReport = window.location.pathname.includes("/sections/");
+  #currentSectionId;
 
   constructor() {
     super("Enrollment Report");
+    if (this.#isSectionReport) {
+      this.#currentSectionId = window.location.pathname
+        .split("?")[0]
+        .split("/")[4];
+    }
   }
 
   createTable() {
@@ -109,11 +116,25 @@ class SkiReportCourseEnrollments extends SkiReport {
         return;
       }
 
-      this.updateLoadingMessage("info", "Getting sections...");
-      const sections = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${this.#currentCourseId}/sections`,
-        { per_page: 100 }
-      );
+      const context = this.#isSectionReport ? "sections" : "courses";
+      const contextId = this.#isSectionReport
+        ? this.#currentSectionId
+        : this.#currentCourseId;
+      let sections = [];
+      if (context == "courses") {
+        this.updateLoadingMessage("info", "Getting sections...");
+        sections = await SkiCanvasLmsApiCaller.getRequestAllPages(
+          `/api/v1/courses/${this.#currentCourseId}/sections`,
+          { per_page: 100 }
+        );
+      } else {
+        this.updateLoadingMessage("info", "Getting section details...");
+        const section = await SkiCanvasLmsApiCaller.getRequestAllPages(
+          `/api/v1/courses/${this.#currentCourseId}/sections/${contextId}`,
+          {}
+        );
+        sections.push(section);
+      }
       const sectionsDict = {};
       for (const section of sections) {
         sectionsDict[section.id] = section;
@@ -124,7 +145,7 @@ class SkiReportCourseEnrollments extends SkiReport {
         "Getting enrollments with selected states..."
       );
       const enrollments = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${this.#currentCourseId}/enrollments`,
+        `/api/v1/${context}/${contextId}/enrollments`,
         {
           per_page: 100,
           "state[]": [...enrollmentStateCheckboxes.map((input) => input.value)],

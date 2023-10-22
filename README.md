@@ -84,6 +84,8 @@ Options will also be updated to allow the user to enable/disable certain customi
     - Add rubric used for grading indicator (Uses Canvas LMS API)
   - Discussions
     - Add export grades button to discussion page (Uses Canvas LMS API)
+  - Sections
+    - Enable section reports (Uses Canvas LMS API)
 
 - Admin
 

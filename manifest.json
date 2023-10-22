@@ -1,8 +1,8 @@
 {
   "name": "Canvas LMS Mods (Basic)",
   "description": "This provides modifications to the Canvas LMS to improve the user experience visually and functionally.",
-  "version": "4.1.0",
-  "version_name": "4.1.0",
+  "version": "5.0.0",
+  "version_name": "5.0.0",
   "manifest_version": 3,
   "permissions": ["storage"],
   "host_permissions": [
@@ -140,6 +140,20 @@
       ],
       "css": [
         "canvas-mods/courses/gradebook/speed_grader/feature-draft-comment-indicator/draft-comment-indicator.css"
+      ]
+    },
+    {
+      "matches": ["*://*/courses/*/sections/*"],
+      "js": [
+        "utils/ski-ui-elements/ski-table-elements/ski-table.js",
+        "utils/ski-ui-elements/ski-report/ski-report.js",
+        "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-modules-progress.js",
+        "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-submissions.js",
+        "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-enrollments.js",
+        "canvas-mods/courses/sections/feature-section-reports/section-reports.js"
+      ],
+      "css": [
+        "utils/ski-ui-elements/ski-table-elements/ski-table-elements.css"
       ]
     },
     {

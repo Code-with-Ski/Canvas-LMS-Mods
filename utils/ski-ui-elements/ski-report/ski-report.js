@@ -157,4 +157,12 @@ class SkiReport {
       });
     });
   }
+
+  static sanitizeText(unsanitizedText) {
+    const sanitizedText = new DOMParser().parseFromString(
+      unsanitizedText,
+      "text/html"
+    ).body.innerText;
+    return sanitizedText;
+  }
 }

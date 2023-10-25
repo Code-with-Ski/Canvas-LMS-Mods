@@ -15,7 +15,8 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
         new SkiTableHeadingConfig("Post ID", true, true),
         new SkiTableHeadingConfig("Post Parent ID", true, true),
         new SkiTableHeadingConfig("Discussion Title"),
-        new SkiTableHeadingConfig("Message Body", false),
+        new SkiTableHeadingConfig("Message Body HTML", false, true),
+        new SkiTableHeadingConfig("Message Body Text", false),
         new SkiTableHeadingConfig("Created At"),
         new SkiTableHeadingConfig("Updated At"),
         new SkiTableHeadingConfig("Message Type"),
@@ -42,10 +43,15 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
 
     const label = document.createElement("label");
     label.innerText = "Select discussion board to get replies from:";
+    label.setAttribute(
+      "for",
+      "ski-report-discussion-replies-discussion-select"
+    );
     discussionSelectionFieldset.appendChild(label);
 
     const discussionSelect = document.createElement("select");
     discussionSelect.classList.add("ski-ui", "ski-discussion-select");
+    discussionSelect.id = "ski-report-discussion-replies-discussion-select";
 
     const defaultAllOption = document.createElement("option");
     defaultAllOption.value = "";
@@ -222,6 +228,7 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
       new SkiTableDataConfig("N/A"),
       new SkiTableDataConfig(discussionLink),
       new SkiTableDataConfig(discussion.message),
+      new SkiTableDataConfig(SkiReport.sanitizeText(discussion.message)),
       new SkiTableDataConfig(
         createdAtDate,
         createdAtDateIso,
@@ -252,67 +259,74 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
   #extractDiscussionReplyData(discussion, participants, reply) {
     const replyData = [];
 
-    const authorId = reply.user_id;
-    let authorName = "Unknown";
-    if (participants.hasOwnProperty(authorId)) {
-      const participant = participants[authorId];
-      const authorUrl = participant.html_url;
-      const link = document.createElement("a");
-      link.href = authorUrl;
-      link.target = "_blank";
-      link.title = `View Course Profile of ${participant.name}`;
-      link.innerHTML = participant.name;
-      authorName = link;
-      participants[authorId]["replyCount"].addReply();
+    if (!reply?.deleted) {
+      const authorId = reply.user_id;
+      let authorName = "Unknown";
+      if (participants.hasOwnProperty(authorId)) {
+        const participant = participants[authorId];
+        const authorUrl = participant.html_url;
+        const link = document.createElement("a");
+        link.href = authorUrl;
+        link.target = "_blank";
+        link.title = `View Course Profile of ${participant.name}`;
+        link.innerHTML = participant.name;
+        authorName = link;
+        participants[authorId]["replyCount"].addReply();
+      }
+
+      const discussionTitle = discussion.title;
+      const discussionLink = document.createElement("a");
+      discussionLink.href = discussion.html_url;
+      discussionLink.target = "_blank";
+      discussionLink.title = "Go to discussion";
+      discussionLink.innerHTML = discussionTitle;
+
+      let createdAtDate = reply.created_at;
+      let createdAtDateIso = "";
+      if (!createdAtDate) {
+        createdAtDate = "None";
+      } else {
+        createdAtDateIso = new Date(createdAtDate).toISOString();
+        createdAtDate = new Date(createdAtDate).toLocaleString();
+      }
+
+      let updatedAtDate = reply.updated_at;
+      let updatedAtDateIso = "";
+      if (!updatedAtDate) {
+        updatedAtDate = "None";
+      } else {
+        updatedAtDateIso = new Date(updatedAtDate).toISOString();
+        updatedAtDate = new Date(updatedAtDate).toLocaleString();
+      }
+
+      replyData.push([
+        new SkiTableDataConfig(authorId, undefined, "number"),
+        new SkiTableDataConfig(authorName),
+        new SkiTableDataConfig(reply.id, undefined, "number"),
+        new SkiTableDataConfig(reply.parent_id, undefined, "number"),
+        new SkiTableDataConfig(discussionLink),
+        new SkiTableDataConfig(reply.message),
+        new SkiTableDataConfig(SkiReport.sanitizeText(reply.message)),
+        new SkiTableDataConfig(
+          createdAtDate,
+          createdAtDateIso,
+          "dateISO",
+          createdAtDateIso
+        ),
+        new SkiTableDataConfig(
+          updatedAtDate,
+          updatedAtDateIso,
+          "dateISO",
+          updatedAtDateIso
+        ),
+        new SkiTableDataConfig("REPLY"),
+        new SkiTableDataConfig(
+          participants.hasOwnProperty(authorId)
+            ? participants[authorId]["replyCount"]
+            : "Unknown"
+        ),
+      ]);
     }
-
-    const discussionTitle = discussion.title;
-    const discussionLink = document.createElement("a");
-    discussionLink.href = discussion.html_url;
-    discussionLink.target = "_blank";
-    discussionLink.title = "Go to discussion";
-    discussionLink.innerHTML = discussionTitle;
-
-    let createdAtDate = reply.created_at;
-    let createdAtDateIso = "";
-    if (!createdAtDate) {
-      createdAtDate = "None";
-    } else {
-      createdAtDateIso = new Date(createdAtDate).toISOString();
-      createdAtDate = new Date(createdAtDate).toLocaleString();
-    }
-
-    let updatedAtDate = reply.updated_at;
-    let updatedAtDateIso = "";
-    if (!updatedAtDate) {
-      updatedAtDate = "None";
-    } else {
-      updatedAtDateIso = new Date(updatedAtDate).toISOString();
-      updatedAtDate = new Date(updatedAtDate).toLocaleString();
-    }
-
-    replyData.push([
-      new SkiTableDataConfig(authorId, undefined, "number"),
-      new SkiTableDataConfig(authorName),
-      new SkiTableDataConfig(reply.id, undefined, "number"),
-      new SkiTableDataConfig(reply.parent_id, undefined, "number"),
-      new SkiTableDataConfig(discussionLink),
-      new SkiTableDataConfig(reply.message),
-      new SkiTableDataConfig(
-        createdAtDate,
-        createdAtDateIso,
-        "dateISO",
-        createdAtDateIso
-      ),
-      new SkiTableDataConfig(
-        updatedAtDate,
-        updatedAtDateIso,
-        "dateISO",
-        updatedAtDateIso
-      ),
-      new SkiTableDataConfig("REPLY"),
-      new SkiTableDataConfig(participants[authorId]["replyCount"]),
-    ]);
 
     if (reply.hasOwnProperty("replies")) {
       replyData.push(

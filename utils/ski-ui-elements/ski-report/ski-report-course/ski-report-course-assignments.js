@@ -12,6 +12,8 @@ class SkiReportCourseAssignments extends SkiReport {
       [
         new SkiTableHeadingConfig("Assignment ID", true, true),
         new SkiTableHeadingConfig("Name"),
+        new SkiTableHeadingConfig("Description HTML", false, true),
+        new SkiTableHeadingConfig("Description Text", false, true),
         new SkiTableHeadingConfig("Due Date"),
         new SkiTableHeadingConfig("Submission Types"),
         new SkiTableHeadingConfig("Grading Type"),
@@ -20,6 +22,10 @@ class SkiReportCourseAssignments extends SkiReport {
         new SkiTableHeadingConfig("Omit from Final Grade"),
         new SkiTableHeadingConfig("Needs Grading"),
         new SkiTableHeadingConfig("Published"),
+        new SkiTableHeadingConfig("Allowed Attempts", true, true),
+        new SkiTableHeadingConfig("Peer Reviews", true, true),
+        new SkiTableHeadingConfig("Anonymous Grading", true, true),
+        new SkiTableHeadingConfig("Muted", true, true),
       ],
       []
     );
@@ -78,9 +84,16 @@ class SkiReportCourseAssignments extends SkiReport {
           ? "None"
           : assignment.points_possible;
 
+      let assignmentAttempts = assignment.allowed_attempts;
+      if (assignmentAttempts == -1) {
+        assignmentAttempts = "Unlimited";
+      }
+
       const rowData = [
         new SkiTableDataConfig(assignment.id, undefined, "number"),
         new SkiTableDataConfig(assignmentNameLink),
+        new SkiTableDataConfig(assignment.description),
+        new SkiTableDataConfig(SkiReport.sanitizeText(assignment.description)),
         new SkiTableDataConfig(
           assignmentDueDate,
           assignmentDueDateIso,
@@ -94,6 +107,14 @@ class SkiReportCourseAssignments extends SkiReport {
         new SkiTableDataConfig(assignment.omit_from_final_grade),
         new SkiTableDataConfig(assignment.needs_grading_count),
         new SkiTableDataConfig(assignment.published),
+        new SkiTableDataConfig(
+          assignmentAttempts,
+          assignment.allowed_attempts,
+          "number"
+        ),
+        new SkiTableDataConfig(assignment.peer_reviews),
+        new SkiTableDataConfig(assignment.anonymous_grading),
+        new SkiTableDataConfig(assignment.muted),
       ];
 
       data.push(rowData);

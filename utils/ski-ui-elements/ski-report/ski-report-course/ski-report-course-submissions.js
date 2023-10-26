@@ -382,6 +382,9 @@ class SkiReportCourseSubmissions extends SkiReport {
         new SkiTableHeadingConfig(`Criteria ID ${i}`, true, true)
       );
       rubricHeadings.push(
+        new SkiTableHeadingConfig(`Outcome ID ${i}`, true, true)
+      );
+      rubricHeadings.push(
         new SkiTableHeadingConfig(`Criteria Description ${i}`, true, true)
       );
       rubricHeadings.push(new SkiTableHeadingConfig(`Score ${i}`, true, true));
@@ -423,9 +426,19 @@ class SkiReportCourseSubmissions extends SkiReport {
       const criteriaAssessment = rubricAssessment[criteriaId];
       const criteria = rubricDict[criteriaId];
       rubricData.push(new SkiTableDataConfig(criteriaId, undefined, "number"));
+      rubricData.push(
+        new SkiTableDataConfig(
+          criteria?.outcome_id ?? "N/A",
+          undefined,
+          "number"
+        )
+      );
       rubricData.push(new SkiTableDataConfig(criteria.description));
       rubricData.push(
         new SkiTableDataConfig(criteriaAssessment.points, undefined, "number")
+      );
+      rubricData.push(
+        new SkiTableDataConfig(criteria.points, undefined, "number")
       );
       rubricData.push({ content: criteriaAssessment.comments });
     }

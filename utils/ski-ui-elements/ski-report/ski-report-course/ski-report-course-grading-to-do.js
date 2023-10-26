@@ -315,13 +315,6 @@ class SkiReportCourseGradingToDo extends SkiReport {
         new SkiTableDataConfig(submissionComments),
       ];
 
-      [
-        new SkiTableHeadingConfig("Days Since Submission"),
-        new SkiTableHeadingConfig("Due Date"),
-        new SkiTableHeadingConfig("Days Since Due Date"),
-        new SkiTableHeadingConfig("Min Days Since"),
-      ];
-
       data.push(rowData);
     }
     return data;

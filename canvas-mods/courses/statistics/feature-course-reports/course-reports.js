@@ -43,6 +43,7 @@
 
       addReport(customReportsDiv, SkiReportCourseAssignments);
       addReport(customReportsDiv, SkiReportCourseSubmissions);
+      addReport(customReportsDiv, SkiReportCourseGradingToDo);
       addReport(customReportsDiv, SkiReportCourseQuizzes);
       addReport(customReportsDiv, SkiReportCourseDiscussions);
       addReport(customReportsDiv, SkiReportCourseDiscussionReplies);
@@ -55,14 +56,14 @@
 
   function addReport(container, ReportConstructor) {
     const report = new ReportConstructor();
-    
+
     const details = document.createElement("details");
     details.classList.add("ski-ui");
     details.style.marginBottom = "1rem";
 
     const detailsSummary = document.createElement("summary");
     detailsSummary.innerText = report.getName();
-    
+
     details.appendChild(detailsSummary);
     details.appendChild(report.getReportContainer());
 

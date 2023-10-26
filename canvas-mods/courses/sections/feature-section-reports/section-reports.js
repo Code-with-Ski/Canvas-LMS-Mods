@@ -42,6 +42,7 @@
       hr.insertAdjacentElement("afterend", customReportsDiv);
 
       addReport(customReportsDiv, SkiReportCourseSubmissions);
+      addReport(customReportsDiv, SkiReportCourseGradingToDo);
       addReport(customReportsDiv, SkiReportCourseModulesProgress);
       addReport(customReportsDiv, SkiReportCourseEnrollments);
     }

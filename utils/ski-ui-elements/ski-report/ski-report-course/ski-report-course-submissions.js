@@ -284,7 +284,7 @@ class SkiReportCourseSubmissions extends SkiReport {
       const assignment = assignments[submission.assignment_id];
       const assignmentName = assignment.name;
       const assignmentNameLink = document.createElement("a");
-      assignmentNameLink.href = submission.html_url;
+      assignmentNameLink.href = assignment.html_url;
       assignmentNameLink.target = "_blank";
       assignmentNameLink.innerText = assignmentName;
       const pointsPossible = assignment.points_possible;

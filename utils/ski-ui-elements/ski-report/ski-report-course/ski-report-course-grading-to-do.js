@@ -60,7 +60,7 @@ class SkiReportCourseGradingToDo extends SkiReport {
 
     const label = document.createElement("label");
     label.innerText =
-      "Select assignment to chdck for submissions that need grading:";
+      "Select assignment to check for submissions that need grading:";
     label.setAttribute("for", `grading-to-do-report-assignment-select`);
     assignmentSelectionFieldset.appendChild(label);
 

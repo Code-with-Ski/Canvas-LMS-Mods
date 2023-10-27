@@ -46,6 +46,7 @@ class SkiReportCourseMissingRubricGrades extends SkiReport {
     const description = document.createElement("p");
     description.innerText =
       "This report provides a list of assignment submissions that are graded, but have a rubric associated that wasn't used for grading.";
+    formContainer.appendChild(description);
 
     // Assignment Selection
     const assignmentSelection = this.createAssignmentSelection();
@@ -60,7 +61,7 @@ class SkiReportCourseMissingRubricGrades extends SkiReport {
     assignmentSelectionFieldset.classList.add("ski-ui");
 
     const label = document.createElement("label");
-    label.innerText = "Select assignment to chdck for submissions:";
+    label.innerText = "Select assignment to check for submissions:";
     label.setAttribute("for", `missing-rubric-grade-report-assignment-select`);
     assignmentSelectionFieldset.appendChild(label);
 

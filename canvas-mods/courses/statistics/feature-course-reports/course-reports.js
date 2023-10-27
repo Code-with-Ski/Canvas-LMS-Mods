@@ -45,6 +45,7 @@
       addReport(customReportsDiv, SkiReportCourseSubmissions);
       addReport(customReportsDiv, SkiReportCourseGradingToDo);
       addReport(customReportsDiv, SkiReportCourseMissingRubricGrades);
+      addReport(customReportsDiv, SkiReportCourseGradeHistory);
       addReport(customReportsDiv, SkiReportCourseQuizzes);
       addReport(customReportsDiv, SkiReportCourseDiscussions);
       addReport(customReportsDiv, SkiReportCourseDiscussionReplies);

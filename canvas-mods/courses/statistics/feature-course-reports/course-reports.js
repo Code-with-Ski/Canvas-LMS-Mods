@@ -1,21 +1,20 @@
 "use strict";
 
 (() => {
-  let IS_DEBUG_DETAILED = false;
-  let currentCourseId = "";
   if (
     /^\/courses\/[0-9]+\/statistics\??[^\/]*\/?$/.test(window.location.pathname)
   ) {
     chrome.storage.sync.get(
       {
-        enableDetailedLogging: false,
         courseStatisticsCourseReport: true,
       },
       function (items) {
-        IS_DEBUG_DETAILED = items.enableDetailedLogging;
-
         if (items.courseStatisticsCourseReport) {
-          currentCourseId = window.location.pathname.split("/")[2];
+          const splitPathname = window.location.pathname
+            .split("?")[0]
+            .split("/");
+          SkiReport.contextDetails.set("reportContext", "courses");
+          SkiReport.contextDetails.set("courseId", splitPathname[2]);
           SkiMonitorChanges.watchForElementById("stats", addReports);
         }
       }

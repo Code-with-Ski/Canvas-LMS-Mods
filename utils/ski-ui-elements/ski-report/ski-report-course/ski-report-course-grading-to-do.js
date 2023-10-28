@@ -1,15 +1,7 @@
 class SkiReportCourseGradingToDo extends SkiReport {
-  #currentCourseId = window.location.pathname.split("/")[2];
-  #isSectionReport = window.location.pathname.includes("/sections/");
-  #currentSectionId;
-
   constructor() {
     super("Grading To Do Report");
-    if (this.#isSectionReport) {
-      this.#currentSectionId = window.location.pathname
-        .split("?")[0]
-        .split("/")[4];
-    }
+    this.addAssignmentOptions();
   }
 
   createTable() {
@@ -76,17 +68,19 @@ class SkiReportCourseGradingToDo extends SkiReport {
 
     assignmentSelectionFieldset.appendChild(assignmentSelect);
 
-    this.addAssignmentOptions(assignmentSelect);
-
     return assignmentSelectionFieldset;
   }
 
-  async addAssignmentOptions(assignmentSelect) {
-    const courseId = window.location.pathname.split("/")[2];
-    const assignments = await SkiCanvasLmsApiCaller.getRequestAllPages(
-      `/api/v1/courses/${courseId}/assignments`,
-      { order_by: "due_at" }
+  async addAssignmentOptions() {
+    const assignmentSelect = this.getReportContainer().querySelector(
+      "#grading-to-do-report-assignment-select"
     );
+    const courseId = SkiReport.contextDetails.get("courseId");
+    if (!courseId) {
+      console.error("Course ID not set in SkiReport");
+      return;
+    }
+    const assignments = await this.#getAssignments(courseId);
 
     const assignmentsGroup = document.createElement("optgroup");
     assignmentsGroup.label = "Assignments";
@@ -121,25 +115,46 @@ class SkiReportCourseGradingToDo extends SkiReport {
 
   async loadData(table, formContainer) {
     try {
+      const courseId = SkiReport.contextDetails.get("courseId");
+      let contextId = courseId;
+      const context = SkiReport.contextDetails.get("reportContext");
+      let sectionId;
+      if (context == "sections") {
+        sectionId = SkiReport.contextDetails.get("sectionId");
+        contextId = sectionId;
+      }
+      if (!courseId) {
+        throw "Course ID not set in SkiReport";
+      }
+
       const selectedAssignmentId = formContainer.querySelector(
         ".ski-assignment-select"
       )?.value;
       let assignments = [];
       if (selectedAssignmentId) {
         this.updateLoadingMessage("info", "Getting assignment details...");
-        const assignment = await SkiCanvasLmsApiCaller.getRequestAllPages(
-          `/api/v1/courses/${
-            this.#currentCourseId
-          }/assignments/${selectedAssignmentId}`,
-          { order_by: "due_at" }
-        );
+        let assignment;
+        if (SkiReport.cache.has("assignments")) {
+          const cachedAssignments = await SkiReport.cache.get("assignments");
+          const filteredAssignments = cachedAssignments.filter(
+            (currentAssignment) => {
+              return currentAssignment.id == selectedAssignmentId;
+            }
+          );
+          if (filteredAssignments.length > 0) {
+            assignment = filteredAssignments[0];
+          }
+        }
+        if (!assignment) {
+          assignment = await SkiCanvasLmsApiCaller.getRequestAllPages(
+            `/api/v1/courses/${courseId}/assignments/${selectedAssignmentId}`,
+            { order_by: "due_at" }
+          );
+        }
         assignments.push(assignment);
       } else {
         this.updateLoadingMessage("info", "Getting details of assignments...");
-        assignments = await SkiCanvasLmsApiCaller.getRequestAllPages(
-          `/api/v1/courses/${this.#currentCourseId}/assignments`,
-          { order_by: "due_at" }
-        );
+        assignments = await this.#getAssignments(courseId);
       }
       const assignmentsDict = {};
       for (const assignment of assignments) {
@@ -148,22 +163,27 @@ class SkiReportCourseGradingToDo extends SkiReport {
 
       this.updateLoadingMessage("info", "Getting enrolled students...");
       const studentsDict = {};
-      const students = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${
-          this.#currentCourseId
-        }/enrollments?type[]=StudentEnrollment`,
-        {}
-      );
+      let students;
+      if (SkiReport.cache.has("enrollments-active")) {
+        const cachedEnrollmentsActive = await SkiReport.cache.get(
+          "enrollments-active"
+        );
+        students = cachedEnrollmentsActive.filter((enrollment) => {
+          enrollment.type == "StudentEnrollment";
+        });
+      }
+      if (!students) {
+        students = await SkiCanvasLmsApiCaller.getRequestAllPages(
+          `/api/v1/courses/${courseId}/enrollments?type[]=StudentEnrollment`,
+          {}
+        );
+      }
       for (const student of students) {
         studentsDict[student.user_id] = student.user;
       }
 
       let submissions = [];
       const submissionStatesToCheck = ["submitted", "pending_review"];
-      const submissionContext = this.#isSectionReport ? "sections" : "courses";
-      const submissionContextId = this.#isSectionReport
-        ? this.#currentSectionId
-        : this.#currentCourseId;
 
       if (selectedAssignmentId) {
         for (const submissionState of submissionStatesToCheck) {
@@ -173,7 +193,7 @@ class SkiReportCourseGradingToDo extends SkiReport {
           );
           const currentSubmissions =
             await SkiCanvasLmsApiCaller.getRequestAllPages(
-              `/api/v1/${submissionContext}/${submissionContextId}/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment&assignment_ids[]=${selectedAssignmentId}&workflow_state=${submissionState}`
+              `/api/v1/${context}/${contextId}/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment&assignment_ids[]=${selectedAssignmentId}&workflow_state=${submissionState}`
             );
           submissions.push(...currentSubmissions);
         }
@@ -185,7 +205,7 @@ class SkiReportCourseGradingToDo extends SkiReport {
           );
           const currentSubmissions =
             await SkiCanvasLmsApiCaller.getRequestAllPages(
-              `/api/v1/${submissionContext}/${submissionContextId}/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment&workflow_state=${submissionState}`
+              `/api/v1/${context}/${contextId}/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment&workflow_state=${submissionState}`
             );
           submissions.push(...currentSubmissions);
         }
@@ -209,6 +229,11 @@ class SkiReportCourseGradingToDo extends SkiReport {
   }
 
   extractData(submissions, assignments, students) {
+    const courseId = SkiReport.contextDetails.get("courseId");
+    if (!courseId) {
+      throw "Course ID not set in SkiReport";
+    }
+
     const data = [];
     for (const submission of submissions) {
       let studentName = "Unknown";
@@ -225,11 +250,7 @@ class SkiReportCourseGradingToDo extends SkiReport {
       const omitFromFinalGrade = assignment.omit_from_final_grade;
 
       const speedGraderLink = document.createElement("a");
-      speedGraderLink.href = `/courses/${
-        this.#currentCourseId
-      }/gradebook/speed_grader?assignment_id=${
-        submission.assignment_id
-      }&student_id=${submission.user_id}`;
+      speedGraderLink.href = `/courses/${courseId}/gradebook/speed_grader?assignment_id=${submission.assignment_id}&student_id=${submission.user_id}`;
       speedGraderLink.title = "Grade Submission";
       speedGraderLink.target = "_blank";
       speedGraderLink.innerText = "SpeedGrader";
@@ -318,5 +339,14 @@ class SkiReportCourseGradingToDo extends SkiReport {
       data.push(rowData);
     }
     return data;
+  }
+
+  #getAssignments(courseId) {
+    return SkiReport.memoizeRequest("assignments", () => {
+      return SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${courseId}/assignments`,
+        { order_by: "due_at" }
+      );
+    });
   }
 }

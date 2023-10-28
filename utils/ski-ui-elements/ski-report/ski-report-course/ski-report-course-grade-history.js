@@ -1,15 +1,8 @@
 class SkiReportCourseGradeHistory extends SkiReport {
-  #currentCourseId = window.location.pathname.split("/")[2];
-  #isSectionReport = window.location.pathname.includes("/sections/");
-  #currentSectionId;
-
   constructor() {
     super("Grade History Report");
-    if (this.#isSectionReport) {
-      this.#currentSectionId = window.location.pathname
-        .split("?")[0]
-        .split("/")[4];
-    }
+    this.addAssignmentOptions();
+    this.addUserOptions();
   }
 
   createTable() {
@@ -73,17 +66,19 @@ class SkiReportCourseGradeHistory extends SkiReport {
 
     assignmentSelectionFieldset.appendChild(assignmentSelect);
 
-    this.addAssignmentOptions(assignmentSelect);
-
     return assignmentSelectionFieldset;
   }
 
-  async addAssignmentOptions(assignmentSelect) {
-    const courseId = window.location.pathname.split("/")[2];
-    const assignments = await SkiCanvasLmsApiCaller.getRequestAllPages(
-      `/api/v1/courses/${courseId}/assignments`,
-      { order_by: "due_at" }
+  async addAssignmentOptions() {
+    const assignmentSelect = this.getReportContainer().querySelector(
+      "#grade-history-report-assignment-select"
     );
+    const courseId = SkiReport.contextDetails.get("courseId");
+    if (!courseId) {
+      console.error("Course ID not set in SkiReport");
+      return;
+    }
+    const assignments = await this.#getAssignments(courseId);
 
     const assignmentsGroup = document.createElement("optgroup");
     assignmentsGroup.label = "Assignments";
@@ -158,12 +153,14 @@ class SkiReportCourseGradeHistory extends SkiReport {
 
     userSelectionFieldset.appendChild(userSelect);
 
-    this.addUserOptions(userSelect);
-
     return userSelectionFieldset;
   }
 
-  async addUserOptions(userSelect) {
+  async addUserOptions() {
+    const userSelect = this.getReportContainer().querySelector(
+      "#grade-history-report-user-select"
+    );
+
     const activeGroup = document.createElement("optgroup");
     activeGroup.label = "Active Users";
     activeGroup.classList.add("ski-optgroup-users-active");
@@ -178,21 +175,19 @@ class SkiReportCourseGradeHistory extends SkiReport {
     deletedGroup.classList.add("ski-optgroup-users-deleted");
 
     const enrollmentStates = ["active", "inactive", "concluded", "deleted"];
-    const splitPathname = window.location.pathname.split("?")[0].split("/");
-    const context = window.location.pathname.includes("/sections/")
-      ? "sections"
-      : "courses";
-    const contextId =
-      context == "sections" ? splitPathname[4] : splitPathname[2];
+    const courseId = SkiReport.contextDetails.get("courseId");
+    let contextId = courseId;
+    const context = SkiReport.contextDetails.get("reportContext");
+    let sectionId;
+    if (context == "sections") {
+      sectionId = SkiReport.contextDetails.get("sectionId");
+      contextId = sectionId;
+    }
+    if (!courseId) {
+      throw "Course ID not set in SkiReport";
+    }
     for (const state of enrollmentStates) {
-      const enrollments = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/${context}/${contextId}/enrollments`,
-        {
-          "type[]": "StudentEnrollment",
-          "state[]": state,
-          per_page: 100,
-        }
-      );
+      const enrollments = await this.#getEnrollments(context, contextId, state);
 
       let optGroup = activeGroup;
       if (state == "inactive") {
@@ -202,7 +197,11 @@ class SkiReportCourseGradeHistory extends SkiReport {
       } else if (state == "deleted") {
         optGroup = deletedGroup;
       }
+
       for (const enrollment of enrollments) {
+        if (enrollment.type != "StudentEnrollment") {
+          continue;
+        }
         const option = document.createElement("option");
         option.value = enrollment.user_id;
         option.text = `${enrollment?.user?.short_name ?? "Unknown"} *(ID: ${
@@ -210,12 +209,25 @@ class SkiReportCourseGradeHistory extends SkiReport {
         })`;
         optGroup.appendChild(option);
       }
+
       userSelect.appendChild(optGroup);
     }
   }
 
   async loadData(table, formContainer) {
     try {
+      const courseId = SkiReport.contextDetails.get("courseId");
+      let contextId = courseId;
+      const context = SkiReport.contextDetails.get("reportContext");
+      let sectionId;
+      if (context == "sections") {
+        sectionId = SkiReport.contextDetails.get("sectionId");
+        contextId = sectionId;
+      }
+      if (!courseId) {
+        throw "Course ID not set in SkiReport";
+      }
+
       this.updateLoadingMessage("info", "Getting selected options");
       const selectedAssignmentId = formContainer.querySelector(
         ".ski-assignment-select"
@@ -230,16 +242,14 @@ class SkiReportCourseGradeHistory extends SkiReport {
           this.updateLoadingMessage("info", "Getting grade history...");
           const submissionHistory =
             await SkiCanvasLmsApiCaller.getRequestAllPages(
-              `/api/v1/courses/${this.#currentCourseId}/gradebook_history/feed`
+              `/api/v1/courses/${courseId}/gradebook_history/feed`
             );
           submissions.push(...submissionHistory);
         } else {
           this.updateLoadingMessage("info", "Getting grade history...");
           const submissionHistory =
             await SkiCanvasLmsApiCaller.getRequestAllPages(
-              `/api/v1/courses/${
-                this.#currentCourseId
-              }/gradebook_history/feed?assignment_id=${selectedAssignmentId}`
+              `/api/v1/courses/${courseId}/gradebook_history/feed?assignment_id=${selectedAssignmentId}`
             );
           submissions.push(...submissionHistory);
         }
@@ -289,7 +299,6 @@ class SkiReportCourseGradeHistory extends SkiReport {
           userIds.push(selectedUserId);
         }
 
-        console.log(userIds);
         const numOfUsers = userIds.length;
         for (let i = 0; i < numOfUsers; i++) {
           const userId = userIds[i];
@@ -300,17 +309,13 @@ class SkiReportCourseGradeHistory extends SkiReport {
           if (!selectedAssignmentId) {
             const submissionHistory =
               await SkiCanvasLmsApiCaller.getRequestAllPages(
-                `/api/v1/courses/${
-                  this.#currentCourseId
-                }/gradebook_history/feed?user_id=${userId}`
+                `/api/v1/courses/${courseId}/gradebook_history/feed?user_id=${userId}`
               );
             submissions.push(...submissionHistory);
           } else {
             const submissionHistory =
               await SkiCanvasLmsApiCaller.getRequestAllPages(
-                `/api/v1/courses/${
-                  this.#currentCourseId
-                }/gradebook_history/feed?user_id=${userId}&assignment_id=${selectedAssignmentId}`
+                `/api/v1/courses/${courseId}/gradebook_history/feed?user_id=${userId}&assignment_id=${selectedAssignmentId}`
               );
             submissions.push(...submissionHistory);
           }
@@ -331,40 +336,35 @@ class SkiReportCourseGradeHistory extends SkiReport {
   }
 
   extractData(gradeHistorySubmissions) {
+    const courseId = SkiReport.contextDetails.get("courseId");
+    if (!courseId) {
+      throw "Course ID not set in SkiReport";
+    }
+
     const data = [];
     for (const submission of gradeHistorySubmissions) {
       const studentName = submission?.user_name ?? "Unknown";
       let studentNameLink = document.createElement("a");
-      studentNameLink.href = `/courses/${this.#currentCourseId}/users/${
-        submission.user_id
-      }`;
+      studentNameLink.href = `/courses/${courseId}/users/${submission.user_id}`;
       studentNameLink.target = "_blank";
       studentNameLink.innerText = studentName;
 
       const assignmentName = submission.assignment_name;
       const assignmentNameLink = document.createElement("a");
-      assignmentNameLink.href = `/courses/${
-        this.#currentCourseId
-      }/assignments/${submission.assignment_id}`;
+      assignmentNameLink.href = `/courses/${courseId}/assignments/${submission.assignment_id}`;
       assignmentNameLink.target = "_blank";
       assignmentNameLink.innerText = assignmentName;
 
       let graderNameLink = submission.grader;
       if (submission.grader_id) {
         graderNameLink = document.createElement("a");
-        graderNameLink.href = `/courses/${this.#currentCourseId}/users/${
-          submission.grader_id
-        }`;
+        graderNameLink.href = `/courses/${courseId}/users/${submission.grader_id}`;
         graderNameLink.target = "_blank";
         graderNameLink.innerText = submission.grader;
       }
 
       const speedGraderLink = document.createElement("a");
-      speedGraderLink.href = `/courses/${
-        this.#currentCourseId
-      }/gradebook/speed_grader?assignment_id=${
-        submission.assignment_id
-      }&student_id=${submission.user_id}`;
+      speedGraderLink.href = `/courses/${courseId}/gradebook/speed_grader?assignment_id=${submission.assignment_id}&student_id=${submission.user_id}`;
       speedGraderLink.title = "Go to SpeedGrader";
       speedGraderLink.target = "_blank";
       speedGraderLink.innerText = "SpeedGrader";
@@ -423,5 +423,26 @@ class SkiReportCourseGradeHistory extends SkiReport {
       data.push(rowData);
     }
     return data;
+  }
+
+  #getAssignments(courseId) {
+    return SkiReport.memoizeRequest("assignments", () => {
+      return SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${courseId}/assignments`,
+        { order_by: "due_at" }
+      );
+    });
+  }
+
+  #getEnrollments(context, contextId, state) {
+    return SkiReport.memoizeRequest(`enrollments-${state}`, () => {
+      return SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/${context}/${contextId}/enrollments`,
+        {
+          per_page: 100,
+          "state[]": state,
+        }
+      );
+    });
   }
 }

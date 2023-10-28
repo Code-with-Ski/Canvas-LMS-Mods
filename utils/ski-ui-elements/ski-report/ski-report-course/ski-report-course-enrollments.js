@@ -1,15 +1,6 @@
 class SkiReportCourseEnrollments extends SkiReport {
-  #currentCourseId = window.location.pathname.split("/")[2];
-  #isSectionReport = window.location.pathname.includes("/sections/");
-  #currentSectionId;
-
   constructor() {
     super("Enrollment Report");
-    if (this.#isSectionReport) {
-      this.#currentSectionId = window.location.pathname
-        .split("?")[0]
-        .split("/")[4];
-    }
   }
 
   createTable() {
@@ -116,41 +107,66 @@ class SkiReportCourseEnrollments extends SkiReport {
         return;
       }
 
-      const context = this.#isSectionReport ? "sections" : "courses";
-      const contextId = this.#isSectionReport
-        ? this.#currentSectionId
-        : this.#currentCourseId;
+      const courseId = SkiReport.contextDetails.get("courseId");
+      let contextId = courseId;
+      const context = SkiReport.contextDetails.get("reportContext");
+      let sectionId;
+      if (context == "sections") {
+        sectionId = SkiReport.contextDetails.get("sectionId");
+        contextId = sectionId;
+      }
+      if (!courseId) {
+        throw "Course ID not set in SkiReport";
+      }
+
       let sections = [];
       if (context == "courses") {
         this.updateLoadingMessage("info", "Getting sections...");
-        sections = await SkiCanvasLmsApiCaller.getRequestAllPages(
-          `/api/v1/courses/${this.#currentCourseId}/sections`,
-          { per_page: 100 }
-        );
+        sections = await this.#getSections(courseId);
       } else {
         this.updateLoadingMessage("info", "Getting section details...");
-        const section = await SkiCanvasLmsApiCaller.getRequestAllPages(
-          `/api/v1/courses/${this.#currentCourseId}/sections/${contextId}`,
-          {}
-        );
+        let section;
+        if (SkiReport.cache.has("sections")) {
+          const cachedSections = await SkiReport.cache.get("sections");
+          const filteredSections = cachedSections.filter((currentSection) => {
+            return currentSection.id == sectionId;
+          });
+          if (filteredSections.length > 0) {
+            section = filteredSections[0];
+          }
+        }
+
+        if (!section) {
+          section = await SkiCanvasLmsApiCaller.getRequestAllPages(
+            `/api/v1/courses/${courseId}/sections/${sectionId}`,
+            {}
+          );
+        }
+
         sections.push(section);
       }
+
       const sectionsDict = {};
       for (const section of sections) {
         sectionsDict[section.id] = section;
       }
 
-      this.updateLoadingMessage(
-        "info",
-        "Getting enrollments with selected states..."
-      );
-      const enrollments = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/${context}/${contextId}/enrollments`,
-        {
-          per_page: 100,
-          "state[]": [...enrollmentStateCheckboxes.map((input) => input.value)],
-        }
-      );
+      const enrollmentStates = [
+        ...enrollmentStateCheckboxes.map((input) => input.value),
+      ];
+      const enrollments = [];
+      for (const state of enrollmentStates) {
+        this.updateLoadingMessage(
+          "info",
+          `Getting enrollments with ${state} states...`
+        );
+        const stateEnrollments = await this.#getEnrollments(
+          context,
+          contextId,
+          state
+        );
+        enrollments.push(...stateEnrollments);
+      }
 
       this.updateLoadingMessage("info", "Formatting data for table...");
       const extractedData = this.extractData(enrollments, sectionsDict);
@@ -306,5 +322,26 @@ class SkiReportCourseEnrollments extends SkiReport {
       data.push(rowData);
     }
     return data;
+  }
+
+  #getSections(courseId) {
+    return SkiReport.memoizeRequest("sections", () => {
+      return SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${courseId}/sections`,
+        { per_page: 100 }
+      );
+    });
+  }
+
+  #getEnrollments(context, contextId, state) {
+    return SkiReport.memoizeRequest(`enrollments-${state}`, () => {
+      return SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/${context}/${contextId}/enrollments`,
+        {
+          per_page: 100,
+          "state[]": state,
+        }
+      );
+    });
   }
 }

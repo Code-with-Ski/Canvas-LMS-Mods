@@ -1,8 +1,6 @@
 "use strict";
 
 (() => {
-  let currentCourseId = "";
-  let currentSectionId = "";
   if (
     /^\/courses\/[0-9]+\/sections\/[0-9]+\??[^\/]*\/?$/.test(
       window.location.pathname
@@ -14,8 +12,12 @@
       },
       function (items) {
         if (items.courseSectionsSectionReport) {
-          currentCourseId = window.location.pathname.split("/")[2];
-          currentSectionId = window.location.pathname.split("/")[4];
+          const splitPathname = window.location.pathname
+            .split("?")[0]
+            .split("/");
+          SkiReport.contextDetails.set("reportContext", "sections");
+          SkiReport.contextDetails.set("courseId", splitPathname[2]);
+          SkiReport.contextDetails.set("courseId", splitPathname[4]);
           SkiMonitorChanges.watchForElementById("content", addReports);
         }
       }

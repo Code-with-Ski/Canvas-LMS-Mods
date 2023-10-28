@@ -1,6 +1,8 @@
 class SkiReport {
   #name;
   #reportContainer;
+  static cache = new Map();
+  static contextDetails = new Map();
 
   constructor(reportName) {
     if (this.constructor === SkiReport) {
@@ -164,5 +166,21 @@ class SkiReport {
       "text/html"
     ).body.innerText;
     return sanitizedText;
+  }
+
+  static memoizeRequest(key, requestFunction) {
+    if (SkiReport.cache.has(key)) {
+      return SkiReport.cache.get(key);
+    }
+
+    SkiReport.cache.set(
+      key,
+      requestFunction().catch((error) => {
+        SkiReport.cache.delete(key);
+        return Promise.reject(error);
+      })
+    );
+
+    return SkiReport.cache.get(key);
   }
 }

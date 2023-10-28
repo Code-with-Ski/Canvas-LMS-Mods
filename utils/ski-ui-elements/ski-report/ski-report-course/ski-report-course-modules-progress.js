@@ -63,6 +63,14 @@ class SkiReportCourseModulesProgress extends SkiReport {
             {}
           );
 
+        // TODO Find reason for the error
+        if (!studentModulesProgress || !Array.isArray(studentModulesProgress)) {
+          console.warn(
+            `Issue retrieving module progress for student ID ${studentId}. Skipping student`
+          );
+          continue;
+        }
+
         let totalNumOfItemsWithRequirements = 0;
         let totalNumOfItemsCompleted = 0;
         for (const module of studentModulesProgress) {

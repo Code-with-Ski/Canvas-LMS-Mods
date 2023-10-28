@@ -53,6 +53,7 @@
       addReport(customReportsDiv, SkiReportCoursePages);
       addReport(customReportsDiv, SkiReportCourseModulesProgress);
       addReport(customReportsDiv, SkiReportCourseEnrollments);
+      addReport(customReportsDiv, SkiReportCourseUserAccess);
     }
   }
 

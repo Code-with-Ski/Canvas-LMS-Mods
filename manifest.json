@@ -107,6 +107,7 @@
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-grading-to-do.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-missing-rubric-grade.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-grade-history.js",
+        "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-user-access.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-enrollments.js",
         "canvas-mods/courses/statistics/feature-course-reports/course-reports.js"
       ],
@@ -155,6 +156,7 @@
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-grading-to-do.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-missing-rubric-grade.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-grade-history.js",
+        "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-user-access.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-enrollments.js",
         "canvas-mods/courses/sections/feature-section-reports/section-reports.js"
       ],

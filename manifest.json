@@ -234,7 +234,8 @@
     {
       "matches": [
         "*://*/accounts/*/rubrics/*", 
-        "*://*/courses/*/rubrics/*"
+        "*://*/courses/*/rubrics/*", 
+        "*://*/courses/*/assignments/*"
       ],
       "js": [
         "utils/ski-ui-elements/ski-table-elements/ski-table.js",

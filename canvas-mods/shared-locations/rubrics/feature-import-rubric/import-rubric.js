@@ -2,7 +2,8 @@
 
 (() => {
   if (
-    /^\/(course|account)s\/([0-9]+)\/rubrics/.test(window.location.pathname)
+    /^\/(course|account)s\/([0-9]+)\/rubrics/.test(window.location.pathname) ||
+    /^\/courses\/([0-9]+)\/assignments\/[0-9]+/.test(window.location.pathname)
   ) {
     chrome.storage.sync.get(
       {
@@ -19,15 +20,25 @@
 
   function watchForEditRubricDialog(importDialog) {
     SkiMonitorChanges.watchForAddedNodesByParentId("content", (addedNode) => {
-      if (addedNode.classList?.contains("rubric_container") && addedNode.classList?.contains("editing")) {
+      if (
+        addedNode.classList?.contains("rubric_container") &&
+        addedNode.classList?.contains("editing")
+      ) {
         addImportDialogButton(addedNode, importDialog);
       }
     });
   }
 
   function addImportDialogButton(editRubricDiv, dialog) {
+    const existingButtonDiv = editRubricDiv.querySelector(
+      ".ski-import-buttons-div"
+    );
+    if (existingButtonDiv) {
+      return;
+    }
     const importButtonDiv = document.createElement("div");
     importButtonDiv.style.textAlign = "right";
+    importButtonDiv.classList.add("ski-import-buttons-div");
 
     const importButton = document.createElement("button");
     importButton.innerText = "Import Details";
@@ -39,14 +50,21 @@
     });
 
     const exportButton = document.createElement("button");
-    exportButton.innerText = "Export Criteria";
-    exportButton.title = "Click to export criteria data in a tab separated format that matches import format."
+    exportButton.innerText = "Export Criteria for Import";
+    exportButton.title =
+      "Click to export criteria data in a tab separated format that matches import format.";
     exportButton.classList.add("Button");
     exportButton.addEventListener("click", downloadExistingCriteria);
 
     importButtonDiv.appendChild(exportButton);
     importButtonDiv.appendChild(importButton);
     editRubricDiv.insertAdjacentElement("afterbegin", importButtonDiv);
+
+    const updateRubricButton =
+      editRubricDiv.querySelector("button.save_button");
+    updateRubricButton?.addEventListener("click", () => {
+      editRubricDiv.removeChild(importButtonDiv);
+    });
   }
 
   function addImportDialog() {
@@ -123,7 +141,8 @@
 
     const importButton = document.createElement("button");
     importButton.innerHTML = `Import`;
-    importButton.title = "Click to keep exisiting criteria in the rubric and import these new criteria";
+    importButton.title =
+      "Click to keep exisiting criteria in the rubric and import these new criteria";
     importButton.style.marginLeft = "0.5rem";
     importButton.classList.add("Button", "Button--primary");
     importButton.addEventListener("click", () => {
@@ -132,7 +151,8 @@
 
     const importAndReplaceButton = document.createElement("button");
     importAndReplaceButton.innerHTML = `Import and Replace`;
-    importAndReplaceButton.title = "Click to remove existing criteria and import these new criteria";
+    importAndReplaceButton.title =
+      "Click to remove existing criteria and import these new criteria";
     importAndReplaceButton.style.marginLeft = "0.5rem";
     importAndReplaceButton.classList.add("Button", "Button--warning");
     importAndReplaceButton.addEventListener("click", () => {
@@ -145,7 +165,7 @@
     footerDivLeft.appendChild(cancelButton);
     footerDivRight.appendChild(importAndReplaceButton);
     footerDivRight.appendChild(importButton);
-    
+
     footerDiv.appendChild(footerDivLeft);
     footerDiv.appendChild(footerDivRight);
 
@@ -168,7 +188,7 @@
     updateMessage("");
   }
 
-  function updateMessage(messageText, isError=false) {
+  function updateMessage(messageText, isError = false) {
     const messageElem = document.querySelector(".ski-dialog-message");
     if (!messageElem) {
       return;
@@ -183,8 +203,7 @@
   }
 
   async function handleImportClick(dialog, shouldRemoveExistingCriteria) {
-    const [isValid, errors, details, outcomes] =
-      await validateImportDetails();
+    const [isValid, errors, details, outcomes] = await validateImportDetails();
     if (isValid) {
       if (shouldRemoveExistingCriteria) {
         removeExistingCriteria();
@@ -242,7 +261,9 @@
             }
           } else if (j == 2) {
             if (!["TRUE", "FALSE"].includes(data.toUpperCase())) {
-              errors.push(`ROW ${(i + 1)}: Expected third column data to be true or false.`)
+              errors.push(
+                `ROW ${i + 1}: Expected third column data to be true or false.`
+              );
             } else {
               validatedRowData.push(data.toUpperCase() == "TRUE");
             }
@@ -255,8 +276,20 @@
                 errors.push(`ROW ${i + 1}: Points must be numeric`);
               } else if (parsedData < 0) {
                 errors.push(`ROW ${i + 1}: Points can't be less than 0`);
-              } else if (j > 3 && parsedData >= (Number.isNaN(Number.parseFloat(row[j - 3].trim())) ? Number.MAX_VALUE : Number.parseFloat(row[j - 3].trim()))) {
-                errors.push(`ROW ${i + 1}: Ratings must be in descending point order (${parsedData} > ${Number.parseFloat(row[j-3].trim())})`);
+              } else if (
+                j > 3 &&
+                parsedData >=
+                  (Number.isNaN(Number.parseFloat(row[j - 3].trim()))
+                    ? Number.MAX_VALUE
+                    : Number.parseFloat(row[j - 3].trim()))
+              ) {
+                errors.push(
+                  `ROW ${
+                    i + 1
+                  }: Ratings must be in descending point order (${parsedData} > ${Number.parseFloat(
+                    row[j - 3].trim()
+                  )})`
+                );
               } else {
                 validatedRowData.push(data);
               }
@@ -328,14 +361,14 @@
     }
 
     const rubricTotalSpan = document.querySelector(
-      "#rubric_new span.rubric_total"
+      ".rubric_container.editing span.rubric_total"
     );
     if (rubricTotalSpan) {
       rubricTotalSpan.innerText = ` ${totalPoints}`;
     }
 
     const editCriterionLink = document.querySelector(
-      "#rubric_new tr#criterion_1 .edit_criterion_link"
+      ".rubric_container.editing tr#criterion_1 .edit_criterion_link"
     );
     editCriterionLink?.click();
     const updateCriterionButton = document.querySelector(
@@ -422,7 +455,9 @@
     criterionRow.appendChild(criterionRatingTd);
     criterionRow.appendChild(criterionPointsTd);
 
-    const summaryRow = document.querySelector("#rubric_new tbody tr.summary");
+    const summaryRow = document.querySelector(
+      ".rubric_container.editing tbody tr.summary"
+    );
     if (summaryRow) {
       summaryRow.insertAdjacentElement("beforebegin", criterionRow);
     }
@@ -504,8 +539,7 @@
                 <span class="nobr toggle_for_hide_points ">
                   <span class="points">${rowDetails[i]}</span>
                   <span class="range_rating" ${
-                    rowDetails[2] &&
-                    rowDetails[i] != "0"
+                    rowDetails[2] && rowDetails[i] != "0"
                       ? "style='display: inline'"
                       : "style='display: none;'"
                   }>to &gt;<span class="min_points">0</span></span> pts
@@ -645,7 +679,9 @@
     criterionRow.appendChild(criterionRatingTd);
     criterionRow.appendChild(criterionPointsTd);
 
-    const summaryRow = document.querySelector("#rubric_new tbody tr.summary");
+    const summaryRow = document.querySelector(
+      ".rubric_container.editing tbody tr.summary"
+    );
     if (summaryRow) {
       summaryRow.insertAdjacentElement("beforebegin", criterionRow);
     }
@@ -846,8 +882,8 @@
       "1932391",
       "Criteria 3\t\tFALSE\t20\tExcellent\t\t16\tGood\t\t12\tSatisfactory\t\t0\tNone",
       "Criteria 4\t\tFALSE\t10\tComplete\t\t0\tIncomplete",
-      "1134090"
-    ]
+      "1134090",
+    ];
     const dataString = sampleData.join("\n");
 
     // Download it
@@ -857,7 +893,8 @@
     link.setAttribute("target", "_blank");
     link.setAttribute(
       "href",
-      "data:text/tab-separated-values;charset=utf-8," + encodeURIComponent(dataString)
+      "data:text/tab-separated-values;charset=utf-8," +
+        encodeURIComponent(dataString)
     );
     link.setAttribute("download", filename);
     document.body.appendChild(link);
@@ -869,24 +906,61 @@
     // Construct tsv
     const data = [
       "title_or_outcome_id\tdescription	use_range\trating_points_1\trating_title_1\trating_description_1\trating_points_2\trating_title_2\trating_description_2\trating_points_3\trating_title_3\trating_description_3\trating_points_4\trating_title_4\trating_description_4\t*DO NOT COPY THIS LINE FOR IMPORT* Note: Additional rating columns can be added if needed.",
-    ]
-    
-    const rubricTitle = document.getElementById("rubric-title")?.value || "untitled";
-    const criteriaRows = [...document.querySelectorAll(".rubric_container.editing table.rubric_table tr.criterion:not(.blank)")];
+    ];
+
+    const rubricTitle =
+      document.getElementById("rubric-title")?.value || "untitled";
+    const criteriaRows = [
+      ...document.querySelectorAll(
+        ".rubric_container.editing table.rubric_table tr.criterion:not(.blank)"
+      ),
+    ];
     for (const row of criteriaRows) {
       const rowData = [];
       if (row.classList.contains("learning_outcome_criterion")) {
-        rowData.push(`${row.querySelector("td.criterion_description .learning_outcome_id")?.innerText?.trim()}`);
+        rowData.push(
+          `${row
+            .querySelector("td.criterion_description .learning_outcome_id")
+            ?.innerText?.trim()}`
+        );
       } else {
-        rowData.push(`${row.querySelector("td.criterion_description .description.description_title")?.innerText?.trim()}`);
-        rowData.push(`${row.querySelector("td.criterion_description .long_description")?.innerText?.trim()}`);
-        rowData.push(`${row.querySelector("td.criterion_description input.criterion_use_range")?.checked}`);
+        rowData.push(
+          `${row
+            .querySelector(
+              "td.criterion_description .description.description_title"
+            )
+            ?.innerText?.trim()}`
+        );
+        rowData.push(
+          `${row
+            .querySelector("td.criterion_description .long_description")
+            ?.innerText?.trim()}`
+        );
+        rowData.push(
+          `${
+            row.querySelector(
+              "td.criterion_description input.criterion_use_range"
+            )?.checked
+          }`
+        );
 
-        const ratingsTableData = [...row.querySelectorAll("table.ratings td.rating")];
+        const ratingsTableData = [
+          ...row.querySelectorAll("table.ratings td.rating"),
+        ];
         for (const ratingTd of ratingsTableData) {
-          rowData.push(`${ratingTd.querySelector(".points")?.innerText?.trim()}`);
-          rowData.push(`${ratingTd.querySelector(".description.rating_description_value")?.innerText?.trim()}`);
-          rowData.push(`${ratingTd.querySelector(".rating_long_description")?.innerText?.trim()}`);
+          rowData.push(
+            `${ratingTd.querySelector(".points")?.innerText?.trim()}`
+          );
+          rowData.push(
+            `${ratingTd
+              .querySelector(".description.rating_description_value")
+              ?.innerText?.trim()}`
+          );
+          rowData.push(
+            `${ratingTd
+              .querySelector(".rating_long_description")
+              ?.innerText?.trim()}`
+          );
         }
       }
       data.push(rowData.join("\t"));
@@ -901,7 +975,8 @@
     link.setAttribute("target", "_blank");
     link.setAttribute(
       "href",
-      "data:text/tab-separated-values;charset=utf-8," + encodeURIComponent(dataString)
+      "data:text/tab-separated-values;charset=utf-8," +
+        encodeURIComponent(dataString)
     );
     link.setAttribute("download", filename);
     document.body.appendChild(link);

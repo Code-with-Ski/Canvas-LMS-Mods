@@ -1,6 +1,4 @@
 class SkiReportCourseAssignments extends SkiReport {
-  #currentCourseId = window.location.pathname.split("/")[2];
-
   constructor() {
     super("Assignment Details");
   }
@@ -36,10 +34,11 @@ class SkiReportCourseAssignments extends SkiReport {
   async loadData(table) {
     try {
       this.updateLoadingMessage("info", "Getting assignments...");
-      const assignments = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${this.#currentCourseId}/assignments`,
-        { order_by: "due_at" }
-      );
+      const courseId = SkiReport.contextDetails.get("courseId");
+      if (!courseId) {
+        throw "Course ID not set in SkiReport";
+      }
+      const assignments = await this.#getAssignments(courseId);
 
       this.updateLoadingMessage("info", "Formatting data for table...");
       const extractedData = this.extractData(assignments);
@@ -120,5 +119,14 @@ class SkiReportCourseAssignments extends SkiReport {
       data.push(rowData);
     }
     return data;
+  }
+
+  #getAssignments(courseId) {
+    return SkiReport.memoizeRequest("assignments", () => {
+      return SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${courseId}/assignments`,
+        { order_by: "due_at" }
+      );
+    });
   }
 }

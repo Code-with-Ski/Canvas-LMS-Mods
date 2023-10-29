@@ -1,8 +1,7 @@
 class SkiReportCourseDiscussionReplies extends SkiReport {
-  #currentCourseId = window.location.pathname.split("/")[2];
-
   constructor() {
     super("Discussion Replies Report");
+    this.addDiscussionOptions();
   }
 
   createTable() {
@@ -61,17 +60,19 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
 
     discussionSelectionFieldset.appendChild(discussionSelect);
 
-    this.addDiscussionOptions(discussionSelect);
-
     return discussionSelectionFieldset;
   }
 
-  async addDiscussionOptions(discussionSelect) {
-    const courseId = window.location.pathname.split("/")[2];
-    const discussions = await SkiCanvasLmsApiCaller.getRequestAllPages(
-      `/api/v1/courses/${courseId}/discussion_topics`,
-      {}
+  async addDiscussionOptions() {
+    const discussionSelect = this.getReportContainer().querySelector(
+      "#ski-report-discussion-replies-discussion-select"
     );
+    const courseId = SkiReport.contextDetails.get("courseId");
+    if (!courseId) {
+      console.error("Course ID not set in SkiReport");
+      return;
+    }
+    const discussions = await this.#getDiscussions(courseId);
 
     for (const discussion of discussions) {
       const option = document.createElement("option");
@@ -83,6 +84,11 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
 
   async loadData(table, formContainer) {
     try {
+      const courseId = SkiReport.contextDetails.get("courseId");
+      if (!courseId) {
+        throw "Course ID not set in SkiReport";
+      }
+
       const selectedDiscussionId = formContainer.querySelector(
         "select.ski-discussion-select"
       )?.value;
@@ -90,27 +96,36 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
       let discussions = [];
       if (selectedDiscussionId) {
         this.updateLoadingMessage("info", "Getting discussion details...");
-        const discussion = await SkiCanvasLmsApiCaller.getRequestAllPages(
-          `/api/v1/courses/${
-            this.#currentCourseId
-          }/discussion_topics/${selectedDiscussionId}`,
-          {}
-        );
+        let discussion;
+        if (SkiReport.cache.has("discussions")) {
+          const cachedDiscussions = await SkiReport.cache.get("discussions");
+          const filteredDiscussions = cachedDiscussions.filter(
+            (currentDiscussion) => {
+              return currentDiscussion.id == selectedDiscussionId;
+            }
+          );
+          if (filteredDiscussions.length > 0) {
+            discussion = filteredDiscussions[0];
+          }
+        }
+        if (!discussion) {
+          discussion = await SkiCanvasLmsApiCaller.getRequestAllPages(
+            `/api/v1/courses/${this.courseId}/discussion_topics/${selectedDiscussionId}`,
+            {}
+          );
+        }
         this.updateLoadingMessage("info", "Getting replies for discussion...");
-        const fullDiscussion = await SkiCanvasLmsApiCaller.getRequestAllPages(
-          `/api/v1/courses/${
-            this.#currentCourseId
-          }/discussion_topics/${selectedDiscussionId}/view`
-        );
+        if (!discussion.hasOwnProperty("fullDiscussion")) {
+          const fullDiscussion = await SkiCanvasLmsApiCaller.getRequestAllPages(
+            `/api/v1/courses/${courseId}/discussion_topics/${selectedDiscussionId}/view`
+          );
 
-        discussion.fullDiscussion = fullDiscussion;
+          discussion.fullDiscussion = fullDiscussion;
+        }
         discussions.push(discussion);
       } else {
         this.updateLoadingMessage("info", "Getting all discussions...");
-        discussions = await SkiCanvasLmsApiCaller.getRequestAllPages(
-          `/api/v1/courses/${this.#currentCourseId}/discussion_topics`,
-          {}
-        );
+        discussions = await this.#getDiscussions(courseId);
         const numOfDiscussions = discussions.length;
         for (let i = 0; i < numOfDiscussions; i++) {
           this.updateLoadingMessage(
@@ -120,11 +135,12 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
             } of ${numOfDiscussions})...`
           );
           const discussion = discussions[i];
+          if (discussion.hasOwnProperty("fullDiscussion")) {
+            continue;
+          }
           const discussionId = discussion.id;
           const fullDiscussion = await SkiCanvasLmsApiCaller.getRequestAllPages(
-            `/api/v1/courses/${
-              this.#currentCourseId
-            }/discussion_topics/${discussionId}/view`
+            `/api/v1/courses/${courseId}/discussion_topics/${discussionId}/view`
           );
 
           discussion.fullDiscussion = fullDiscussion;
@@ -339,6 +355,15 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
     }
 
     return replyData;
+  }
+
+  #getDiscussions(courseId) {
+    return SkiReport.memoizeRequest("discussions", () => {
+      return SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${courseId}/discussion_topics`,
+        {}
+      );
+    });
   }
 }
 

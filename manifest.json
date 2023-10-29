@@ -1,8 +1,8 @@
 {
   "name": "Canvas LMS Mods (Basic)",
   "description": "This provides modifications to the Canvas LMS to improve the user experience visually and functionally.",
-  "version": "5.1.0",
-  "version_name": "5.1.0",
+  "version": "5.2.0",
+  "version_name": "5.2.0",
   "manifest_version": 3,
   "permissions": ["storage"],
   "host_permissions": [
@@ -104,6 +104,10 @@
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-pages.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-quizzes.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-submissions.js",
+        "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-grading-to-do.js",
+        "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-missing-rubric-grade.js",
+        "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-grade-history.js",
+        "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-user-access.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-enrollments.js",
         "canvas-mods/courses/statistics/feature-course-reports/course-reports.js"
       ],
@@ -149,6 +153,10 @@
         "utils/ski-ui-elements/ski-report/ski-report.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-modules-progress.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-submissions.js",
+        "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-grading-to-do.js",
+        "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-missing-rubric-grade.js",
+        "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-grade-history.js",
+        "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-user-access.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-enrollments.js",
         "canvas-mods/courses/sections/feature-section-reports/section-reports.js"
       ],
@@ -226,7 +234,8 @@
     {
       "matches": [
         "*://*/accounts/*/rubrics/*", 
-        "*://*/courses/*/rubrics/*"
+        "*://*/courses/*/rubrics/*", 
+        "*://*/courses/*/assignments/*"
       ],
       "js": [
         "utils/ski-ui-elements/ski-table-elements/ski-table.js",

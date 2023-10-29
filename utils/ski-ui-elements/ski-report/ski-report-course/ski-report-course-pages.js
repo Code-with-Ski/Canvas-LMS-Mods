@@ -27,11 +27,13 @@ class SkiReportCoursePages extends SkiReport {
 
   async loadData(table) {
     try {
+      const courseId = SkiReport.contextDetails.get("courseId");
+      if (!courseId) {
+        throw "Course ID not set in SkiReport";
+      }
+
       this.updateLoadingMessage("info", "Getting pages...");
-      const pages = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${this.#currentCourseId}/pages`,
-        {}
-      );
+      const pages = await this.#getPages(courseId);
 
       this.updateLoadingMessage("info", "Formatting data for table...");
       const extractedData = this.extractData(pages);
@@ -99,5 +101,14 @@ class SkiReportCoursePages extends SkiReport {
       data.push(rowData);
     }
     return data;
+  }
+
+  #getPages(courseId) {
+    return SkiReport.memoizeRequest("pages", () => {
+      return SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${courseId}/pages`,
+        {}
+      );
+    });
   }
 }

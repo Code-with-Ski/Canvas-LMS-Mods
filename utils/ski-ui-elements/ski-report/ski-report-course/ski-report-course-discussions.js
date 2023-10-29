@@ -1,6 +1,4 @@
 class SkiReportCourseDiscussions extends SkiReport {
-  #currentCourseId = window.location.pathname.split("/")[2];
-
   constructor() {
     super("Discussion Details");
   }
@@ -33,10 +31,11 @@ class SkiReportCourseDiscussions extends SkiReport {
   async loadData(table) {
     try {
       this.updateLoadingMessage("info", "Getting discussions...");
-      const discussions = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${this.#currentCourseId}/discussion_topics`,
-        {}
-      );
+      const courseId = SkiReport.contextDetails.get("courseId");
+      if (!courseId) {
+        throw "Course ID not set in SkiReport";
+      }
+      const discussions = await this.#getDiscussions(courseId);
 
       this.updateLoadingMessage("info", "Formatting data for table...");
       const discussionsData = this.extractData(discussions);
@@ -105,5 +104,14 @@ class SkiReportCourseDiscussions extends SkiReport {
       data.push(rowData);
     }
     return data;
+  }
+
+  #getDiscussions(courseId) {
+    return SkiReport.memoizeRequest("discussions", () => {
+      return SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${courseId}/discussion_topics`,
+        {}
+      );
+    });
   }
 }

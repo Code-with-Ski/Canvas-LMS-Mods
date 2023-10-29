@@ -1,6 +1,4 @@
 class SkiReportCourseAnnouncements extends SkiReport {
-  #currentCourseId = window.location.pathname.split("/")[2];
-
   constructor() {
     super("Announcement Details");
   }
@@ -33,10 +31,11 @@ class SkiReportCourseAnnouncements extends SkiReport {
   async loadData(table) {
     try {
       this.updateLoadingMessage("info", "Getting announcements...");
-      const discussions = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${this.#currentCourseId}/discussion_topics`,
-        { only_announcements: true }
-      );
+      const courseId = SkiReport.contextDetails.get("courseId");
+      if (!courseId) {
+        throw "Course ID not set in SkiReport";
+      }
+      const discussions = await this.#getAnnouncements(courseId);
 
       this.updateLoadingMessage("info", "Formatting data for table...");
       const discussionsData = this.extractData(discussions);
@@ -121,5 +120,14 @@ class SkiReportCourseAnnouncements extends SkiReport {
       data.push(rowData);
     }
     return data;
+  }
+
+  #getAnnouncements(courseId) {
+    return SkiReport.memoizeRequest("announcements", () => {
+      return SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${courseId}/discussion_topics`,
+        { only_announcements: true }
+      );
+    });
   }
 }

@@ -1,8 +1,6 @@
 "use strict";
 
 (() => {
-  let currentCourseId = "";
-  let currentSectionId = "";
   if (
     /^\/courses\/[0-9]+\/sections\/[0-9]+\??[^\/]*\/?$/.test(
       window.location.pathname
@@ -14,8 +12,13 @@
       },
       function (items) {
         if (items.courseSectionsSectionReport) {
-          currentCourseId = window.location.pathname.split("/")[2];
-          currentSectionId = window.location.pathname.split("/")[4];
+          const splitPathname = window.location.pathname
+            .split("?")[0]
+            .split("/");
+          SkiReport.contextDetails.set("reportContext", "sections");
+          SkiReport.contextDetails.set("courseId", splitPathname[2]);
+          SkiReport.contextDetails.set("sectionId", splitPathname[4]);
+          SkiReport.contextDetails.set("contextId", splitPathname[4]);
           SkiMonitorChanges.watchForElementById("content", addReports);
         }
       }
@@ -42,8 +45,12 @@
       hr.insertAdjacentElement("afterend", customReportsDiv);
 
       addReport(customReportsDiv, SkiReportCourseSubmissions);
+      addReport(customReportsDiv, SkiReportCourseGradingToDo);
+      addReport(customReportsDiv, SkiReportCourseMissingRubricGrades);
+      addReport(customReportsDiv, SkiReportCourseGradeHistory);
       addReport(customReportsDiv, SkiReportCourseModulesProgress);
       addReport(customReportsDiv, SkiReportCourseEnrollments);
+      addReport(customReportsDiv, SkiReportCourseUserAccess);
     }
   }
 

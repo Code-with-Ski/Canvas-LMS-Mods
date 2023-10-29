@@ -34,7 +34,6 @@
     }
 
     const rubricContainer = rubricContainers[0];
-    console.log(rubricContainer);
     if (!rubricContainer || rubricContainer?.style?.display == "none") {
       return;
     }

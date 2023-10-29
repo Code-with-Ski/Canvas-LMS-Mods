@@ -174,18 +174,15 @@ class SkiReportCourseGradeHistory extends SkiReport {
     deletedGroup.label = "Deleted Users";
     deletedGroup.classList.add("ski-optgroup-users-deleted");
 
-    const enrollmentStates = ["active", "inactive", "concluded", "deleted"];
     const courseId = SkiReport.contextDetails.get("courseId");
-    let contextId = courseId;
     const context = SkiReport.contextDetails.get("reportContext");
-    let sectionId;
-    if (context == "sections") {
-      sectionId = SkiReport.contextDetails.get("sectionId");
-      contextId = sectionId;
-    }
+    const sectionId = SkiReport.contextDetails.get("sectionId");
+    const contextId = SkiReport.contextDetails.get("contextId");
     if (!courseId) {
       throw "Course ID not set in SkiReport";
     }
+
+    const enrollmentStates = ["active", "inactive", "concluded", "deleted"];
     for (const state of enrollmentStates) {
       const enrollments = await this.#getEnrollments(context, contextId, state);
 
@@ -254,57 +251,30 @@ class SkiReportCourseGradeHistory extends SkiReport {
           submissions.push(...submissionHistory);
         }
       } else {
-        const userIds = [];
-        if (selectedUserId == "active") {
-          const activeUserOptions = [
-            ...formContainer.querySelectorAll(
-              ".ski-optgroup-users-active option"
-            ),
-          ];
-          const activeUserIds = [
-            ...activeUserOptions.map((option) => option.value),
-          ];
-          userIds.push(...activeUserIds);
-        } else if (selectedUserId == "inactive") {
-          const inactiveUserOptions = [
-            ...formContainer.querySelectorAll(
-              ".ski-optgroup-users-inactive option"
-            ),
-          ];
-          const inactiveUserIds = [
-            ...inactiveUserOptions.map((option) => option.value),
-          ];
-          userIds.push(...inactiveUserIds);
-        } else if (selectedUserId == "concluded") {
-          const concludedUserOptions = [
-            ...formContainer.querySelectorAll(
-              ".ski-optgroup-users-concluded option"
-            ),
-          ];
-          const concludedUserIds = [
-            ...concludedUserOptions.map((option) => option.value),
-          ];
-          userIds.push(...concludedUserIds);
-        } else if (selectedUserId == "deleted") {
-          const deletedUserOptions = [
-            ...formContainer.querySelectorAll(
-              ".ski-optgroup-users-deleted option"
-            ),
-          ];
-          const deletedUserIds = [
-            ...deletedUserOptions.map((option) => option.value),
-          ];
-          userIds.push(...deletedUserIds);
+        const enrollmentStates = ["active", "inactive", "concluded", "deleted"];
+        const userIds = new Set();
+        if (enrollmentStates.includes(selectedUserId)) {
+          const enrollments = await this.#getEnrollments(
+            context,
+            contextId,
+            selectedUserId
+          );
+          for (const enrollment of enrollments) {
+            if (enrollment.type == "StudentEnrollment") {
+              userIds.add(enrollment.user_id);
+            }
+          }
         } else {
-          userIds.push(selectedUserId);
+          userIds.add(selectedUserId);
         }
 
-        const numOfUsers = userIds.length;
-        for (let i = 0; i < numOfUsers; i++) {
-          const userId = userIds[i];
+        const numOfUsers = userIds.size;
+        let currentCount = 0;
+        for (const userId of userIds) {
+          currentCount++;
           this.updateLoadingMessage(
             "info",
-            "Getting grade history of users (${i + 1} of ${numOfUsers})..."
+            "Getting grade history of users (${currentCount} of ${numOfUsers})..."
           );
           if (!selectedAssignmentId) {
             const submissionHistory =

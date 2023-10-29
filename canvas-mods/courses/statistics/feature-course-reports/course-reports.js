@@ -15,6 +15,7 @@
             .split("/");
           SkiReport.contextDetails.set("reportContext", "courses");
           SkiReport.contextDetails.set("courseId", splitPathname[2]);
+          SkiReport.contextDetails.set("contextId", splitPathname[2]);
           SkiMonitorChanges.watchForElementById("stats", addReports);
         }
       }

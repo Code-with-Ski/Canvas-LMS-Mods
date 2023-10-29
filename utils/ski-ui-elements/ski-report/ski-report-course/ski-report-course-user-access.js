@@ -1,15 +1,7 @@
 class SkiReportCourseUserAccess extends SkiReport {
-  #currentCourseId = window.location.pathname.split("/")[2];
-  #isSectionReport = window.location.pathname.includes("/sections/");
-  #currentSectionId;
-
   constructor() {
     super("User Access Report");
-    if (this.#isSectionReport) {
-      this.#currentSectionId = window.location.pathname
-        .split("?")[0]
-        .split("/")[4];
-    }
+    this.addUserOptions();
   }
 
   createTable() {
@@ -23,7 +15,7 @@ class SkiReportCourseUserAccess extends SkiReport {
         new SkiTableHeadingConfig("Assest Category", true, true),
         new SkiTableHeadingConfig("Assest Class Name", true, true),
         new SkiTableHeadingConfig("User ID", true, true),
-        new SkiTableHeadingConfig("Student Name"),
+        new SkiTableHeadingConfig("User Name"),
         new SkiTableHeadingConfig("Membership Type"),
         new SkiTableHeadingConfig("Context ID", true, true),
         new SkiTableHeadingConfig("Context Type"),
@@ -86,19 +78,18 @@ class SkiReportCourseUserAccess extends SkiReport {
     concludedOption.text = "All Concluded";
     userSelect.appendChild(concludedOption);
 
-    const deletedOption = document.createElement("option");
-    deletedOption.value = "deleted";
-    deletedOption.text = "All Deleted";
-    userSelect.appendChild(deletedOption);
-
     userSelectionFieldset.appendChild(userSelect);
-
-    this.addUserOptions(userSelect);
 
     return userSelectionFieldset;
   }
 
-  async addUserOptions(userSelect) {
+  async addUserOptions() {
+    const userSelect = this.getReportContainer().querySelector(
+      "#user-access-report-user-select"
+    );
+    if (!userSelect) {
+      return;
+    }
     const activeGroup = document.createElement("optgroup");
     activeGroup.label = "Active Users";
     activeGroup.classList.add("ski-optgroup-users-active");
@@ -108,34 +99,29 @@ class SkiReportCourseUserAccess extends SkiReport {
     const concludedGroup = document.createElement("optgroup");
     concludedGroup.label = "Concluded Users";
     concludedGroup.classList.add("ski-optgroup-users-concluded");
-    const deletedGroup = document.createElement("optgroup");
-    deletedGroup.label = "Deleted Users";
-    deletedGroup.classList.add("ski-optgroup-users-deleted");
 
-    const enrollmentStates = ["active", "inactive", "concluded", "deleted"];
-    const splitPathname = window.location.pathname.split("?")[0].split("/");
-    const context = window.location.pathname.includes("/sections/")
-      ? "sections"
-      : "courses";
-    const contextId =
-      context == "sections" ? splitPathname[4] : splitPathname[2];
+    const courseId = SkiReport.contextDetails.get("courseId");
+    const context = SkiReport.contextDetails.get("reportContext");
+    const sectionId = SkiReport.contextDetails.get("sectionId");
+    const contextId = SkiReport.contextDetails.get("contextId");
+    if (!courseId) {
+      throw "Course ID not set in SkiReport";
+    }
+
+    const enrollmentStates = ["active", "inactive", "concluded"];
     for (const state of enrollmentStates) {
-      const enrollments = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/${context}/${contextId}/enrollments`,
-        {
-          //"type[]": "StudentEnrollment",
-          "state[]": state,
-          per_page: 100,
-        }
-      );
+      const enrollments = await this.#getEnrollments(context, contextId, state);
+      enrollments.sort((enrollmentA, enrollmentB) => {
+        const shortNameA = enrollmentA?.user?.short_name ?? "";
+        const shortNameB = enrollmentB?.user?.short_name ?? "";
+        return shortNameA.localeCompare(shortNameB);
+      });
 
       let optGroup = activeGroup;
       if (state == "inactive") {
         optGroup = inactiveGroup;
       } else if (state == "concluded") {
         optGroup = concludedGroup;
-      } else if (state == "deleted") {
-        optGroup = deletedGroup;
       }
       for (const enrollment of enrollments) {
         const option = document.createElement("option");
@@ -151,51 +137,39 @@ class SkiReportCourseUserAccess extends SkiReport {
 
   async loadData(table, formContainer) {
     try {
+      const courseId = SkiReport.contextDetails.get("courseId");
+      const context = SkiReport.contextDetails.get("reportContext");
+      const sectionId = SkiReport.contextDetails.get("sectionId");
+      const contextId = SkiReport.contextDetails.get("contextId");
+      if (!courseId) {
+        throw "Course ID not set in SkiReport";
+      }
+
       this.updateLoadingMessage("info", "Getting selected option");
       const selectedUserId =
         formContainer.querySelector(".ski-user-select")?.value;
 
       const users = {};
+      const enrollmentStates = ["active", "inactive", "concluded"];
       if (!selectedUserId) {
-        const options = [...formContainer.querySelectorAll("option")];
-        for (const option of options) {
-          users[option.value] = option.innerText.split(" *(ID")[0];
+        for (const state of enrollmentStates) {
+          const enrollments = await this.#getEnrollments(
+            context,
+            contextId,
+            state
+          );
+          for (const enrollment of enrollments) {
+            users[enrollment.user_id] = enrollment?.user?.short_name;
+          }
         }
-      } else if (selectedUserId == "active") {
-        const options = [
-          ...formContainer.querySelectorAll(
-            ".ski-optgroup-users-active option"
-          ),
-        ];
-        for (const option of options) {
-          users[option.value] = option.innerText.split(" *(ID")[0];
-        }
-      } else if (selectedUserId == "inactive") {
-        const options = [
-          ...formContainer.querySelectorAll(
-            ".ski-optgroup-users-inactive option"
-          ),
-        ];
-        for (const option of options) {
-          users[option.value] = option.innerText.split(" *(ID")[0];
-        }
-      } else if (selectedUserId == "concluded") {
-        const options = [
-          ...formContainer.querySelectorAll(
-            ".ski-optgroup-users-concluded option"
-          ),
-        ];
-        for (const option of options) {
-          users[option.value] = option.innerText.split(" *(ID")[0];
-        }
-      } else if (selectedUserId == "deleted") {
-        const options = [
-          ...formContainer.querySelectorAll(
-            ".ski-optgroup-users-deleted option"
-          ),
-        ];
-        for (const option of options) {
-          users[option.value] = option.innerText.split(" *(ID")[0];
+      } else if (enrollmentStates.includes(selectedUserId)) {
+        const enrollments = await this.#getEnrollments(
+          context,
+          contextId,
+          selectedUserId
+        );
+        for (const enrollment of enrollments) {
+          users[enrollment.user_id] = enrollment?.user?.short_name;
         }
       } else {
         const options = [...formContainer.querySelectorAll("option[selected]")];
@@ -205,7 +179,6 @@ class SkiReportCourseUserAccess extends SkiReport {
       }
 
       const userIds = Object.keys(users);
-      console.log(userIds);
       const accessData = [];
       const numOfUsers = userIds.length;
       for (let i = 0; i < numOfUsers; i++) {
@@ -215,9 +188,11 @@ class SkiReportCourseUserAccess extends SkiReport {
           "Getting access history of users (${i + 1} of ${numOfUsers})..."
         );
         const accessHistory = await SkiCanvasLmsApiCaller.getRequestAllPages(
-          `/courses/${this.#currentCourseId}/users/${userId}/usage.json`
+          `/courses/${courseId}/users/${userId}/usage.json`
         );
-        console.log(accessHistory);
+        if (!accessHistory) {
+          continue;
+        }
         accessData.push(...accessHistory);
       }
 
@@ -235,6 +210,11 @@ class SkiReportCourseUserAccess extends SkiReport {
   }
 
   extractData(assetAccessData, users) {
+    const courseId = SkiReport.contextDetails.get("courseId");
+    if (!courseId) {
+      throw "Course ID not set in SkiReport";
+    }
+
     const data = [];
     for (const assetUserAccess of assetAccessData) {
       const userAccessData = assetUserAccess.asset_user_access;
@@ -243,9 +223,7 @@ class SkiReportCourseUserAccess extends SkiReport {
         ? users[userAccessData.user_id]
         : "Unknown";
       let studentNameLink = document.createElement("a");
-      studentNameLink.href = `/courses/${this.#currentCourseId}/users/${
-        userAccessData.user_id
-      }`;
+      studentNameLink.href = `/courses/${courseId}/users/${userAccessData.user_id}`;
       studentNameLink.target = "_blank";
       studentNameLink.innerText = studentName;
 
@@ -277,7 +255,7 @@ class SkiReportCourseUserAccess extends SkiReport {
       }
 
       const contentName = document.createElement("span");
-      let url = `/courses/${this.#currentCourseId}`;
+      let url = `/courses/${courseId}`;
       const assetCode = userAccessData.asset_code;
       const assetCategory = userAccessData.asset_category;
       if (assetCategory != "home") {
@@ -367,5 +345,17 @@ class SkiReportCourseUserAccess extends SkiReport {
       data.push(rowData);
     }
     return data;
+  }
+
+  #getEnrollments(context, contextId, state) {
+    return SkiReport.memoizeRequest(`enrollments-${state}`, () => {
+      return SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/${context}/${contextId}/enrollments`,
+        {
+          per_page: 100,
+          "state[]": state,
+        }
+      );
+    });
   }
 }

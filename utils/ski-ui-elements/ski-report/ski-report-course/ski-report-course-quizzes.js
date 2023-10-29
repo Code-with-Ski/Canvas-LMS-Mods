@@ -1,6 +1,4 @@
 class SkiReportCourseQuizzes extends SkiReport {
-  #currentCourseId = window.location.pathname.split("/")[2];
-
   constructor() {
     super("Quiz Details");
   }
@@ -33,11 +31,13 @@ class SkiReportCourseQuizzes extends SkiReport {
 
   async loadData(table) {
     try {
+      const courseId = SkiReport.contextDetails.get("courseId");
+      if (!courseId) {
+        throw "Course ID not set in SkiReport";
+      }
+
       this.updateLoadingMessage("info", "Getting quizzes...");
-      const quizzes = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${this.#currentCourseId}/all_quizzes`,
-        {}
-      );
+      const quizzes = await this.#getQuizzes(courseId);
 
       this.updateLoadingMessage("info", "Formatting data for table...");
       const quizzesData = this.extractData(quizzes);
@@ -85,5 +85,14 @@ class SkiReportCourseQuizzes extends SkiReport {
       data.push(rowData);
     }
     return data;
+  }
+
+  #getQuizzes(courseId) {
+    return SkiReport.memoizeRequest("quizzes", () => {
+      return SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${courseId}/all_quizzes`,
+        {}
+      );
+    });
   }
 }

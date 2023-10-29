@@ -108,13 +108,9 @@ class SkiReportCourseEnrollments extends SkiReport {
       }
 
       const courseId = SkiReport.contextDetails.get("courseId");
-      let contextId = courseId;
       const context = SkiReport.contextDetails.get("reportContext");
-      let sectionId;
-      if (context == "sections") {
-        sectionId = SkiReport.contextDetails.get("sectionId");
-        contextId = sectionId;
-      }
+      const sectionId = SkiReport.contextDetails.get("sectionId");
+      const contextId = SkiReport.contextDetails.get("contextId");
       if (!courseId) {
         throw "Course ID not set in SkiReport";
       }

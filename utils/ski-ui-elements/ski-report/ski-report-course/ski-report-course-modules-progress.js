@@ -1,15 +1,6 @@
 class SkiReportCourseModulesProgress extends SkiReport {
-  #currentCourseId = window.location.pathname.split("/")[2];
-  #isSectionReport = window.location.pathname.includes("/sections/");
-  #currentSectionId;
-
   constructor() {
     super("Modules Progress Report");
-    if (this.#isSectionReport) {
-      this.#currentSectionId = window.location.pathname
-        .split("?")[0]
-        .split("/")[4];
-    }
   }
 
   createTable() {
@@ -36,16 +27,23 @@ class SkiReportCourseModulesProgress extends SkiReport {
 
   async loadData(table) {
     try {
-      const context = this.#isSectionReport ? "sections" : "courses";
-      const contextId = this.#isSectionReport
-        ? this.#currentSectionId
-        : this.#currentCourseId;
+      const courseId = SkiReport.contextDetails.get("courseId");
+      const context = SkiReport.contextDetails.get("reportContext");
+      const sectionId = SkiReport.contextDetails.get("sectionId");
+      const contextId = SkiReport.contextDetails.get("contextId");
+      if (!courseId) {
+        throw "Course ID not set in SkiReport";
+      }
 
       this.updateLoadingMessage("info", "Getting enrolled students...");
-      const students = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/${context}/${contextId}/enrollments?type[]=StudentEnrollment`,
-        {}
+      const enrollments = await this.#getEnrollments(
+        context,
+        contextId,
+        "active"
       );
+      const students = enrollments.filter((enrollment) => {
+        return enrollment.type == "StudentEnrollment";
+      });
 
       const numOfStudents = students.length;
       for (let i = 0; i < numOfStudents; i++) {
@@ -57,9 +55,7 @@ class SkiReportCourseModulesProgress extends SkiReport {
         const studentId = studentEnrollment["user_id"];
         const studentModulesProgress =
           await SkiCanvasLmsApiCaller.getRequestAllPages(
-            `/api/v1/courses/${
-              this.#currentCourseId
-            }/modules?include[]=items&student_id=${studentId}`,
+            `/api/v1/courses/${courseId}/modules?include[]=items&student_id=${studentId}`,
             {}
           );
 
@@ -215,5 +211,17 @@ class SkiReportCourseModulesProgress extends SkiReport {
     }
 
     return RATING_COLORS[(completionPercentage / 100) * RATING_COLORS.length];
+  }
+
+  #getEnrollments(context, contextId, state) {
+    return SkiReport.memoizeRequest(`enrollments-${state}`, () => {
+      return SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/${context}/${contextId}/enrollments`,
+        {
+          per_page: 100,
+          "state[]": state,
+        }
+      );
+    });
   }
 }

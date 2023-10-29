@@ -1,15 +1,7 @@
 class SkiReportCourseSubmissions extends SkiReport {
-  #currentCourseId = window.location.pathname.split("/")[2];
-  #isSectionReport = window.location.pathname.includes("/sections/");
-  #currentSectionId;
-
   constructor() {
     super("Submission Details");
-    if (this.#isSectionReport) {
-      this.#currentSectionId = window.location.pathname
-        .split("?")[0]
-        .split("/")[4];
-    }
+    this.addAssignmentOptions();
   }
 
   createTable() {
@@ -75,17 +67,22 @@ class SkiReportCourseSubmissions extends SkiReport {
 
     assignmentSelectionFieldset.appendChild(assignmentSelect);
 
-    this.addAssignmentOptions(assignmentSelect);
-
     return assignmentSelectionFieldset;
   }
 
-  async addAssignmentOptions(assignmentSelect) {
-    const courseId = window.location.pathname.split("/")[2];
-    const assignments = await SkiCanvasLmsApiCaller.getRequestAllPages(
-      `/api/v1/courses/${courseId}/assignments`,
-      { order_by: "due_at" }
+  async addAssignmentOptions() {
+    const assignmentSelect = this.getReportContainer().querySelector(
+      "#submission-report-assignment-select"
     );
+    if (!assignmentSelect) {
+      return;
+    }
+
+    const courseId = SkiReport.contextDetails.get("courseId");
+    if (!courseId) {
+      throw "Course ID not set in SkiReport";
+    }
+    const assignments = await this.#getAssignments(courseId);
 
     const assignmentsGroup = document.createElement("optgroup");
     assignmentsGroup.label = "Assignments";
@@ -175,25 +172,40 @@ class SkiReportCourseSubmissions extends SkiReport {
         return;
       }
 
+      const courseId = SkiReport.contextDetails.get("courseId");
+      const context = SkiReport.contextDetails.get("reportContext");
+      const sectionId = SkiReport.contextDetails.get("sectionId");
+      const contextId = SkiReport.contextDetails.get("contextId");
+      if (!courseId) {
+        throw "Course ID not set in SkiReport";
+      }
+
       const selectedAssignmentId = formContainer.querySelector(
         ".ski-assignment-select"
       )?.value;
       let assignments = [];
       if (selectedAssignmentId) {
         this.updateLoadingMessage("info", "Getting assignment details...");
-        const assignment = await SkiCanvasLmsApiCaller.getRequestAllPages(
-          `/api/v1/courses/${
-            this.#currentCourseId
-          }/assignments/${selectedAssignmentId}`,
-          { order_by: "due_at" }
-        );
+        let assignment;
+        if (SkiReport.cache.has("assignments")) {
+          const cachedAssignments = await SkiReport.cache.get("assignments");
+          const filteredAssignments = cachedAssignments.filter((assignment) => {
+            return assignment.id == selectedAssignmentId;
+          });
+          if (filteredAssignments.length > 0) {
+            assignment = filteredAssignments[0];
+          }
+        }
+        if (!assignment) {
+          const assignment = await SkiCanvasLmsApiCaller.getRequestAllPages(
+            `/api/v1/courses/${courseId}/assignments/${selectedAssignmentId}`,
+            { order_by: "due_at" }
+          );
+        }
         assignments.push(assignment);
       } else {
         this.updateLoadingMessage("info", "Getting details of assignments...");
-        assignments = await SkiCanvasLmsApiCaller.getRequestAllPages(
-          `/api/v1/courses/${this.#currentCourseId}/assignments`,
-          { order_by: "due_at" }
-        );
+        assignments = await this.#getAssignments(courseId);
       }
 
       this.updateLoadingMessage(
@@ -216,21 +228,18 @@ class SkiReportCourseSubmissions extends SkiReport {
 
       this.updateLoadingMessage("info", "Getting enrolled students...");
       const studentsDict = {};
-      const students = await SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${
-          this.#currentCourseId
-        }/enrollments?type[]=StudentEnrollment`,
-        {}
+      const enrollments = await this.#getEnrollments(
+        context,
+        contextId,
+        "active"
       );
-      for (const student of students) {
-        studentsDict[student.user_id] = student.user;
+      for (const enrollment of enrollments) {
+        if (enrollment.type == "StudentEnrollment") {
+          studentsDict[enrollment.user_id] = enrollment.user;
+        }
       }
 
       let submissions = [];
-      const submissionContext = this.#isSectionReport ? "sections" : "courses";
-      const submissionContextId = this.#isSectionReport
-        ? this.#currentSectionId
-        : this.#currentCourseId;
       if (selectedAssignmentId) {
         for (const checkbox of submissionStateCheckboxes) {
           this.updateLoadingMessage(
@@ -239,7 +248,13 @@ class SkiReportCourseSubmissions extends SkiReport {
           );
           const currentSubmissions =
             await SkiCanvasLmsApiCaller.getRequestAllPages(
-              `/api/v1/${submissionContext}/${submissionContextId}/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment&assignment_ids[]=${selectedAssignmentId}&workflow_state=${checkbox.value}`
+              `/api/v1/${context}/${contextId}/students/submissions`,
+              {
+                "student_ids[]": "all",
+                "include[]": ["submission_comments", "rubric_assessment"],
+                workflow_state: checkbox.value,
+                "assignment_ids[]": selectedAssignmentId,
+              }
             );
           submissions.push(...currentSubmissions);
         }
@@ -251,7 +266,12 @@ class SkiReportCourseSubmissions extends SkiReport {
           );
           const currentSubmissions =
             await SkiCanvasLmsApiCaller.getRequestAllPages(
-              `/api/v1/${submissionContext}/${submissionContextId}/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment&workflow_state=${checkbox.value}`
+              `/api/v1/${context}/${contextId}/students/submissions`,
+              {
+                "student_ids[]": "all",
+                "include[]": ["submission_comments", "rubric_assessment"],
+                workflow_state: checkbox.value,
+              }
             );
           submissions.push(...currentSubmissions);
         }
@@ -444,5 +464,26 @@ class SkiReportCourseSubmissions extends SkiReport {
     }
 
     return rubricData;
+  }
+
+  #getAssignments(courseId) {
+    return SkiReport.memoizeRequest("assignments", () => {
+      return SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/courses/${courseId}/assignments`,
+        { order_by: "due_at" }
+      );
+    });
+  }
+
+  #getEnrollments(context, contextId, state) {
+    return SkiReport.memoizeRequest(`enrollments-${state}`, () => {
+      return SkiCanvasLmsApiCaller.getRequestAllPages(
+        `/api/v1/${context}/${contextId}/enrollments`,
+        {
+          per_page: 100,
+          "state[]": state,
+        }
+      );
+    });
   }
 }

@@ -26,18 +26,25 @@
   function addJumpToModuleSelection(contextModulesDiv) {
     if (contextModulesDiv) {
       createJumpToModuleMenu(contextModulesDiv);
-      
+
       const moduleDivs = [
         ...document.querySelectorAll("#context_modules div.context_module"),
       ];
       addModuleLinksToMenu(moduleDivs);
 
-      SkiMonitorChanges.watchForChangeOfNodesByParentId("context_modules", 
+      SkiMonitorChanges.watchForChangeOfNodesByParentId(
+        "context_modules",
         (addedNode) => {
           if (addedNode.classList?.contains("context_module")) {
-            SkiMonitorChanges.watchForAttributeChangeOfElement(addedNode, 
-              (element) => { addModuleLinkToMenu(element); },
-              (element) => { return element.id != "context_module_new"; });
+            SkiMonitorChanges.watchForAttributeChangeOfElement(
+              addedNode,
+              (element) => {
+                addModuleLinkToMenu(element);
+              },
+              (element) => {
+                return element.id != "context_module_new";
+              }
+            );
           }
         },
         (removedNode) => {
@@ -49,7 +56,7 @@
             }
           }
         }
-      )
+      );
     }
   }
 
@@ -62,11 +69,8 @@
     containerDiv.style.marginBottom = "-0.5rem";
     containerDiv.dataset.associatedModuleId = `${moduleDiv?.dataset?.moduleId}`;
     containerDiv.innerHTML = `<a class="Button" href="#"><i class="icon-line icon-arrow-up"></i> Back to Top</a>`;
-    
-    moduleDiv.insertAdjacentElement(
-      "beforeEnd",
-      containerDiv
-    );
+
+    moduleDiv.insertAdjacentElement("beforeEnd", containerDiv);
   }
 
   function createJumpToModuleMenu(contextModulesDiv) {
@@ -75,7 +79,7 @@
         <summary>Jump to Module</summary>
         <ul></ul>
       </details>`;
-    
+
     contextModulesDiv.insertAdjacentHTML(
       "beforebegin",
       jumpToModuleSelectionHTML
@@ -90,7 +94,9 @@
 
   function addModuleLinkToMenu(moduleDiv) {
     const jumpToModuleMenu = document.getElementById("ski-jump-to-module-menu");
-    if (!jumpToModuleMenu) { return; }
+    if (!jumpToModuleMenu) {
+      return;
+    }
 
     const menuList = jumpToModuleMenu.querySelector("ul");
     const moduleId = moduleDiv.id.split("_").pop();
@@ -117,12 +123,16 @@
   }
 
   function removeBackToTopContainer(moduleId) {
-    const backToTopContainer = document.querySelector(`#context_modules div[data-associated-module-id='${moduleId}']`);
+    const backToTopContainer = document.querySelector(
+      `#context_modules div[data-associated-module-id='${moduleId}']`
+    );
     backToTopContainer?.parentElement?.removeChild(backToTopContainer);
   }
-  
+
   function removeLinkItem(moduleId) {
-    const link = document.querySelector(`#ski-jump-to-module-menu li > a[href='#context_module_${moduleId}']`);
+    const link = document.querySelector(
+      `#ski-jump-to-module-menu li > a[href='#context_module_${moduleId}']`
+    );
     const linkItem = link?.parentElement;
     linkItem?.parentElement?.removeChild(linkItem);
   }

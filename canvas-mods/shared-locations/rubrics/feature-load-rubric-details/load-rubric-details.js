@@ -35,46 +35,44 @@
   async function loadRubricDetails() {
     const rubricItems = [...document.querySelectorAll("#rubrics ul > li")];
     if (rubricItems) {
-      const courseId = window.location.pathname.split("/")[2];
+      const splitPathname = window.location.pathname.split("/");
+      const context = splitPathname[1];
+      const contextId = splitPathname[2];
       for (const rubricItem of rubricItems) {
-        const rubricLink = rubricItem.querySelector("a");
-        const rubricId = rubricLink?.href?.split("/").pop();
-        if (!rubricId) {
-          continue;
-        }
+        try {
+          const rubricLink = rubricItem.querySelector("a");
+          const rubricId = rubricLink?.href?.split("/").pop();
+          if (!rubricId) {
+            continue;
+          }
 
-        const rubric = await getRubric(courseId, rubricId, {
-          "include[]": "assignment_associations",
-        });
-        if (!rubric) {
-          continue;
-        }
+          const rubric = await getRubric(context, contextId, rubricId, {
+            "include[]": "assignment_associations",
+          });
+          if (!rubric) {
+            continue;
+          }
 
-        let messageContainer = rubricItem.querySelector(
-          ".ski-rubric-additional-info"
-        );
-        if (!messageContainer) {
-          messageContainer = document.createElement("div");
-          messageContainer.classList.add("ski-rubric-additional-info");
-          messageContainer.style.fontSize = "0.7rem";
-          messageContainer.style.marginLeft = "20px";
-          rubricItem.appendChild(messageContainer);
-        }
+          let messageContainer = rubricItem.querySelector(
+            ".ski-rubric-additional-info"
+          );
+          if (!messageContainer) {
+            messageContainer = document.createElement("div");
+            messageContainer.classList.add("ski-rubric-additional-info");
+            messageContainer.style.fontSize = "0.7rem";
+            messageContainer.style.marginLeft = "20px";
+            rubricItem.appendChild(messageContainer);
+          }
 
-        const rubricAssociations = rubric.associations;
-        messageContainer.innerHTML = `
+          const rubricAssociations = rubric.associations;
+          messageContainer.innerHTML = `
         <span class='text-info'>
           Context Type: ${rubric.context_type} (ID: ${rubric.context_id})
         </span><br>
         <span class='text-info'>
             ${
-              rubricAssociations.length > 0 &&
-              rubricAssociations.some((association) => {
-                return association.association_id == courseId;
-              })
-                ? "Has assignment association(s) in this course"
-                : rubricAssociations.length > 0
-                ? "No assignment associations in this course. Has assignment association(s) in other course(s)."
+              rubricAssociations.length > 0
+                ? "Has assignment association(s)."
                 : "No assignment associations"
             }
           </span><br>
@@ -88,12 +86,15 @@
             }
           </span>
         `;
+        } catch (error) {
+          console.error(`Error loading rubric details: ${error}`);
+        }
       }
     }
   }
 
-  async function getRubric(courseId, rubricId, params) {
-    const endPointUrl = `/api/v1/courses/${courseId}/rubrics/${rubricId}`;
+  async function getRubric(context, contextId, rubricId, params) {
+    const endPointUrl = `/api/v1/${context}/${contextId}/rubrics/${rubricId}`;
     const rubric = await SkiCanvasLmsApiCaller.getRequestAllPages(
       endPointUrl,
       params

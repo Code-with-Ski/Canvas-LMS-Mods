@@ -274,7 +274,7 @@ class SkiReportCourseGradeHistory extends SkiReport {
           currentCount++;
           this.updateLoadingMessage(
             "info",
-            "Getting grade history of users (${currentCount} of ${numOfUsers})..."
+            `Getting grade history of users (${currentCount} of ${numOfUsers})...`
           );
           if (!selectedAssignmentId) {
             const submissionHistory =

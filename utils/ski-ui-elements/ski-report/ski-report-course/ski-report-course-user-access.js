@@ -185,7 +185,7 @@ class SkiReportCourseUserAccess extends SkiReport {
         const userId = userIds[i];
         this.updateLoadingMessage(
           "info",
-          "Getting access history of users (${i + 1} of ${numOfUsers})..."
+          `Getting access history of users (${i + 1} of ${numOfUsers})...`
         );
         const accessHistory = await SkiCanvasLmsApiCaller.getRequestAllPages(
           `/courses/${courseId}/users/${userId}/usage.json`

@@ -55,7 +55,7 @@ class SkiReportCoursePages extends SkiReport {
         page.url
       }`;
       pageTitleLink.target = "_blank";
-      pageTitleLink.innerText = page.url;
+      pageTitleLink.innerText = page.title;
 
       let createdAtDate = page.created_at;
       let createdAtDateIso = "";

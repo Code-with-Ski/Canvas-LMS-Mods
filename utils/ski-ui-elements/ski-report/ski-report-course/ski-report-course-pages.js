@@ -55,7 +55,7 @@ class SkiReportCoursePages extends SkiReport {
         page.url
       }`;
       pageTitleLink.target = "_blank";
-      pageTitleLink.innerText = page.url;
+      pageTitleLink.innerText = page.title;
 
       let createdAtDate = page.created_at;
       let createdAtDateIso = "";
@@ -78,7 +78,7 @@ class SkiReportCoursePages extends SkiReport {
       const pageBody = page.body;
 
       const rowData = [
-        new SkiTableDataConfig(page.id, undefined, "number"),
+        new SkiTableDataConfig(page.page_id, undefined, "number"),
         new SkiTableDataConfig(pageTitleLink),
         new SkiTableDataConfig(page.url),
         new SkiTableDataConfig(

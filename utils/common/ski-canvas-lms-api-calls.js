@@ -385,7 +385,7 @@ class SkiCanvasLmsApiCaller {
 
     const VALID_METHODS = ["POST", "PUT", "DELETE"];
     const validatedMethod = method.toUpperCase();
-    if (VALID_METHODS.includes(validatedMethod)) {
+    if (!VALID_METHODS.includes(validatedMethod)) {
       console.warn(`Invalid request method: ${method}`);
       return;
     }

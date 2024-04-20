@@ -71,6 +71,14 @@ class SkiReportCourseModulesProgress extends SkiReport {
         let totalNumOfItemsCompleted = 0;
         for (const module of studentModulesProgress) {
           const items = module.items;
+          // TODO Find reason why items would be undefined
+          if (!items) {
+            console.warn(
+              `Issue retrieving module items of module for student ID ${studentId}. Skipping module (${module}).`
+            );
+            continue;
+          }
+
           let numOfItemsWithRequirements = items.filter((item) => {
             return item.hasOwnProperty("completion_requirement");
           }).length;

@@ -70,13 +70,24 @@ class SkiReportCourseModulesProgress extends SkiReport {
         let totalNumOfItemsWithRequirements = 0;
         let totalNumOfItemsCompleted = 0;
         for (const module of studentModulesProgress) {
-          const items = module.items;
-          // TODO Find reason why items would be undefined
+          let items = module.items;
+
+          // Attempt to get module items if not included with module details
           if (!items) {
-            console.warn(
-              `Issue retrieving module items of module for student ID ${studentId}. Skipping module (${module}).`
+            items = await SkiCanvasLmsApiCaller.getRequestAllPages(
+              `/api/v1/courses/${courseId}/modules/${module.id}/items?student_id=${studentId}`,
+              {}
             );
-            continue;
+
+            // Check if items have now been retrieved
+            if (!items) {
+              console.warn(
+                `Issue retrieving module items of module for student ID ${studentId}. Skipping module (${module}).`
+              );
+              continue;
+            } else {
+              module.items = items;
+            }
           }
 
           let numOfItemsWithRequirements = items.filter((item) => {
@@ -138,7 +149,7 @@ class SkiReportCourseModulesProgress extends SkiReport {
             ? Math.round((module.completedItems / module.requiredItems) * 100)
             : -1;
 
-        const moduleItems = module.items;
+        const moduleItems = module.items ?? [];
         for (let itemIndex = 0; itemIndex < moduleItems.length; itemIndex++) {
           const item = moduleItems[itemIndex];
           const requirementType = item?.completion_requirement?.type || "N/A";

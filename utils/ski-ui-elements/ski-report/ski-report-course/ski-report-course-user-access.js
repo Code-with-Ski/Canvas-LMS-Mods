@@ -146,8 +146,8 @@ class SkiReportCourseUserAccess extends SkiReport {
       }
 
       this.updateLoadingMessage("info", "Getting selected option");
-      const selectedUserId =
-        formContainer.querySelector(".ski-user-select")?.value;
+      const userSelect = formContainer.querySelector(".ski-user-select");
+      const selectedUserId = userSelect?.value;
 
       const users = {};
       const enrollmentStates = ["active", "inactive", "concluded"];
@@ -172,10 +172,9 @@ class SkiReportCourseUserAccess extends SkiReport {
           users[enrollment.user_id] = enrollment?.user?.short_name;
         }
       } else {
-        const options = [...formContainer.querySelectorAll("option[selected]")];
-        for (const option of options) {
-          users[option.value] = option.innerText.split(" *(ID")[0];
-        }
+        const selectedOption = userSelect.options[userSelect.selectedIndex];
+        users[selectedOption.value] =
+          selectedOption.innerText.split(" *(ID")[0];
       }
 
       const userIds = Object.keys(users);

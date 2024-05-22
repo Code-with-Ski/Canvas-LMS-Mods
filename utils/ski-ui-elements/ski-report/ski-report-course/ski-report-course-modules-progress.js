@@ -80,7 +80,7 @@ class SkiReportCourseModulesProgress extends SkiReport {
             );
 
             // Check if items have now been retrieved
-            if (!items) {
+            if (!items || !Array.isArray(items)) {
               console.warn(
                 `Issue retrieving module items of module for student ID ${studentId}. Skipping module (${module}).`
               );
@@ -90,18 +90,20 @@ class SkiReportCourseModulesProgress extends SkiReport {
             }
           }
 
-          let numOfItemsWithRequirements = items.filter((item) => {
-            return item.hasOwnProperty("completion_requirement");
-          }).length;
+          let numOfItemsWithRequirements =
+            items?.filter((item) => {
+              return item.hasOwnProperty("completion_requirement");
+            })?.length ?? 0;
           module.requiredItems = numOfItemsWithRequirements;
           totalNumOfItemsWithRequirements += numOfItemsWithRequirements;
 
-          let numOfItemsCompleted = items.filter((item) => {
-            return (
-              item.hasOwnProperty("completion_requirement") &&
-              item.completion_requirement.completed
-            );
-          }).length;
+          let numOfItemsCompleted =
+            items?.filter((item) => {
+              return (
+                item.hasOwnProperty("completion_requirement") &&
+                item.completion_requirement.completed
+              );
+            })?.length ?? 0;
           module.completedItems = numOfItemsCompleted;
           totalNumOfItemsCompleted += numOfItemsCompleted;
         }
@@ -125,6 +127,10 @@ class SkiReportCourseModulesProgress extends SkiReport {
   extractData(students) {
     const data = [];
     for (const student of students) {
+      if (!student.modulesProgress) {
+        continue;
+      }
+
       const studentId = student["user_id"];
       const studentSortableName = student["user"]["sortable_name"];
 
@@ -133,7 +139,7 @@ class SkiReportCourseModulesProgress extends SkiReport {
           ? Math.round((student.completedItems / student.requiredItems) * 100)
           : -1;
 
-      const modulesProgress = student.modulesProgress;
+      const modulesProgress = student.modulesProgress ?? [];
       for (
         let moduleIndex = 0;
         moduleIndex < modulesProgress.length;

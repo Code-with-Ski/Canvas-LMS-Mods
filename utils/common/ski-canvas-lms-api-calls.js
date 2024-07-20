@@ -518,7 +518,11 @@ class SkiCanvasLmsApiResponse {
         }
       }
     }
-    console.log(linkDictionary);
+
+    if (SKI_DEBUG_MODE) {
+      console.log(linkDictionary);
+    }
+
     return linkDictionary;
   }
 

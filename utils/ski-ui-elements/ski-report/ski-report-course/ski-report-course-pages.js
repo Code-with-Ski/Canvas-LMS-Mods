@@ -106,7 +106,7 @@ class SkiReportCoursePages extends SkiReport {
   #getPages(courseId) {
     return SkiReport.memoizeRequest("pages", () => {
       return SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${courseId}/pages`,
+        `/api/v1/courses/${courseId}/pages?include[]=body`,
         {}
       );
     });

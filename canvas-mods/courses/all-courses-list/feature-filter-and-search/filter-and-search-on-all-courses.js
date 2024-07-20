@@ -19,7 +19,7 @@
     areFiltersEnabled
   ) {
     if (areSearchFieldsEnabled || areFiltersEnabled) {
-      addSearchFiltersRowToAllCoursesTables();
+      addSearchFilterWrappersToAllCoursesTables();
 
       if (areSearchFieldsEnabled) {
         addSearchFieldsToAllCoursesTables();
@@ -31,7 +31,7 @@
     }
   }
 
-  function addSearchFiltersRowToAllCoursesTables() {
+  function addSearchFilterWrappersToAllCoursesTables() {
     const courseTableIds = [
       "my_courses_table",
       "past_enrollments_table",
@@ -40,25 +40,22 @@
     for (let courseTableId of courseTableIds) {
       const coursesTable = document.getElementById(courseTableId);
       if (coursesTable) {
-        const coursesTableHead = coursesTable.querySelector("thead");
-        if (coursesTableHead) {
-          const coursesSearchAndFiltersRow = coursesTableHead.querySelector(
-            "tr.ski-search-filters-row"
-          );
-          if (!coursesSearchAndFiltersRow) {
-            coursesTableHead.insertAdjacentHTML(
-              "beforeend",
-              `
-              <tr class="ski-search-filters-row">
-                <td class="course-list-star-column"></td>
-                <td class="ski-column-search-field course-list-course-title-column course-list-no-left-border"></td>
-                <td class="ski-column-search-field course-list-nickname-column course-list-no-left-border"></td>
-                <td class="ski-column-filter-field course-list-term-column course-list-no-left-border"></td>
-                <td class="ski-column-filter-field course-list-enrolled-as-column course-list-no-left-border"></td>
-                <td class="ski-column-filter-field course-list-published-column course-list-no-left-border"></td>
-              </tr>
-            `
+        const coursesTableHeadRow = coursesTable.querySelector("thead tr");
+        if (coursesTableHeadRow) {
+          const columnHeaders = coursesTableHeadRow.querySelectorAll("th");
+          for (const header of columnHeaders) {
+            const searchFilterSpan = header.querySelector(
+              "span.ski-column-search-field"
             );
+            if (!searchFilterSpan) {
+              header.insertAdjacentHTML(
+                "beforeend",
+                `
+                  <br />
+                  <span class='ski-column-search-field'></span> 
+                `
+              );
+            }
           }
         }
       }
@@ -72,26 +69,24 @@
       "future_enrollments_table",
     ];
     for (let courseTableId of courseTableIds) {
-      const coursesSearchAndFiltersRow = document.querySelector(
-        `#${courseTableId} thead tr.ski-search-filters-row`
+      const headings = document.querySelectorAll(
+        `#${courseTableId} thead tr th`
       );
-      if (coursesSearchAndFiltersRow) {
-        const courseTitleSearchCell = coursesSearchAndFiltersRow.querySelector(
-          ".ski-column-search-field.course-list-course-title-column"
-        );
-        if (courseTitleSearchCell) {
-          const courseTitleSearch = courseTitleSearchCell.querySelector(
+      for (const heading of headings) {
+        const headingSpan = heading.querySelector("span");
+        if (heading.classList.contains("course-list-course-title-column")) {
+          const courseTitleSearch = heading.querySelector(
             ".ski-course-title-search"
           );
           if (!courseTitleSearch) {
-            courseTitleSearchCell.insertAdjacentHTML(
+            headingSpan.insertAdjacentHTML(
               "afterbegin",
               `
-              <input type="text" class="ski-course-title-search" placeholder="Search course title" style="margin-bottom: 0;">
+              <input type="text" class="ski-course-title-search" placeholder="Search course title">
             `
             );
 
-            const newCourseTitleSearch = courseTitleSearchCell.querySelector(
+            const newCourseTitleSearch = headingSpan.querySelector(
               ".ski-course-title-search"
             );
             if (newCourseTitleSearch) {
@@ -110,28 +105,21 @@
               }
             }
           }
-        }
-
-        const courseNicknameSearchCell =
-          coursesSearchAndFiltersRow.querySelector(
-            ".ski-column-search-field.course-list-nickname-column"
-          );
-        if (courseNicknameSearchCell) {
-          const nicknameSearch = courseNicknameSearchCell.querySelector(
+        } else if (heading.classList.contains("course-list-nickname-column")) {
+          const nicknameSearch = heading.querySelector(
             ".ski-course-nickname-search"
           );
           if (!nicknameSearch) {
-            courseNicknameSearchCell.insertAdjacentHTML(
+            headingSpan.insertAdjacentHTML(
               "afterbegin",
               `
-              <input type="text" class="ski-course-nickname-search" placeholder="Search nickname" style="margin-bottom: 0;">
+              <input type="text" class="ski-course-nickname-search" placeholder="Search nickname">
             `
             );
 
-            const newCourseNicknameSearch =
-              courseNicknameSearchCell.querySelector(
-                ".ski-course-nickname-search"
-              );
+            const newCourseNicknameSearch = heading.querySelector(
+              ".ski-course-nickname-search"
+            );
             if (newCourseNicknameSearch) {
               const courseNicknameCells = [
                 ...document.querySelectorAll(
@@ -167,19 +155,17 @@
       "future_enrollments_table",
     ];
     for (let courseTableId of courseTableIds) {
-      const coursesSearchAndFiltersRow = document.querySelector(
-        `#${courseTableId} thead tr.ski-search-filters-row`
+      const headings = document.querySelectorAll(
+        `#${courseTableId} thead tr th`
       );
-      if (coursesSearchAndFiltersRow) {
-        const courseTermFilterCell = coursesSearchAndFiltersRow.querySelector(
-          ".ski-column-filter-field.course-list-term-column"
-        );
-        if (courseTermFilterCell) {
-          const courseTermFilter = courseTermFilterCell.querySelector(
+      for (const heading of headings) {
+        const headingSpan = heading.querySelector("span");
+        if (heading.classList.contains("course-list-term-column")) {
+          const courseTermFilter = heading.querySelector(
             ".ski-course-term-filter"
           );
           if (!courseTermFilter) {
-            courseTermFilterCell.insertAdjacentHTML(
+            headingSpan.insertAdjacentHTML(
               "afterbegin",
               `
               <select class="ski-course-term-filter">
@@ -188,7 +174,7 @@
             `
             );
 
-            const newCourseTermFilter = courseTermFilterCell.querySelector(
+            const newCourseTermFilter = heading.querySelector(
               ".ski-course-term-filter"
             );
             if (newCourseTermFilter) {
@@ -223,26 +209,23 @@
               }
             }
           }
-        }
-
-        const courseRoleFilterCell = coursesSearchAndFiltersRow.querySelector(
-          ".ski-column-filter-field.course-list-enrolled-as-column"
-        );
-        if (courseRoleFilterCell) {
-          const courseRoleFilter = courseRoleFilterCell.querySelector(
+        } else if (
+          heading.classList.contains("course-list-enrolled-as-column")
+        ) {
+          const courseRoleFilter = heading.querySelector(
             ".ski-course-role-filter"
           );
           if (!courseRoleFilter) {
-            courseRoleFilterCell.insertAdjacentHTML(
+            headingSpan.insertAdjacentHTML(
               "afterbegin",
               `
-              <select class="ski-course-role-filter">
-                <option value="">All</option>
-              </select>
-            `
+                <select class="ski-course-role-filter">
+                  <option value="">All</option>
+                </select>
+              `
             );
 
-            const newCourseRoleFilter = courseRoleFilterCell.querySelector(
+            const newCourseRoleFilter = headingSpan.querySelector(
               ".ski-course-role-filter"
             );
             if (newCourseRoleFilter) {
@@ -263,8 +246,8 @@
                     newCourseRoleFilter.insertAdjacentHTML(
                       "beforeend",
                       `
-                      <option value="${role}">${role}</option>
-                    `
+                        <option value="${role}">${role}</option>
+                      `
                     );
                   }
 
@@ -277,18 +260,12 @@
               }
             }
           }
-        }
-
-        const coursePublishedFilterCell =
-          coursesSearchAndFiltersRow.querySelector(
-            ".ski-column-filter-field.course-list-published-column"
-          );
-        if (coursePublishedFilterCell) {
-          const coursePublishedFilter = coursePublishedFilterCell.querySelector(
+        } else if (heading.classList.contains("course-list-published-column")) {
+          const coursePublishedFilter = heading.querySelector(
             ".ski-course-published-filter"
           );
           if (!coursePublishedFilter) {
-            coursePublishedFilterCell.insertAdjacentHTML(
+            headingSpan.insertAdjacentHTML(
               "afterbegin",
               `
               <select class="ski-course-published-filter">
@@ -297,10 +274,9 @@
             `
             );
 
-            const newCoursePublishedFilter =
-              coursePublishedFilterCell.querySelector(
-                ".ski-course-published-filter"
-              );
+            const newCoursePublishedFilter = headingSpan.querySelector(
+              ".ski-course-published-filter"
+            );
             if (newCoursePublishedFilter) {
               const publishedCells = [
                 ...document.querySelectorAll(
@@ -335,6 +311,54 @@
               }
             }
           }
+        } else if (heading.classList.contains("course-list-star-column")) {
+          const favoriteFilter = heading.querySelector(
+            ".ski-course-favorite-filter"
+          );
+          if (!favoriteFilter) {
+            headingSpan.insertAdjacentHTML(
+              "afterbegin",
+              `
+              <select class="ski-course-favorite-filter">
+                <option value="">All</option>
+                <option value="favorite">Favorite</option>
+                <option value="not">Not Favorite</option>
+              </select>
+            `
+            );
+
+            const newCourseFavoriteFilter = headingSpan.querySelector(
+              ".ski-course-favorite-filter"
+            );
+            if (newCourseFavoriteFilter) {
+              const favoriteCells = [
+                ...document.querySelectorAll(
+                  `#${courseTableId} tbody tr td.course-list-star-column`
+                ),
+              ];
+              if (favoriteCells) {
+                const hasFavorite =
+                  [
+                    ...document.querySelectorAll(
+                      `#${courseTableId} tbody tr td.course-list-star-column span.course-list-favoritable.course-list-favorite-course`
+                    ),
+                  ].length > 0;
+                const hasNotFavorite =
+                  [
+                    ...document.querySelectorAll(
+                      `#${courseTableId} tbody tr td.course-list-star-column span.course-list-favoritable:not(.course-list-favorite-course)`
+                    ),
+                  ].length > 0;
+                if (hasFavorite && hasNotFavorite) {
+                  newCourseFavoriteFilter.addEventListener("change", () =>
+                    updateTableFilteredDisplay(courseTableId)
+                  );
+                } else {
+                  newCourseFavoriteFilter.disabled = true;
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -343,12 +367,10 @@
   function updateTableFilteredDisplay(tableId) {
     const table = document.getElementById(tableId);
     if (table) {
-      const searchAndFiltersRow = table.querySelector(
-        "thead tr.ski-search-filters-row"
-      );
+      const searchAndFiltersRow = table.querySelector("thead tr");
       const filters = [];
       const searchCells = [
-        ...searchAndFiltersRow.querySelectorAll("td.ski-column-search-field"),
+        ...searchAndFiltersRow.querySelectorAll(".ski-column-search-field"),
       ];
       for (let searchCell of searchCells) {
         const searchInput = searchCell.querySelector("input");
@@ -357,17 +379,17 @@
             searchInput.value,
             "text/html"
           ).body.innerText;
-          const columnNameClass = [...searchCell.classList].reduce(
-            (previousValue, currentValue) => {
-              if (
-                currentValue.startsWith("course-list-") &&
-                currentValue.endsWith("-column")
-              ) {
-                previousValue = currentValue;
-              }
-              return previousValue;
+          const columnNameClass = [
+            ...searchCell.parentElement.classList,
+          ].reduce((previousValue, currentValue) => {
+            if (
+              currentValue.startsWith("course-list-") &&
+              currentValue.endsWith("-column")
+            ) {
+              previousValue = currentValue;
             }
-          );
+            return previousValue;
+          });
 
           filters.push({
             type: "search",
@@ -375,30 +397,24 @@
             column: columnNameClass,
           });
         }
-      }
 
-      const filterCells = [
-        ...searchAndFiltersRow.querySelectorAll("td.ski-column-filter-field"),
-      ];
-      for (let filterCell of filterCells) {
-        const selectInput = filterCell.querySelector("select");
+        const selectInput = searchCell.querySelector("select");
         if (selectInput && !selectInput.disabled) {
           const selectInputValue = new DOMParser().parseFromString(
             selectInput.value,
             "text/html"
           ).body.innerText;
-          const columnNameClass = [...filterCell.classList].reduce(
-            (previousValue, currentValue) => {
-              if (
-                currentValue.startsWith("course-list-") &&
-                currentValue.endsWith("-column")
-              ) {
-                previousValue = currentValue;
-              }
-              return previousValue;
-            },
-            ""
-          );
+          const columnNameClass = [
+            ...searchCell.parentElement.classList,
+          ].reduce((previousValue, currentValue) => {
+            if (
+              currentValue.startsWith("course-list-") &&
+              currentValue.endsWith("-column")
+            ) {
+              previousValue = currentValue;
+            }
+            return previousValue;
+          }, "");
 
           filters.push({
             type: "filter",
@@ -433,6 +449,24 @@
                       if (
                         cellToCheck.querySelector("span").innerText.trim() !=
                         filter.value
+                      ) {
+                        displayValue = "none";
+                        break;
+                      }
+                    } else if (filter.column.includes("-star-")) {
+                      if (
+                        filter.value == "favorite" &&
+                        cellToCheck.querySelector(
+                          "span.course-list-favoritable:not(.course-list-favorite-course)"
+                        )
+                      ) {
+                        displayValue = "none";
+                        break;
+                      } else if (
+                        filter.value == "not" &&
+                        cellToCheck.querySelector(
+                          "span.course-list-favoritable.course-list-favorite-course"
+                        )
                       ) {
                         displayValue = "none";
                         break;

@@ -129,17 +129,28 @@ table.roster.ski-ui-inactive-hide tr.ski-ui-inactive-user {
   display: none;
 }
 
-button.ski-ui-column-sort-btn {
+.ic-Table th.course-list-column-header {
+  
+}
+
+button.ski-ui-column-sort-btn:not([disabled]) {
   background: none;
   color: darkblue;
   color: var(--ic-link-color);
   border: none;
   font-weight: 700;
-  font-size: 1rem;
   cursor: pointer;
 }
 
-button.ski-ui-column-sort-btn::after {
+button.ski-ui-column-sort-btn:is([disabled]) {
+  background: none;
+  color: rgb(80, 80, 80);
+  border: none;
+  font-weight: 700;
+  cursor: not-allowed;
+}
+
+button.ski-ui-column-sort-btn:not([disabled])::after {
   content: " ↕";
 }
 
@@ -165,8 +176,13 @@ table thead td.ski-column-search-field {
 .ski-course-nickname-search,
 .ski-course-term-filter,
 .ski-course-role-filter,
-.ski-course-published-filter {
-  max-width: 90%;
+.ski-course-published-filter,
+.ski-course-favorite-filter {
+  max-width: 95%;
+}
+
+.ski-column-search-field {
+  margin-top: 2rem;
 }
 
 .ski-course-view-grades:hover,

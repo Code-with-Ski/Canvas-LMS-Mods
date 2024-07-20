@@ -354,7 +354,7 @@ function restoreOptions() {
       courseGroupsExportEnabled: true,
       courseUserAccessExportEnabled: true,
       courseSpeedGraderCommentsWithHyperlinksEnabled: true,
-      courseSpeedGraderDraftCommentIndicator: true,
+      courseSpeedGraderDraftCommentIndicator: false,
       courseStatisticsCourseReport: true,
       courseAssignmentsLoadDetails: true,
       courseAssignmentsLoadDetailsTurnitin: true,

@@ -6,7 +6,7 @@
   ) {
     chrome.storage.sync.get(
       {
-        courseSpeedGraderDraftCommentIndicator: true,
+        courseSpeedGraderDraftCommentIndicator: false,
       },
       function (items) {
         if (items.courseSpeedGraderDraftCommentIndicator) {

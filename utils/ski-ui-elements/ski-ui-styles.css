@@ -129,10 +129,6 @@ table.roster.ski-ui-inactive-hide tr.ski-ui-inactive-user {
   display: none;
 }
 
-.ic-Table th.course-list-column-header {
-  
-}
-
 button.ski-ui-column-sort-btn:not([disabled]) {
   background: none;
   color: darkblue;

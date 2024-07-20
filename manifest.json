@@ -52,7 +52,7 @@
       "js": ["canvas-mods/profile/feature-view-grades/profile-view-grades.js"]
     },
     {
-      "matches": ["*://*/courses"],
+      "matches": ["*://*/courses", "*://*/courses?*"],
       "js": [
         "canvas-mods/courses/all-courses-list/feature-sort-columns/sort-columns-on-all-courses.js",
         "canvas-mods/courses/all-courses-list/feature-filter-and-search/filter-and-search-on-all-courses.js"

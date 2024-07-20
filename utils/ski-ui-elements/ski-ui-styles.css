@@ -181,10 +181,6 @@ table thead td.ski-column-search-field {
   max-width: 95%;
 }
 
-.ski-column-search-field {
-  margin-top: 2rem;
-}
-
 .ski-course-view-grades:hover,
 .ski-course-view-grades:focus {
   background-color: rgba(45, 59, 69, 0.1) !important;

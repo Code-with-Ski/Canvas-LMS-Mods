@@ -168,7 +168,7 @@
             headingSpan.insertAdjacentHTML(
               "afterbegin",
               `
-              <select class="ski-course-term-filter">
+              <select class="ski-course-term-filter" title="Select term to show">
                 <option value="">All</option>
               </select>
             `
@@ -219,7 +219,7 @@
             headingSpan.insertAdjacentHTML(
               "afterbegin",
               `
-                <select class="ski-course-role-filter">
+                <select class="ski-course-role-filter" title="Select course role to show">
                   <option value="">All</option>
                 </select>
               `
@@ -268,7 +268,7 @@
             headingSpan.insertAdjacentHTML(
               "afterbegin",
               `
-              <select class="ski-course-published-filter">
+              <select class="ski-course-published-filter" style="min-width: 60px;" title="Select published states to show">
                 <option value="">All</option>
               </select>
             `
@@ -319,7 +319,7 @@
             headingSpan.insertAdjacentHTML(
               "afterbegin",
               `
-              <select class="ski-course-favorite-filter">
+              <select class="ski-course-favorite-filter" title="Select favorite status to show">
                 <option value="">All</option>
                 <option value="favorite">Favorite</option>
                 <option value="not">Not Favorite</option>

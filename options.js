@@ -4,6 +4,9 @@ function saveOptions() {
   const isGlobalFullWidthEnabled = document.getElementById(
     "global-body-full-width"
   ).checked;
+  isGlobalDetailedLoggingEnabled = document.getElementById(
+    "global-detailed-logging"
+  ).checked;
 
   // Global Nav settings
   const isGlobalNavAdminQuickAccessEnabled = document.getElementById(
@@ -250,6 +253,7 @@ function saveOptions() {
   chrome.storage.sync.set(
     {
       globalBodyFullWidth: isGlobalFullWidthEnabled,
+      enableDetailedLogging: isGlobalDetailedLoggingEnabled,
       globalNavAdminQuickAccess: isGlobalNavAdminQuickAccessEnabled,
       globalNavTestIndicator: isGlobalNavTestIndicatorEnabled,
       globalNavBetaIndicator: isGlobalNavBetaIndicatorEnabled,
@@ -335,6 +339,7 @@ function restoreOptions() {
   chrome.storage.sync.get(
     {
       globalBodyFullWidth: true,
+      enableDetailedLogging: false,
       globalNavAdminQuickAccess: true,
       globalNavTestIndicator: true,
       globalNavBetaIndicator: true,
@@ -403,6 +408,9 @@ function restoreOptions() {
       // Global settings
       document.getElementById("global-body-full-width").checked =
         items.globalBodyFullWidth;
+
+      document.getElementById("global-detailed-logging").checked =
+        items.enableDetailedLogging;
 
       // Global Nav settings
       (document.getElementById(

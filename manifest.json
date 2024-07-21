@@ -63,10 +63,15 @@
       "js": [
         "canvas-mods/courses/feature-sticky-course-header/sticky-course-header.js",
         "canvas-mods/courses/modules/feature-jump-to-module/jump-to-module.js",
-        "canvas-mods/courses/course-home/feature-course-stats-button/course-stats-button.js"
+        "canvas-mods/courses/course-home/feature-course-stats-button/course-stats-button.js",
+        "utils/ski-ui-elements/ski-table-elements/ski-table.js",
+        "utils/ski-ui-elements/ski-report/ski-report.js",
+        "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-simple-search.js",
+        "canvas-mods/courses/feature-simple-search/simple-search.js"
       ],
       "css": [
-        "canvas-mods/courses/feature-sticky-course-header/sticky-course-header.css"
+        "canvas-mods/courses/feature-sticky-course-header/sticky-course-header.css",
+        "utils/ski-ui-elements/ski-table-elements/ski-table-elements.css"
       ]
     },
     {
@@ -92,8 +97,6 @@
     {
       "matches": ["*://*/courses/*/statistics"],
       "js": [
-        "utils/ski-ui-elements/ski-table-elements/ski-table.js",
-        "utils/ski-ui-elements/ski-report/ski-report.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-announcements.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-assignments.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-discussion-replies.js",
@@ -108,8 +111,7 @@
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-user-access.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-enrollments.js",
         "canvas-mods/courses/statistics/feature-course-reports/course-reports.js"
-      ],
-      "css": ["utils/ski-ui-elements/ski-table-elements/ski-table-elements.css"]
+      ]
     },
     {
       "matches": ["*://*/courses/*/groups*"],
@@ -145,8 +147,6 @@
     {
       "matches": ["*://*/courses/*/sections/*"],
       "js": [
-        "utils/ski-ui-elements/ski-table-elements/ski-table.js",
-        "utils/ski-ui-elements/ski-report/ski-report.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-modules-progress.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-submissions.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-grading-to-do.js",
@@ -155,8 +155,7 @@
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-user-access.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-enrollments.js",
         "canvas-mods/courses/sections/feature-section-reports/section-reports.js"
-      ],
-      "css": ["utils/ski-ui-elements/ski-table-elements/ski-table-elements.css"]
+      ]
     },
     {
       "matches": ["*://*/users/*/grades"],

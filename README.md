@@ -34,6 +34,7 @@ Options will also be updated to allow the user to enable/disable certain customi
 - Global
 
   - Enable full-width for body
+  - Enable detailed logging
 
 - Global Nav (All Users)
 
@@ -60,6 +61,8 @@ Options will also be updated to allow the user to enable/disable certain customi
 
   - Global for Course
     - Enable sticky course header
+    - Enable course simple search
+    - Simple search course navigation position
     - Enable course statistics button on home
   - Modules
     - Enable "Jump to Module" selection
@@ -74,7 +77,7 @@ Options will also be updated to allow the user to enable/disable certain customi
     - Enable access report export to CSV button
   - SpeedGrader
     - Enable converting text that resembles links (begins with http:// or https://) to a hyperlink in the comments
-    - Enable changing the draft comment indicator from "\*" to the "DRAFT"
+    - [DEPRECATED] Enable changing the draft comment indicator from "\*" to the "DRAFT"
   - Statistics
     - Enable course reports (Uses Canvas LMS API)
   - Assignments

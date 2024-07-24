@@ -15,7 +15,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
         new SkiTableHeadingConfig("Item Type"),
         new SkiTableHeadingConfig("Title"),
         new SkiTableHeadingConfig("Content", false),
-        new SkiTableHeadingConfig("HTML Content", false),
+        new SkiTableHeadingConfig("HTML Content", false, true),
       ],
       []
     );

@@ -36,7 +36,7 @@
             ""
           );
 
-          if (columnNameClass && !columnNameClass.includes("-star")) {
+          if (columnNameClass) {
             const columnCells = [
               ...document.querySelectorAll(
                 `#${courseTableId} tbody tr td.${columnNameClass}`
@@ -46,43 +46,45 @@
               values = [
                 ...new Set([...columnCells.map((cell) => cell.innerText)]),
               ];
-              if (values.length > 1) {
-                const headingName = columnHeader.innerText.trim();
-                columnHeader.innerHTML = `
-                    <button class="ski-ui-column-sort-btn" data-ski-sort-dir="none">
-                      ${headingName}
-                    </button>
-                  `;
+              //if (values.length > 1) {
+              const headingName = columnHeader.innerText.trim();
+              columnHeader.innerHTML = `
+                  <button class="ski-ui-column-sort-btn" data-ski-sort-dir="none" ${
+                    values.length <= 1 ? "disabled" : ""
+                  }>
+                    ${headingName}
+                  </button>
+                `;
 
-                const columnSortButton = columnHeader.querySelector("button");
-                if (columnSortButton) {
-                  columnSortButton.addEventListener("click", () => {
-                    const sortDirection = columnSortButton.dataset.skiSortDir;
-                    if (sortDirection == "asc") {
-                      columnSortButton.dataset.skiSortDir = "desc";
-                    } else if (sortDirection == "desc") {
-                      columnSortButton.dataset.skiSortDir = "asc";
-                    } else {
-                      columnSortButton.dataset.skiSortDir = "asc";
-                    }
+              const columnSortButton = columnHeader.querySelector("button");
+              if (columnSortButton) {
+                columnSortButton.addEventListener("click", () => {
+                  const sortDirection = columnSortButton.dataset.skiSortDir;
+                  if (sortDirection == "asc") {
+                    columnSortButton.dataset.skiSortDir = "desc";
+                  } else if (sortDirection == "desc") {
+                    columnSortButton.dataset.skiSortDir = "asc";
+                  } else {
+                    columnSortButton.dataset.skiSortDir = "asc";
+                  }
 
-                    const sortButtons = [
-                      ...document.querySelectorAll(
-                        `#${courseTableId} thead th:not(.${columnNameClass}) button.ski-ui-column-sort-btn`
-                      ),
-                    ];
-                    for (let sortButton of sortButtons) {
-                      sortButton.dataset.skiSortDir = "none";
-                    }
+                  const sortButtons = [
+                    ...document.querySelectorAll(
+                      `#${courseTableId} thead th:not(.${columnNameClass}) button.ski-ui-column-sort-btn`
+                    ),
+                  ];
+                  for (let sortButton of sortButtons) {
+                    sortButton.dataset.skiSortDir = "none";
+                  }
 
-                    updateTableSortDisplay(
-                      courseTableId,
-                      columnNameClass,
-                      columnSortButton.dataset.skiSortDir == "asc"
-                    );
-                  });
-                }
+                  updateTableSortDisplay(
+                    courseTableId,
+                    columnNameClass,
+                    columnSortButton.dataset.skiSortDir == "asc"
+                  );
+                });
               }
+              //}
             }
           }
         }

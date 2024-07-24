@@ -15,6 +15,11 @@
         <input type="checkbox" id="global-body-full-width" checked />
         Enable full-width for the body
       </label>
+
+      <label>
+        <input type="checkbox" id="global-detailed-logging" />
+        Enable detailed logging
+      </label>
     </details>
 
     <details>
@@ -79,6 +84,23 @@
         <label>
           <input type="checkbox" id="course-global-sticky-header" checked />
           Enable sticky course header
+        </label>
+
+        <label>
+          <input type="checkbox" id="course-global-simple-search" checked />
+          Enable course simple search
+        </label>
+
+        <label>
+          Simple search course navigation position
+          <input
+            type="number"
+            id="course-global-simple-search-position"
+            required
+            min="1"
+            value="2"
+            step="1"
+          />
         </label>
 
         <label>
@@ -148,9 +170,8 @@
           <input
             type="checkbox"
             id="course-speedgrader-draft-comment-indicator"
-            checked
           />
-          Replace draft comment indicator (*) with the word DRAFT
+          [DEPRECATED] Replace draft comment indicator (*) with the word DRAFT
         </label>
       </details>
       <details>

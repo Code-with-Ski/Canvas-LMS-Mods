@@ -4,6 +4,9 @@ function saveOptions() {
   const isGlobalFullWidthEnabled = document.getElementById(
     "global-body-full-width"
   ).checked;
+  isGlobalDetailedLoggingEnabled = document.getElementById(
+    "global-detailed-logging"
+  ).checked;
 
   // Global Nav settings
   const isGlobalNavAdminQuickAccessEnabled = document.getElementById(
@@ -42,6 +45,15 @@ function saveOptions() {
   const isCourseGlobalStickyHeaderEnabled = document.getElementById(
     "course-global-sticky-header"
   ).checked;
+  const isCourseGlobalSimpleSearchEnabled = document.getElementById(
+    "course-global-simple-search"
+  ).checked;
+  let simpleSearchCourseNavPosition = Number.parseInt(
+    document.getElementById("course-global-simple-search-position").value
+  );
+  if (Number.isNaN(simpleSearchCourseNavPosition)) {
+    simpleSearchCourseNavPosition = 2;
+  }
   const isCourseStatisticsButtonOnHomeEnabled = document.getElementById(
     "course-statistics-button-on-home"
   ).checked;
@@ -250,6 +262,7 @@ function saveOptions() {
   chrome.storage.sync.set(
     {
       globalBodyFullWidth: isGlobalFullWidthEnabled,
+      enableDetailedLogging: isGlobalDetailedLoggingEnabled,
       globalNavAdminQuickAccess: isGlobalNavAdminQuickAccessEnabled,
       globalNavTestIndicator: isGlobalNavTestIndicatorEnabled,
       globalNavBetaIndicator: isGlobalNavBetaIndicatorEnabled,
@@ -260,6 +273,8 @@ function saveOptions() {
       allCoursesSearchFields: areSearchesEnabled,
       allCoursesColumnSorts: areColumnSortsEnabled,
       courseGlobalStickyHeader: isCourseGlobalStickyHeaderEnabled,
+      courseGlobalSimpleSearch: isCourseGlobalSimpleSearchEnabled,
+      courseGlobalSimpleSearchPosition: simpleSearchCourseNavPosition,
       courseStatisticsButtonOnHome: isCourseStatisticsButtonOnHomeEnabled,
       courseModulesJumpToEnabled: isCourseModulesJumpToEnabled,
       coursePeopleExportEnabled: isCoursePeopleExportEnabled,
@@ -335,6 +350,7 @@ function restoreOptions() {
   chrome.storage.sync.get(
     {
       globalBodyFullWidth: true,
+      enableDetailedLogging: false,
       globalNavAdminQuickAccess: true,
       globalNavTestIndicator: true,
       globalNavBetaIndicator: true,
@@ -345,6 +361,8 @@ function restoreOptions() {
       allCoursesSearchFields: true,
       allCoursesColumnSorts: true,
       courseGlobalStickyHeader: true,
+      courseGlobalSimpleSearch: true,
+      courseGlobalSimpleSearchPosition: 2,
       courseStatisticsButtonOnHome: true,
       courseModulesJumpToEnabled: true,
       coursePeopleExportEnabled: true,
@@ -354,7 +372,7 @@ function restoreOptions() {
       courseGroupsExportEnabled: true,
       courseUserAccessExportEnabled: true,
       courseSpeedGraderCommentsWithHyperlinksEnabled: true,
-      courseSpeedGraderDraftCommentIndicator: true,
+      courseSpeedGraderDraftCommentIndicator: false,
       courseStatisticsCourseReport: true,
       courseAssignmentsLoadDetails: true,
       courseAssignmentsLoadDetailsTurnitin: true,
@@ -404,6 +422,9 @@ function restoreOptions() {
       document.getElementById("global-body-full-width").checked =
         items.globalBodyFullWidth;
 
+      document.getElementById("global-detailed-logging").checked =
+        items.enableDetailedLogging;
+
       // Global Nav settings
       (document.getElementById(
         "admin-global-nav-quick-access-enabled"
@@ -434,6 +455,10 @@ function restoreOptions() {
       // Course - Global settings
       document.getElementById("course-global-sticky-header").checked =
         items.courseGlobalStickyHeader;
+      document.getElementById("course-global-simple-search").checked =
+        items.courseGlobalSimpleSearch;
+      document.getElementById("course-global-simple-search-position").value =
+        items.courseGlobalSimpleSearchPosition;
       document.getElementById("course-statistics-button-on-home").checked =
         items.courseStatisticsButtonOnHome;
 

@@ -68,6 +68,20 @@ fieldset.ski-ui label + select {
   width: auto;
 }
 
+fieldset.ski-ui > label {
+  margin-right: 0.5rem;
+  font-weight: 700;
+}
+
+fieldset.ski-ui > input {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 0.75rem;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+  height: 2.25rem;
+  line-height: 2.25rem;
+}
+
 .ski-loading-icon {
   border: 0.5rem solid #c2bcbc;
   border-top: 0.5rem solid #119db9;
@@ -129,17 +143,24 @@ table.roster.ski-ui-inactive-hide tr.ski-ui-inactive-user {
   display: none;
 }
 
-button.ski-ui-column-sort-btn {
+button.ski-ui-column-sort-btn:not([disabled]) {
   background: none;
   color: darkblue;
   color: var(--ic-link-color);
   border: none;
   font-weight: 700;
-  font-size: 1rem;
   cursor: pointer;
 }
 
-button.ski-ui-column-sort-btn::after {
+button.ski-ui-column-sort-btn:is([disabled]) {
+  background: none;
+  color: rgb(80, 80, 80);
+  border: none;
+  font-weight: 700;
+  cursor: not-allowed;
+}
+
+button.ski-ui-column-sort-btn:not([disabled])::after {
   content: " ↕";
 }
 
@@ -165,8 +186,9 @@ table thead td.ski-column-search-field {
 .ski-course-nickname-search,
 .ski-course-term-filter,
 .ski-course-role-filter,
-.ski-course-published-filter {
-  max-width: 90%;
+.ski-course-published-filter,
+.ski-course-favorite-filter {
+  max-width: 95%;
 }
 
 .ski-course-view-grades:hover,

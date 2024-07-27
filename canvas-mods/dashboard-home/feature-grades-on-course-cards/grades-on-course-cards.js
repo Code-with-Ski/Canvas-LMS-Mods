@@ -11,12 +11,18 @@
           const studentGrades = await getStudentGradesByCourse();
           SkiMonitorChanges.waitForDocumentReady(() => {
             addCourseGrades(studentGrades);
-          })
+            SkiMonitorChanges.watchForAddedNodesByParentId(
+              "DashboardCard_Container",
+              () => {
+                addCourseGrades(studentGrades);
+              }
+            );
+          });
         }
       }
     );
   }
-  
+
   /*
     Gets the active and available courses for the current user where they are
     a student and include the total scores
@@ -70,6 +76,10 @@
       ),
     ];
     for (const card of dashboardCards) {
+      const existingGrade = card.querySelector(".ski-dashboard-card-grade");
+      if (existingGrade) {
+        continue;
+      }
       const cardLink = card.querySelector("a.ic-DashboardCard__link");
       if (cardLink) {
         const cardCourseId = cardLink.href.split("/").pop();

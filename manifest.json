@@ -1,8 +1,8 @@
 {
   "name": "Canvas LMS Mods (Basic)",
   "description": "This provides modifications to the Canvas LMS to improve the user experience visually and functionally.",
-  "version": "5.3.0",
-  "version_name": "5.3.0",
+  "version": "5.3.1",
+  "version_name": "5.3.1",
   "manifest_version": 3,
   "permissions": ["storage"],
   "host_permissions": [
@@ -61,11 +61,11 @@
     {
       "matches": ["*://*/courses/*"],
       "js": [
+        "utils/ski-ui-elements/ski-table-elements/ski-table.js",
+        "utils/ski-ui-elements/ski-report/ski-report.js",
         "canvas-mods/courses/feature-sticky-course-header/sticky-course-header.js",
         "canvas-mods/courses/modules/feature-jump-to-module/jump-to-module.js",
         "canvas-mods/courses/course-home/feature-course-stats-button/course-stats-button.js",
-        "utils/ski-ui-elements/ski-table-elements/ski-table.js",
-        "utils/ski-ui-elements/ski-report/ski-report.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-simple-search.js",
         "canvas-mods/courses/feature-simple-search/simple-search.js"
       ],
@@ -97,6 +97,8 @@
     {
       "matches": ["*://*/courses/*/statistics"],
       "js": [
+        "utils/ski-ui-elements/ski-table-elements/ski-table.js",
+        "utils/ski-ui-elements/ski-report/ski-report.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-announcements.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-assignments.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-discussion-replies.js",
@@ -147,6 +149,8 @@
     {
       "matches": ["*://*/courses/*/sections/*"],
       "js": [
+        "utils/ski-ui-elements/ski-table-elements/ski-table.js",
+        "utils/ski-ui-elements/ski-report/ski-report.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-modules-progress.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-submissions.js",
         "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-grading-to-do.js",

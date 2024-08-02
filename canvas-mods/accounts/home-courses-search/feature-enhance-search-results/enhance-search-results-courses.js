@@ -139,11 +139,17 @@
     let courses = await getCurrentCourses();
     const searchTable = document.querySelector("div#content > div > table");
     if (!searchTable) {
+      if (SKI_DEBUG_MODE) {
+        console.log("Course search table not yet loaded. Watching for table.");
+      }
       const observer = new MutationObserver(() => {
         const loadedSearchTable = document.querySelector(
           "div#content > div > table"
         );
         if (loadedSearchTable) {
+          if (SKI_DEBUG_MODE) {
+            console.log("Search table now added.  Watching for rows.");
+          }
           observer.disconnect();
           const tableObserver = new MutationObserver(async (mutations) => {
             for (let mutationRecord of mutations) {
@@ -172,6 +178,10 @@
                         courses[canvasCourseCode] = currentCourse;
                       }
                     }
+                    if (SKI_DEBUG_MODE) {
+                      console.log("Courses potentially on page:");
+                      console.log(courses);
+                    }
                     if (canvasCourseCode in courses) {
                       const course = courses[canvasCourseCode];
                       updateRow(
@@ -197,6 +207,9 @@
       });
       observer.observe(document.body, { childList: true });
     } else {
+      if (SKI_DEBUG_MODE) {
+        console.log("Search results table found. Getting rows");
+      }
       const tableRows = document.querySelectorAll(
         "div#content > div > table > tbody > tr"
       );
@@ -204,6 +217,23 @@
         const courseNameLink = row.querySelector("td > a[href*='/courses/']");
         if (courseNameLink) {
           const canvasCourseCode = courseNameLink.href.split("/").pop();
+          if (canvasCourseCode && !(canvasCourseCode in courses)) {
+            if (window.location.href != currentUrl) {
+              courses = await getCurrentCourses();
+              currentUrl = window.location.href;
+              if (!(canvasCourseCode in courses)) {
+                const currentCourse = await getCourse(canvasCourseCode);
+                courses[canvasCourseCode] = currentCourse;
+              }
+            } else {
+              const currentCourse = await getCourse(canvasCourseCode);
+              courses[canvasCourseCode] = currentCourse;
+            }
+          }
+          if (SKI_DEBUG_MODE) {
+            console.log("Courses potentially on page:");
+            console.log(courses);
+          }
           if (canvasCourseCode in courses) {
             const course = courses[canvasCourseCode];
             updateRow(
@@ -219,6 +249,11 @@
         }
       }
 
+      if (SKI_DEBUG_MODE) {
+        console.log(
+          "Updated current table results. Watching for new table rows"
+        );
+      }
       const tableObserver = new MutationObserver(async (mutations) => {
         for (let mutationRecord of mutations) {
           let newNodes = mutationRecord.addedNodes;
@@ -267,6 +302,10 @@
     addSubaccountLink,
     addViewGradesButton
   ) {
+    if (SKI_DEBUG_MODE) {
+      console.log("Updating row");
+      console.log(course);
+    }
     const courseNameLink = row.querySelector("td > a[href*='/courses/']");
     if (addConcludedIndicator) {
       if (course["concluded"]) {

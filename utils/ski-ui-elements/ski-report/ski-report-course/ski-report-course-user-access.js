@@ -48,7 +48,7 @@ class SkiReportCourseUserAccess extends SkiReport {
     userSelectionFieldset.classList.add("ski-ui");
 
     const label = document.createElement("label");
-    label.innerText = "Select user(s) for which to check the grade history:";
+    label.innerText = "Select user(s) for which to check access history:";
     label.setAttribute("for", `user-access-report-user-select`);
     userSelectionFieldset.appendChild(label);
 

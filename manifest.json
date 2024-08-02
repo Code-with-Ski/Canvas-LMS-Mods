@@ -15,6 +15,7 @@
     {
       "matches": ["*://*/*"],
       "js": [
+        "canvas-mods/shared-locations/global/feature-logging/mod-logging.js",
         "utils/common/ski-canvas-lms-api-calls.js",
         "utils/common/ski-monitor-changes.js",
         "canvas-mods/shared-locations/global/feature-full-width-body/full-width-body.js",

@@ -194,7 +194,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
       const discussionTitleLink = document.createElement("a");
       discussionTitleLink.href = discussion.html_url;
       discussionTitleLink.target = "_blank";
-      discussionTitleLink.innerText = discussionTitle.replace(
+      discussionTitleLink.innerHTML = discussionTitle.replace(
         new RegExp(searchValue, "gi"),
         (match, group) => {
           return `<mark>${match}</mark>`;
@@ -262,7 +262,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
       const assignmentNameLink = document.createElement("a");
       assignmentNameLink.href = assignment.html_url;
       assignmentNameLink.target = "_blank";
-      assignmentNameLink.innerText = assignmentName.replace(
+      assignmentNameLink.innerHTML = assignmentName.replace(
         new RegExp(searchValue, "gi"),
         (match, group) => {
           return `<mark>${match}</mark>`;

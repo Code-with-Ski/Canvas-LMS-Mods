@@ -9,11 +9,11 @@ class SkiReportCourseUserAccess extends SkiReport {
       "user-access",
       new SkiTableConfig("400px"),
       [
-        new SkiTableHeadingConfig("Assest Access ID", true, true),
-        new SkiTableHeadingConfig("Assest Code", true, true),
-        new SkiTableHeadingConfig("Assest Group Code", true, true),
-        new SkiTableHeadingConfig("Assest Category", true, true),
-        new SkiTableHeadingConfig("Assest Class Name", true, true),
+        new SkiTableHeadingConfig("Asset Access ID", true, true),
+        new SkiTableHeadingConfig("Asset Code", true, true),
+        new SkiTableHeadingConfig("Asset Group Code", true, true),
+        new SkiTableHeadingConfig("Asset Category", true, true),
+        new SkiTableHeadingConfig("Asset Class Name", true, true),
         new SkiTableHeadingConfig("User ID", true, true),
         new SkiTableHeadingConfig("User Name"),
         new SkiTableHeadingConfig("Membership Type"),
@@ -48,7 +48,7 @@ class SkiReportCourseUserAccess extends SkiReport {
     userSelectionFieldset.classList.add("ski-ui");
 
     const label = document.createElement("label");
-    label.innerText = "Select user(s) for which to check the grade history:";
+    label.innerText = "Select user(s) for which to check access history:";
     label.setAttribute("for", `user-access-report-user-select`);
     userSelectionFieldset.appendChild(label);
 

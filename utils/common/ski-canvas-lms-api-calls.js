@@ -1,15 +1,5 @@
 "use strict";
 
-let SKI_DEBUG_MODE = false;
-chrome.storage.sync.get(
-  {
-    enableDetailedLogging: false,
-  },
-  function (items) {
-    SKI_DEBUG_MODE = items.enableDetailedLogging;
-  }
-);
-
 class SkiCanvasLmsApiCaller {
   static BASE_URL = `${window.location.protocol}//${window.location.hostname}`;
   static MAX_ATTEMPTS = 3;

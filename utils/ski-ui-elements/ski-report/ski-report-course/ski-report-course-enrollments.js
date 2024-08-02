@@ -141,10 +141,16 @@ class SkiReportCourseEnrollments extends SkiReport {
 
         sections.push(section);
       }
+      if (SKI_DEBUG_MODE) {
+        console.log("Retrieved sections");
+        console.log(sections);
+      }
 
       const sectionsDict = {};
-      for (const section of sections) {
-        sectionsDict[section.id] = section;
+      if (sections && Array.isArray(sections)) {
+        for (const section of sections) {
+          sectionsDict[section.id] = section;
+        }
       }
 
       const enrollmentStates = [

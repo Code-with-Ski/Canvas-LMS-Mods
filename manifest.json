@@ -1,8 +1,8 @@
 {
   "name": "Canvas LMS Mods (Basic)",
   "description": "This provides modifications to the Canvas LMS to improve the user experience visually and functionally.",
-  "version": "5.3.1",
-  "version_name": "5.3.1",
+  "version": "5.3.2",
+  "version_name": "5.3.2",
   "manifest_version": 3,
   "permissions": ["storage"],
   "host_permissions": [
@@ -15,6 +15,7 @@
     {
       "matches": ["*://*/*"],
       "js": [
+        "canvas-mods/shared-locations/global/feature-logging/mod-logging.js",
         "utils/common/ski-canvas-lms-api-calls.js",
         "utils/common/ski-monitor-changes.js",
         "canvas-mods/shared-locations/global/feature-full-width-body/full-width-body.js",

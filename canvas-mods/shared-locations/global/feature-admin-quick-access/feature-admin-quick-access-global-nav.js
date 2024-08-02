@@ -170,7 +170,9 @@
         `
         );
 
-        const accountLoadingIndicator = document.getElementById("ski-global-nav-admin-account-loading");
+        const accountLoadingIndicator = document.getElementById(
+          "ski-global-nav-admin-account-loading"
+        );
         if (!accountLoadingIndicator) {
           return;
         }
@@ -179,8 +181,10 @@
         accountLoadingIndicator.style.display = "none";
 
         updateVisibleElements();
-        
-        const termLoadingIndicator = document.getElementById("ski-global-nav-admin-term-loading");
+
+        const termLoadingIndicator = document.getElementById(
+          "ski-global-nav-admin-term-loading"
+        );
         if (!termLoadingIndicator) {
           return;
         }
@@ -388,8 +392,19 @@
 
   async function loadAccountSelect() {
     let manageableAccounts = await getManageableAccounts();
+    if (SKI_DEBUG_MODE) {
+      console.log("Manageable Accounts");
+      console.log(manageableAccounts);
+    }
     if (manageableAccounts.length == 0) {
+      if (SKI_DEBUG_MODE) {
+        console.log("No manageable accounts found.");
+      }
       manageableAccounts = await getAccounts();
+      if (SKI_DEBUG_MODE) {
+        console.log("All Accounts");
+        console.log(manageableAccounts);
+      }
     }
     manageableAccounts.sort((a, b) => {
       const parentIdA = a.parent_account_id;
@@ -446,7 +461,6 @@
         }
       }
     }
-    
   }
 
   function getManageableAccounts() {
@@ -589,12 +603,11 @@
     const selectedAccountId =
       document.getElementById("ski-account-select")?.value;
     const userPermissions = await getPermissions(selectedAccountId);
-    
-    const canSearchCourses = hasPermission(
-      userPermissions,
-      "read_course_list"
+
+    const canSearchCourses = hasPermission(userPermissions, "read_course_list");
+    const courseSearch = document.getElementById(
+      "ski=global-nav-admin-course-search"
     );
-    const courseSearch = document.getElementById("ski=global-nav-admin-course-search");
     if (courseSearch) {
       if (canSearchCourses) {
         courseSearch.style.display = "block";
@@ -604,7 +617,9 @@
     }
 
     const canSearchUsers = hasPermission(userPermissions, "read_roster");
-    const peopleSearch = document.getElementById("ski-global-nav-admin-people-search");
+    const peopleSearch = document.getElementById(
+      "ski-global-nav-admin-people-search"
+    );
     if (peopleSearch) {
       if (canSearchUsers) {
         peopleSearch.style.display = "block";
@@ -612,14 +627,15 @@
         peopleSearch.style.display = "none";
       }
     }
-    
-    
+
     const canViewAdminTools =
       hasPermission(userPermissions, "undelete_courses") ||
       hasPermission(userPermissions, "view_notifications") ||
       hasPermission(userPermissions, "view_grade_changes") ||
       hasPermission(userPermissions, "view_course_changes");
-    const adminToolsDiv = document.getElementById("ski-global-nav-admin-admin-tools");
+    const adminToolsDiv = document.getElementById(
+      "ski-global-nav-admin-admin-tools"
+    );
     if (adminToolsDiv) {
       if (canViewAdminTools) {
         adminToolsDiv.style.display = "block";
@@ -627,13 +643,14 @@
         adminToolsDiv.style.display = "none";
       }
     }
-    
-    
+
     const canViewAccountReports = hasPermission(
       userPermissions,
       "read_reports"
     );
-    const accountReportsDiv = document.getElementById("ski-global-nav-admin-account-reports");
+    const accountReportsDiv = document.getElementById(
+      "ski-global-nav-admin-account-reports"
+    );
     if (accountReportsDiv) {
       if (canViewAccountReports) {
         accountReportsDiv.style.display = "block";
@@ -641,7 +658,6 @@
         accountReportsDiv.style.display = "none";
       }
     }
-    
   }
 
   function getRoles() {

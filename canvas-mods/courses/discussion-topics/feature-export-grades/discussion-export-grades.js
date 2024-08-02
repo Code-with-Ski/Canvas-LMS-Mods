@@ -12,9 +12,16 @@
       },
       function (items) {
         if (items.courseDiscussionExportGrades) {
+          // classic discussions view
           SkiMonitorChanges.watchForElementByQuery(
             ".admin-links ul.ui-menu",
             addExportGradesButton
+          );
+
+          // discussion re-design view
+          SkiMonitorChanges.watchForElementByQuery(
+            ".discussion-post-manage-discussion",
+            addExportGradesButtonForDiscussionRedesign
           );
         }
       }
@@ -29,7 +36,11 @@
     const assignmentId = discussion?.assignment_id;
 
     if (assignmentId) {
-      const exportGrades = createExportGradesButton(courseId, assignmentId);
+      const exportGrades = createExportGradesButton(
+        courseId,
+        assignmentId,
+        true
+      );
       const item1 = document.createElement("li");
       item1.classList.add("ui-menu-item");
       item1.setAttribute("role", "presentation");
@@ -42,7 +53,8 @@
       if (hasRubric) {
         const exportGradesByCriteria = createExportGradesByCriteriaButton(
           courseId,
-          assignmentId
+          assignmentId,
+          true
         );
         const item2 = document.createElement("li");
         item2.classList.add("ui-menu-item");
@@ -53,12 +65,52 @@
     }
   }
 
-  function createExportGradesButton(courseId, assignmentId) {
-    const button = document.createElement("a");
-    button.href = "#";
-    button.innerText = "Export Grades";
-    button.classList.add("ui-corner-all");
-    button.setAttribute("role", "menuitem");
+  async function addExportGradesButtonForDiscussionRedesign(menuButtonSpan) {
+    const splitPathname = document.location.pathname.split("/");
+    const courseId = splitPathname[2];
+    const discussionId = splitPathname[4].split("?")[0];
+    const discussion = await getDiscussion(courseId, discussionId);
+    const assignmentId = discussion?.assignment_id;
+
+    const content = document.querySelector(
+      "#content .discussion-redesign-layout > div span"
+    );
+    if (assignmentId && content) {
+      const exportGrades = createExportGradesButton(courseId, assignmentId);
+      const exportWrapper = document.createElement("div");
+      exportWrapper.style.textAlign = "right";
+      exportWrapper.appendChild(exportGrades);
+
+      const hasRubric = discussion?.assignment?.rubric;
+      if (hasRubric) {
+        const exportGradesByCriteria = createExportGradesByCriteriaButton(
+          courseId,
+          assignmentId
+        );
+        exportWrapper.appendChild(exportGradesByCriteria);
+      }
+      content.insertAdjacentElement("afterbegin", exportWrapper);
+    }
+  }
+
+  function createExportGradesButton(
+    courseId,
+    assignmentId,
+    isClassicDiscussion = false
+  ) {
+    let button;
+    if (isClassicDiscussion) {
+      button = document.createElement("a");
+      button.href = "#";
+      button.innerText = "Export Grades";
+      button.classList.add("ui-corner-all");
+      button.setAttribute("role", "menuitem");
+    } else {
+      button = document.createElement("button");
+      button.innerText = "Export Grades";
+      button.classList.add("Button");
+      button.style.marginLeft = "0.5rem";
+    }
 
     button.addEventListener("click", async () => {
       button.disabled = true;
@@ -82,12 +134,24 @@
     return button;
   }
 
-  function createExportGradesByCriteriaButton(courseId, assignmentId) {
-    const button = document.createElement("a");
-    button.href = "#";
-    button.innerText = "Export Grades by Criteria";
-    button.classList.add("ui-corner-all");
-    button.setAttribute("role", "menuitem");
+  function createExportGradesByCriteriaButton(
+    courseId,
+    assignmentId,
+    isClassicDiscussion = false
+  ) {
+    let button;
+    if (isClassicDiscussion) {
+      button = document.createElement("a");
+      button.href = "#";
+      button.innerText = "Export Grades by Criteria";
+      button.classList.add("ui-corner-all");
+      button.setAttribute("role", "menuitem");
+    } else {
+      button = document.createElement("button");
+      button.innerText = "Export Grades by Criteria";
+      button.classList.add("Button");
+      button.style.marginLeft = "0.5rem";
+    }
 
     button.addEventListener("click", async () => {
       button.disabled = true;

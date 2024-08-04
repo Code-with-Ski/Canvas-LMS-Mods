@@ -10,6 +10,7 @@ details {
   border: 1px solid #aaa;
   border-radius: 4px;
   padding: .5em .5em 0;
+  margin-bottom: 0.5rem;
 }
 
 summary {
@@ -25,4 +26,8 @@ details[open] {
 details[open] summary {
   border-bottom: 1px solid #aaa;
   margin-bottom: .5em;
+}
+
+button#save {
+  margin-top: 1rem;
 }

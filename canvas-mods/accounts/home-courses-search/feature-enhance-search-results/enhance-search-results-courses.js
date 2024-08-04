@@ -5,9 +5,8 @@
         adminCoursesConcludedIcon: true,
         adminCoursesCourseCode: true,
         adminCoursesPeopleLink: true,
-        adminCoursesSubaccountLink: true,
+        adminCoursesSubaccountLink: false,
         adminCoursesGradesButton: true,
-        adminCoursesBlueprintInputPreventFill: true,
         adminCoursesAdditionalSearchInputs: true,
       },
       async function (items) {
@@ -344,15 +343,23 @@
             numOfStudentsTd.innerHTML = `<a href='/courses/${course["id"]}/users' target='_blank' title='View People in course' class="ski-course-people"'>${numOfStudentsTd.innerText}</a>`;
           }
         }
-        if (addViewGradesButton) {
-          if (!numOfStudentsTd.querySelector("a.ski-course-view-grades")) {
-            numOfStudentsTd.innerHTML += `
-              <br><br>
-              <a href='/courses/${course["id"]}/gradebook' target='_blank' title='View course gradebook' class='ski-course-view-grades Button' style="background: white; margin: 0px; padding: 0.4rem; border-radius: 0.25rem; border-width: 0px; width: auto; cursor: pointer;">
-                <i class="icon-line icon-gradebook" aria-hidden="true"></i>
-              </a>
-            `;
-          }
+      }
+    }
+    if (addViewGradesButton) {
+      const gradeLink = row.querySelector("td a.ski-course-view-grades");
+      if (!gradeLink) {
+        const numOfStudentsTd = row.querySelector("td:nth-last-child(2)");
+        numOfStudentsTd.style.textAlign = "center";
+        if (
+          numOfStudentsTd &&
+          !numOfStudentsTd.querySelector("a.ski-course-view-grades")
+        ) {
+          numOfStudentsTd.innerHTML += `
+            <br><br>
+            <a href='/courses/${course["id"]}/gradebook' target='_blank' title='View course gradebook' class='ski-course-view-grades Button' style="background: white; margin: 0px; padding: 0.4rem; border-radius: 0.25rem; border-width: 0px; width: auto; cursor: pointer;">
+              <i class="icon-line icon-gradebook" aria-hidden="true"></i>
+            </a>
+          `;
         }
       }
     }

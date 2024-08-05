@@ -7,7 +7,7 @@
         adminCoursesPeopleLink: true,
         adminCoursesSubaccountLink: true,
         adminCoursesGradesButton: true,
-        adminCoursesBlueprintInputPreventFill: true,
+        adminCoursesBlueprintInputPreventFill: false,
         adminCoursesAdditionalSearchInputs: true,
       },
       async function (items) {
@@ -69,11 +69,21 @@
     const rowOfSearchOptions = document.querySelector(
       "div#content form > span > span > span > span > span:nth-child(2)"
     );
-    if (rowOfSearchOptions) {
-      rowOfSearchOptions.insertAdjacentHTML(
+    const searchForm = document.querySelector("div#content form");
+    const additionalSearchWrapper = document.querySelector(
+      "div#content form div.ski-additional-search-options"
+    );
+    if (searchForm && !additionalSearchWrapper) {
+      const wrapper = document.createElement("div");
+      wrapper.classList.add("ski-additional-search-options");
+      wrapper.style.display = "flex";
+      wrapper.style.justifyContent = "space-between";
+      wrapper.style.marginTop = "1rem";
+
+      wrapper.insertAdjacentHTML(
         "afterbegin",
         `
-        <div class="ic-Form-control" style="max-width: 20rem; padding-left: 0.375rem; padding-right: 0.375rem;">
+        <div class="ic-Form-control" style="display: inline-block; max-width: 20rem; padding-right: 0.375rem;">
           <select id="ski-course-search-state-select" class="ic-Input">
             <optgroup label="Select course state">
               <option value="">All Course States</option>
@@ -85,15 +95,15 @@
       `
       );
 
-      const searchForm = document.querySelector("div#content form");
-      searchForm.insertAdjacentHTML(
-        "afterend",
+      wrapper.insertAdjacentHTML(
+        "beforeend",
         `
-        <div style="text-align: right;">
+        <div>
           <button data-sort="" id="ski-course-search-course-id-sort-btn" class="Button">Sort by Course ID - Descending</button>
         </div>
       `
       );
+      searchForm.appendChild(wrapper);
 
       const url = new URL(window.location);
       const stateSelect = document.getElementById(

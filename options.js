@@ -296,8 +296,8 @@ function saveOptions() {
         isRubricUsedForGradingIndicatorEnabled,
       courseDiscussionExportGrades: isDiscussionGradeExportEnabled,
       courseSectionsSectionReport: enableSectionsReports,
-      adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent,
-      adminCoursesSubaccountLink: isAdminCoursesSubaccountLinkEnabled,
+      adminCoursesBlueprintInputPreventFill: isBlueprintInputFillPrevent, // [DEPRECATED]
+      adminCoursesSubaccountLink: isAdminCoursesSubaccountLinkEnabled, // [DEPRECATED]
       adminCoursesConcludedIcon: isCourseConcludedIconEnabled,
       adminCoursesPeopleLink: isPeopleLinkEnabled,
       adminCoursesCourseCode: isCourseCodeEnabled,
@@ -380,11 +380,11 @@ function restoreOptions() {
       courseAssignmentRubricUsedForGradingCheck: true,
       courseDiscussionExportGrades: true,
       courseSectionsSectionReport: true,
-      adminCoursesBlueprintInputPreventFill: true,
+      adminCoursesBlueprintInputPreventFill: false, // [DEPRECATED]
       adminCoursesAdditionalSearchInputs: true,
       adminCoursesCourseCode: true,
       adminCoursesConcludedIcon: true,
-      adminCoursesSubaccountLink: true,
+      adminCoursesSubaccountLink: false, // [DEPRECATED]
       adminCoursesPeopleLink: true,
       adminCoursesGradesButton: true,
       adminUsersEnrollmentsResizable: true,

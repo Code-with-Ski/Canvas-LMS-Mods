@@ -742,7 +742,9 @@ class SkiTable {
   ) {
     const table = this.#htmlElements.querySelector("table");
     if (table) {
-      const rows = table.querySelectorAll("tr");
+      const rows = table.querySelectorAll(
+        ":scope > thead > tr, :scope > tbody > tr"
+      );
 
       const csv = [];
       for (const row of rows) {
@@ -799,7 +801,13 @@ class SkiTableConfig {
   isDownloadable;
   pagination;
 
-  constructor(maxHeight="800px", hideableColumns=true, showUnsorted=false, isDownloadable=true, pagination=true) {
+  constructor(
+    maxHeight = "800px",
+    hideableColumns = true,
+    showUnsorted = false,
+    isDownloadable = true,
+    pagination = true
+  ) {
     this.maxHeight = maxHeight;
     this.hideableColumns = hideableColumns;
     this.showUnsorted = showUnsorted;
@@ -808,7 +816,6 @@ class SkiTableConfig {
   }
 }
 
-
 // Configurations for table headings (th) in SkiTable
 class SkiTableHeadingConfig {
   name;
@@ -816,7 +823,7 @@ class SkiTableHeadingConfig {
   isHidden;
   isLocked;
 
-  constructor(name, isSortable=true, isHidden=false, isLocked=false) {
+  constructor(name, isSortable = true, isHidden = false, isLocked = false) {
     this.name = name;
     this.isSortable = isSortable;
     this.isHidden = isHidden;
@@ -824,16 +831,21 @@ class SkiTableHeadingConfig {
   }
 }
 
-
 // Configurations for table data (td) in SkiTable
 class SkiTableDataConfig {
   content;
   sortValue;
-  primarySortType;  // Valid options to override basic string comparison ["dateISO", "number"]
+  primarySortType; // Valid options to override basic string comparison ["dateISO", "number"]
   downloadInfo;
   styles;
 
-  constructor(content, sortValue=undefined, primarySortType=undefined, downloadInfo=undefined, styles={}) {
+  constructor(
+    content,
+    sortValue = undefined,
+    primarySortType = undefined,
+    downloadInfo = undefined,
+    styles = {}
+  ) {
     this.content = content;
     this.sortValue = sortValue;
     this.primarySortType = primarySortType;

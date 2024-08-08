@@ -1,6 +1,4 @@
-class SkiReportCourseSimpleSearch extends SkiReport {
-  #currentCourseId = window.location.pathname.split("/")[2];
-
+class SkiReportAllCoursesSimpleSearch extends SkiReport {
   constructor() {
     super("Simple Search");
   }
@@ -10,6 +8,10 @@ class SkiReportCourseSimpleSearch extends SkiReport {
       "simple-search-results",
       new SkiTableConfig("400px"),
       [
+        new SkiTableHeadingConfig("Canvas Course ID", true, true),
+        new SkiTableHeadingConfig("Course Name", true),
+        new SkiTableHeadingConfig("Course Code", true, true),
+        new SkiTableHeadingConfig("SIS Course ID", true, true),
         new SkiTableHeadingConfig("Item ID", true, true),
         new SkiTableHeadingConfig("URL", true, true),
         new SkiTableHeadingConfig("Item Type"),
@@ -27,6 +29,10 @@ class SkiReportCourseSimpleSearch extends SkiReport {
     // Search input
     const searchFieldset = this.createSearchFieldset();
     formContainer.appendChild(searchFieldset);
+
+    // Enrollment options
+    const enrollmentOptionsWrapper = this.createEnrollmentOptions();
+    formContainer.appendChild(enrollmentOptionsWrapper);
 
     // Search options
     const searchOptionsWrapper = this.createSearchOptions();
@@ -54,6 +60,47 @@ class SkiReportCourseSimpleSearch extends SkiReport {
     searchFieldset.appendChild(input);
 
     return searchFieldset;
+  }
+
+  createEnrollmentOptions() {
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("ski-simple-search-enrollment-options");
+
+    const fieldset = document.createElement("fieldset");
+    fieldset.classList.add("ic-Fieldset", "ic-Fieldset--radio-checkbox");
+
+    const legend = document.createElement("legend");
+    legend.classList.add("ic-Legend");
+    legend.innerText = `Course Enrollments to Search`;
+    fieldset.appendChild(legend);
+
+    const checkboxesContainer = document.createElement("div");
+    checkboxesContainer.style.marginBottom = "0.5rem";
+    checkboxesContainer.classList.add(
+      "ic-Checkbox-group",
+      "ic-Checkbox-group--inline"
+    );
+    const optionSettings = [
+      { name: "Current", value: "current" },
+      { name: "Past", value: "past" },
+      { name: "Future", value: "future" },
+    ];
+    for (const settings of optionSettings) {
+      const checkboxWrapper = document.createElement("div");
+      checkboxWrapper.classList.add(
+        "ic-Form-control",
+        "ic-Form-control--checkbox"
+      );
+      checkboxWrapper.innerHTML = `
+        <input type="checkbox" id='ski-simple-search-enrollment-${settings.value}' value="${settings.value}" checked>
+        <label class='ic-Label' for='ski-simple-search-enrollment-${settings.value}'>${settings.name}</label>
+      `;
+      checkboxesContainer.appendChild(checkboxWrapper);
+    }
+
+    fieldset.appendChild(checkboxesContainer);
+    wrapper.appendChild(fieldset);
+    return wrapper;
   }
 
   createSearchOptions() {
@@ -143,6 +190,27 @@ class SkiReportCourseSimpleSearch extends SkiReport {
       return;
     }
 
+    const selectedEnrollmentOptionCheckboxes = [
+      ...document.querySelectorAll(
+        ".ski-simple-search-enrollment-options input:checked"
+      ),
+    ];
+    if (
+      !selectedEnrollmentOptionCheckboxes ||
+      selectedEnrollmentOptionCheckboxes.length == 0
+    ) {
+      this.updateLoadingMessage(
+        "error",
+        `ERROR: Need to select at least one course enrollment state option`
+      );
+      return;
+    }
+    const enrollmentOptions = [
+      ...selectedEnrollmentOptionCheckboxes.map((checkbox) => {
+        return checkbox.value;
+      }),
+    ];
+
     const selectedSearchOptionCheckboxes = [
       ...document.querySelectorAll(".ski-simple-search-options input:checked"),
     ];
@@ -163,77 +231,166 @@ class SkiReportCourseSimpleSearch extends SkiReport {
     ];
 
     try {
-      const courseId = SkiReport.contextDetails.get("courseId");
-      if (!courseId) {
-        throw "Course ID not set in SkiReport";
-      }
-
       const extractedData = [];
 
-      if (searchOptions.includes("syllabus")) {
-        this.updateLoadingMessage("info", "Getting syllabus...");
+      const courseRows = [];
+      if (enrollmentOptions.includes("current")) {
+        const currentCourseRows = [
+          ...document.querySelectorAll(
+            "#my_courses_table tr.course-list-table-row"
+          ),
+        ];
+        courseRows.push(...currentCourseRows);
+      }
+      if (enrollmentOptions.includes("past")) {
+        const pastCourseRows = [
+          ...document.querySelectorAll(
+            "#past_enrollments_table tr.course-list-table-row"
+          ),
+        ];
+        courseRows.push(...pastCourseRows);
+      }
+      if (enrollmentOptions.includes("future")) {
+        const futureCourseRows = [
+          ...document.querySelectorAll(
+            "#future_enrollments_table tr.course-list-table-row"
+          ),
+        ];
+        courseRows.push(...futureCourseRows);
+      }
+
+      const visibleCourseRows = [
+        ...courseRows.filter((row) => {
+          return row.style.display != "none";
+        }),
+      ];
+
+      let currentCourse = 0;
+      const TOTAL_COURSES = visibleCourseRows.length;
+      for (const row of visibleCourseRows) {
+        currentCourse++;
+        const courseId = row
+          .querySelector(".course-list-course-title-column a")
+          ?.href?.split("/")
+          ?.pop();
+        if (!courseId) {
+          continue;
+        }
+
         const course = (
           await this.#getCourse(courseId, {
             "include[]": "syllabus_body",
           })
         )?.results;
-        const syllabusBody = course?.syllabus_body ?? "";
-        this.updateLoadingMessage("info", "Searching syllabus...");
-        extractedData.push(
-          ...this.extractSyllabusData(syllabusBody, searchValue)
-        );
-      }
 
-      if (searchOptions.includes("pages")) {
-        this.updateLoadingMessage("info", "Getting pages...");
-        const pages = await this.#getPages(courseId);
-        this.updateLoadingMessage("info", "Searching pages...");
-        extractedData.push(...this.extractPageData(pages, searchValue));
-      }
+        if (searchOptions.includes("syllabus")) {
+          this.updateLoadingMessage(
+            "info",
+            `Getting syllabus (Course ${currentCourse} of ${TOTAL_COURSES})...`
+          );
+          const syllabusBody = course?.syllabus_body ?? "";
+          this.updateLoadingMessage(
+            "info",
+            `Searching syllabus (Course ${currentCourse} of ${TOTAL_COURSES})...`
+          );
+          extractedData.push(
+            ...this.extractSyllabusData(syllabusBody, searchValue, course)
+          );
+        }
 
-      if (searchOptions.includes("announcement-topics")) {
-        this.updateLoadingMessage("info", "Getting announcements...");
-        const announcements = await this.#getAnnouncements(courseId);
-        this.updateLoadingMessage("info", "Searching announcements...");
-        extractedData.push(
-          ...this.extractDiscussionData(announcements, searchValue)
-        );
-      }
+        if (searchOptions.includes("pages")) {
+          this.updateLoadingMessage(
+            "info",
+            `Getting pages (Course ${currentCourse} of ${TOTAL_COURSES})...`
+          );
+          const pages = await this.#getPages(courseId);
+          this.updateLoadingMessage(
+            "info",
+            `Searching pages (Course ${currentCourse} of ${TOTAL_COURSES})...`
+          );
+          extractedData.push(
+            ...this.extractPageData(pages, searchValue, course)
+          );
+        }
 
-      if (searchOptions.includes("discussion-topics")) {
-        this.updateLoadingMessage("info", "Getting discussions...");
-        const discussions = await this.#getDiscussions(courseId);
-        this.updateLoadingMessage("info", "Searching discussions...");
-        extractedData.push(
-          ...this.extractDiscussionData(discussions, searchValue)
-        );
-      }
+        if (searchOptions.includes("announcement-topics")) {
+          this.updateLoadingMessage(
+            "info",
+            `Getting announcements (Course ${currentCourse} of ${TOTAL_COURSES})...`
+          );
+          const announcements = await this.#getAnnouncements(courseId);
+          this.updateLoadingMessage(
+            "info",
+            `Searching announcements (Course ${currentCourse} of ${TOTAL_COURSES})...`
+          );
+          extractedData.push(
+            ...this.extractDiscussionData(announcements, searchValue, course)
+          );
+        }
 
-      if (searchOptions.includes("assignments")) {
-        this.updateLoadingMessage("info", "Getting assignments...");
-        const assignments = await this.#getAssignments(courseId);
-        this.updateLoadingMessage("info", "Searching assignments...");
-        extractedData.push(
-          ...this.extractAssignmentData(assignments, searchValue)
-        );
-      }
+        if (searchOptions.includes("discussion-topics")) {
+          this.updateLoadingMessage(
+            "info",
+            `Getting discussions (Course ${currentCourse} of ${TOTAL_COURSES})...`
+          );
+          const discussions = await this.#getDiscussions(courseId);
+          this.updateLoadingMessage(
+            "info",
+            `Searching discussions (Course ${currentCourse} of ${TOTAL_COURSES})...`
+          );
+          extractedData.push(
+            ...this.extractDiscussionData(discussions, searchValue, course)
+          );
+        }
 
-      if (searchOptions.includes("files")) {
-        this.updateLoadingMessage("info", "Getting files...");
-        const files = await this.#getFiles(courseId, {
-          search_term: searchValue,
-        });
-        this.updateLoadingMessage("info", "Searching files...");
-        extractedData.push(...this.extractFileData(files, searchValue));
-      }
+        if (searchOptions.includes("assignments")) {
+          this.updateLoadingMessage(
+            "info",
+            `Getting assignments (Course ${currentCourse} of ${TOTAL_COURSES})...`
+          );
+          const assignments = await this.#getAssignments(courseId);
+          this.updateLoadingMessage(
+            "info",
+            `Searching assignments (Course ${currentCourse} of ${TOTAL_COURSES})...`
+          );
+          extractedData.push(
+            ...this.extractAssignmentData(assignments, searchValue, course)
+          );
+        }
 
-      if (searchOptions.includes("module-items")) {
-        this.updateLoadingMessage("info", "Getting module items...");
-        const modules = await this.#getModules(courseId, {
-          "include[]": "items",
-        });
-        this.updateLoadingMessage("info", "Searching module items...");
-        extractedData.push(...this.extractModuleItemData(modules, searchValue));
+        if (searchOptions.includes("files")) {
+          this.updateLoadingMessage(
+            "info",
+            `Getting files (Course ${currentCourse} of ${TOTAL_COURSES})...`
+          );
+          const files = await this.#getFiles(courseId, {
+            search_term: searchValue,
+          });
+          this.updateLoadingMessage(
+            "info",
+            `Searching files (Course ${currentCourse} of ${TOTAL_COURSES})...`
+          );
+          extractedData.push(
+            ...this.extractFileData(files, searchValue, course)
+          );
+        }
+
+        if (searchOptions.includes("module-items")) {
+          this.updateLoadingMessage(
+            "info",
+            `Getting module items (Course ${currentCourse} of ${TOTAL_COURSES})...`
+          );
+          const modules = await this.#getModules(courseId, {
+            "include[]": "items",
+          });
+          this.updateLoadingMessage(
+            "info",
+            `Searching module items (Course ${currentCourse} of ${TOTAL_COURSES})...`
+          );
+          extractedData.push(
+            ...this.extractModuleItemData(modules, searchValue, course)
+          );
+        }
       }
 
       this.updateLoadingMessage("info", "Adding data to table...");
@@ -245,16 +402,14 @@ class SkiReportCourseSimpleSearch extends SkiReport {
     }
   }
 
-  extractSyllabusData(syllabus, searchValue) {
+  extractSyllabusData(syllabus, searchValue, course) {
     const upperCaseSearchValue = searchValue.toUpperCase();
     if (!syllabus.toUpperCase().includes(upperCaseSearchValue)) {
       return [];
     }
 
     const syllabusLink = document.createElement("a");
-    syllabusLink.href = `/courses/${
-      this.#currentCourseId
-    }/assignments/syllabus`;
+    syllabusLink.href = `/courses/${course.id}/assignments/syllabus`;
     syllabusLink.target = "_blank";
     syllabusLink.innerText = "Course Syllabus";
 
@@ -284,7 +439,16 @@ class SkiReportCourseSimpleSearch extends SkiReport {
       }
     `;
 
+    const courseNameLink = document.createElement("a");
+    courseNameLink.href = `/courses/${course.id}`;
+    courseNameLink.target = "_blank";
+    courseNameLink.innerText = course.name;
+
     const rowData = [
+      new SkiTableDataConfig(course.id, undefined, "number"),
+      new SkiTableDataConfig(courseNameLink),
+      new SkiTableDataConfig(course.course_code),
+      new SkiTableDataConfig(course.sis_course_id),
       new SkiTableDataConfig("N/A"),
       new SkiTableDataConfig(syllabusLink.href),
       new SkiTableDataConfig("SYLLABUS"),
@@ -296,7 +460,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
     return [rowData];
   }
 
-  extractPageData(pages, searchValue) {
+  extractPageData(pages, searchValue, course) {
     const data = [];
     for (const page of pages) {
       const pageTitle = page.title ?? "";
@@ -310,9 +474,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
       }
 
       const pageTitleLink = document.createElement("a");
-      pageTitleLink.href = `/courses/${this.#currentCourseId}/pages/${
-        page.url
-      }`;
+      pageTitleLink.href = `/courses/${course.id}/pages/${page.url}`;
       pageTitleLink.target = "_blank";
       pageTitleLink.innerHTML = pageTitle.replace(
         new RegExp(searchValue, "gi"),
@@ -350,7 +512,16 @@ class SkiReportCourseSimpleSearch extends SkiReport {
         }
       `;
 
+      const courseNameLink = document.createElement("a");
+      courseNameLink.href = `/courses/${course.id}`;
+      courseNameLink.target = "_blank";
+      courseNameLink.innerText = course.name;
+
       const rowData = [
+        new SkiTableDataConfig(course.id, undefined, "number"),
+        new SkiTableDataConfig(courseNameLink),
+        new SkiTableDataConfig(course.course_code),
+        new SkiTableDataConfig(course.sis_course_id),
         new SkiTableDataConfig(page.page_id, undefined, "number"),
         new SkiTableDataConfig(page.html_url),
         new SkiTableDataConfig("PAGE"),
@@ -364,7 +535,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
     return data;
   }
 
-  extractDiscussionData(discussions, searchValue) {
+  extractDiscussionData(discussions, searchValue, course) {
     const data = [];
     for (const discussion of discussions) {
       const discussionTitle = discussion.title ?? "";
@@ -417,7 +588,16 @@ class SkiReportCourseSimpleSearch extends SkiReport {
         }
       `;
 
+      const courseNameLink = document.createElement("a");
+      courseNameLink.href = `/courses/${course.id}`;
+      courseNameLink.target = "_blank";
+      courseNameLink.innerText = course.name;
+
       const rowData = [
+        new SkiTableDataConfig(course.id, undefined, "number"),
+        new SkiTableDataConfig(courseNameLink),
+        new SkiTableDataConfig(course.course_code),
+        new SkiTableDataConfig(course.sis_course_id),
         new SkiTableDataConfig(discussion.id, undefined, "number"),
         new SkiTableDataConfig(discussion.html_url),
         new SkiTableDataConfig(
@@ -433,7 +613,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
     return data;
   }
 
-  extractAssignmentData(assignments, searchValue) {
+  extractAssignmentData(assignments, searchValue, course) {
     const data = [];
     for (const assignment of assignments) {
       const assignmentName = assignment.name ?? "";
@@ -485,7 +665,16 @@ class SkiReportCourseSimpleSearch extends SkiReport {
         }
       `;
 
+      const courseNameLink = document.createElement("a");
+      courseNameLink.href = `/courses/${course.id}`;
+      courseNameLink.target = "_blank";
+      courseNameLink.innerText = course.name;
+
       const rowData = [
+        new SkiTableDataConfig(course.id, undefined, "number"),
+        new SkiTableDataConfig(courseNameLink),
+        new SkiTableDataConfig(course.course_code),
+        new SkiTableDataConfig(course.sis_course_id),
         new SkiTableDataConfig(assignment.id, undefined, "number"),
         new SkiTableDataConfig(assignment.html_url),
         new SkiTableDataConfig(
@@ -502,7 +691,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
     return data;
   }
 
-  extractFileData(files, searchValue) {
+  extractFileData(files, searchValue, course) {
     const data = [];
     for (const file of files) {
       const displayName = file.display_name ?? "";
@@ -529,7 +718,16 @@ class SkiReportCourseSimpleSearch extends SkiReport {
         }
       );
 
+      const courseNameLink = document.createElement("a");
+      courseNameLink.href = `/courses/${course.id}`;
+      courseNameLink.target = "_blank";
+      courseNameLink.innerText = course.name;
+
       const rowData = [
+        new SkiTableDataConfig(course.id, undefined, "number"),
+        new SkiTableDataConfig(courseNameLink),
+        new SkiTableDataConfig(course.course_code),
+        new SkiTableDataConfig(course.sis_course_id),
         new SkiTableDataConfig(file.id, undefined, "number"),
         new SkiTableDataConfig(file.url),
         new SkiTableDataConfig(`FILE`),
@@ -544,7 +742,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
     return data;
   }
 
-  extractModuleItemData(modules, searchValue) {
+  extractModuleItemData(modules, searchValue, course) {
     const data = [];
     for (const module of modules) {
       const items = module?.items ?? [];
@@ -565,7 +763,16 @@ class SkiReportCourseSimpleSearch extends SkiReport {
           }
         );
 
+        const courseNameLink = document.createElement("a");
+        courseNameLink.href = `/courses/${course.id}`;
+        courseNameLink.target = "_blank";
+        courseNameLink.innerText = course.name;
+
         const rowData = [
+          new SkiTableDataConfig(course.id, undefined, "number"),
+          new SkiTableDataConfig(courseNameLink),
+          new SkiTableDataConfig(course.course_code),
+          new SkiTableDataConfig(course.sis_course_id),
           new SkiTableDataConfig(item.id, undefined, "number"),
           new SkiTableDataConfig(item.html_url),
           new SkiTableDataConfig(`MODULE ITEM - ${item.type}`),
@@ -582,48 +789,38 @@ class SkiReportCourseSimpleSearch extends SkiReport {
   }
 
   #getCourse(courseId, params = {}) {
-    return SkiReport.memoizeRequest("course", () => {
-      return SkiCanvasLmsApiCaller.getRequest(
-        `/api/v1/courses/${courseId}`,
-        params
-      );
-    });
+    return SkiCanvasLmsApiCaller.getRequest(
+      `/api/v1/courses/${courseId}`,
+      params
+    );
   }
 
   #getPages(courseId) {
-    return SkiReport.memoizeRequest("pages", () => {
-      return SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${courseId}/pages?include[]=body`,
-        {}
-      );
-    });
+    return SkiCanvasLmsApiCaller.getRequestAllPages(
+      `/api/v1/courses/${courseId}/pages?include[]=body`,
+      {}
+    );
   }
 
   #getAnnouncements(courseId) {
-    return SkiReport.memoizeRequest("announcements", () => {
-      return SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${courseId}/discussion_topics`,
-        { only_announcements: true }
-      );
-    });
+    return SkiCanvasLmsApiCaller.getRequestAllPages(
+      `/api/v1/courses/${courseId}/discussion_topics`,
+      { only_announcements: true }
+    );
   }
 
   #getDiscussions(courseId) {
-    return SkiReport.memoizeRequest("discussions", () => {
-      return SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${courseId}/discussion_topics`,
-        {}
-      );
-    });
+    return SkiCanvasLmsApiCaller.getRequestAllPages(
+      `/api/v1/courses/${courseId}/discussion_topics`,
+      {}
+    );
   }
 
   #getAssignments(courseId) {
-    return SkiReport.memoizeRequest("assignments", () => {
-      return SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${courseId}/assignments`,
-        { order_by: "due_at" }
-      );
-    });
+    return SkiCanvasLmsApiCaller.getRequestAllPages(
+      `/api/v1/courses/${courseId}/assignments`,
+      { order_by: "due_at" }
+    );
   }
 
   #getFiles(courseId, params = {}) {
@@ -634,11 +831,9 @@ class SkiReportCourseSimpleSearch extends SkiReport {
   }
 
   #getModules(courseId, params = {}) {
-    return SkiReport.memoizeRequest("modules", () => {
-      return SkiCanvasLmsApiCaller.getRequestAllPages(
-        `/api/v1/courses/${courseId}/modules`,
-        params
-      );
-    });
+    return SkiCanvasLmsApiCaller.getRequestAllPages(
+      `/api/v1/courses/${courseId}/modules`,
+      params
+    );
   }
 }

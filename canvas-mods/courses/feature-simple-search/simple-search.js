@@ -58,9 +58,9 @@
   function addSimpleSearchModal() {
     const dialog = document.createElement("dialog");
     dialog.id = "ski-simple-search-dialog";
-    dialog.style.width = "600px";
+    dialog.style.width = "800px";
     dialog.style.maxWidth = "90%";
-    dialog.style.height = "400px";
+    dialog.style.height = "600px";
     dialog.style.maxHeight = "90%";
     dialog.style.resize = "both";
 

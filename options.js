@@ -40,6 +40,9 @@ function saveOptions() {
   const areColumnSortsEnabled = document.getElementById(
     "courses-column-sorts"
   ).checked;
+  const isCoursesSimpleSearchEnabled = document.getElementById(
+    "courses-simple-search"
+  ).checked;
 
   // Course - Global settings
   const isCourseGlobalStickyHeaderEnabled = document.getElementById(
@@ -272,6 +275,7 @@ function saveOptions() {
       allCoursesFilters: areFiltersEnabled,
       allCoursesSearchFields: areSearchesEnabled,
       allCoursesColumnSorts: areColumnSortsEnabled,
+      allCoursesSimpleSearch: isCoursesSimpleSearchEnabled,
       courseGlobalStickyHeader: isCourseGlobalStickyHeaderEnabled,
       courseGlobalSimpleSearch: isCourseGlobalSimpleSearchEnabled,
       courseGlobalSimpleSearchPosition: simpleSearchCourseNavPosition,
@@ -360,6 +364,7 @@ function restoreOptions() {
       allCoursesFilters: true,
       allCoursesSearchFields: true,
       allCoursesColumnSorts: true,
+      allCoursesSimpleSearch: true,
       courseGlobalStickyHeader: true,
       courseGlobalSimpleSearch: true,
       courseGlobalSimpleSearchPosition: 2,
@@ -451,6 +456,8 @@ function restoreOptions() {
         items.allCoursesSearchFields;
       document.getElementById("courses-column-sorts").checked =
         items.allCoursesColumnSorts;
+      document.getElementById("courses-simple-search").checked =
+        items.allCoursesSimpleSearch;
 
       // Course - Global settings
       document.getElementById("course-global-sticky-header").checked =

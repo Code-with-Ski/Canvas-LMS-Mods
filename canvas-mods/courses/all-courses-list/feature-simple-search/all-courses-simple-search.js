@@ -39,10 +39,10 @@
     dialog.style.height = "600px";
     dialog.style.maxHeight = "90%";
     dialog.style.resize = "both";
+    dialog.style.overflow = "hidden";
 
-    const splitPathname = window.location.pathname.split("?")[0].split("/");
     SkiReport.contextDetails.set("reportContext", "all-courses");
-    const report = new SkiReportAllCoursesSimpleSearch();
+    const report = new SkiReportCourseSimpleSearch();
     const reportContainer = report.getReportContainer();
     reportContainer.style.maxHeight = "calc(100% - 4rem)";
     reportContainer.style.overflow = "auto";

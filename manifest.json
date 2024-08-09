@@ -1,8 +1,8 @@
 {
   "name": "Canvas LMS Mods (Basic)",
   "description": "This provides modifications to the Canvas LMS to improve the user experience visually and functionally.",
-  "version": "6.0.0",
-  "version_name": "6.0.0",
+  "version": "6.1.0",
+  "version_name": "6.1.0",
   "manifest_version": 3,
   "permissions": ["storage"],
   "host_permissions": [
@@ -57,7 +57,7 @@
       "js": [
         "utils/ski-ui-elements/ski-table-elements/ski-table.js",
         "utils/ski-ui-elements/ski-report/ski-report.js",
-        "utils/ski-ui-elements/ski-report/ski-report-all-courses/ski-report-all-courses-simple-search.js",
+        "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-simple-search.js",
         "canvas-mods/courses/all-courses-list/feature-simple-search/all-courses-simple-search.js",
         "canvas-mods/courses/all-courses-list/feature-sort-columns/sort-columns-on-all-courses.js",
         "canvas-mods/courses/all-courses-list/feature-filter-and-search/filter-and-search-on-all-courses.js"

@@ -196,3 +196,17 @@ table thead td.ski-column-search-field {
   background-color: rgba(45, 59, 69, 0.1) !important;
   border-width: 0.05rem !important;
 }
+
+.ski-line-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical; 
+  overflow: hidden;
+}
+
+.ski-expand-collapse-button {
+  margin-top: 0.5rem;
+  width: 90%;
+  margin-left: 5%;
+}

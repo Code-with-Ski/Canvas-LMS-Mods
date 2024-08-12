@@ -475,7 +475,10 @@ class SkiReportCourseSimpleSearch extends SkiReport {
       }),
     ];
 
-    return courseIds;
+    // User may have multiple enrollments in the same course
+    const uniqueCourseIds = Array.from(new Set(courseIds));
+
+    return uniqueCourseIds;
   }
 
   #isFound(text, searchValue, ignoreCase = true) {

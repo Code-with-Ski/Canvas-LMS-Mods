@@ -124,7 +124,8 @@
     {
       "matches": ["*://*/courses/*/groups*"],
       "js": [
-        "canvas-mods/courses/groups/feature-export-group-set/export-group-set.js"
+        "canvas-mods/courses/groups/feature-export-group-set/export-group-set.js",
+        "canvas-mods/courses/groups/feature-expand-collapse-groups/expand-collapse-groups.js"
       ]
     },
     {

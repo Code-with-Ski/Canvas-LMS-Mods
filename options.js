@@ -83,6 +83,9 @@ function saveOptions() {
   const isGroupsExportButtonEnabled = document.getElementById(
     "course-groups-export"
   ).checked;
+  const isCourseGroupsExpandCollapseEnabled = document.getElementById(
+    "course-groups-expand-collapse"
+  ).checked;
 
   // Course - User Access Report settings
   const isCourseUserAccessReportButtonEnabled = document.getElementById(
@@ -289,6 +292,7 @@ function saveOptions() {
       coursePeopleSectionFilter: isCoursePeopleSectionFilterEnabled,
       coursePeopleSortEnabled: isCoursePeopleSortEnabled,
       courseGroupsExportEnabled: isGroupsExportButtonEnabled,
+      courseGroupsExapndCollapseEnabled: isCourseGroupsExpandCollapseEnabled,
       courseUserAccessExportEnabled: isCourseUserAccessReportButtonEnabled,
       courseSpeedGraderCommentsWithHyperlinksEnabled:
         isSpeedGraderCommentHyperlinksEnabled,
@@ -379,6 +383,7 @@ function restoreOptions() {
       coursePeopleSectionFilter: true,
       coursePeopleSortEnabled: true,
       courseGroupsExportEnabled: true,
+      courseGroupsExpandCollapseEnabled: true,
       courseUserAccessExportEnabled: true,
       courseSpeedGraderCommentsWithHyperlinksEnabled: true,
       courseSpeedGraderDraftCommentIndicator: false,
@@ -491,6 +496,8 @@ function restoreOptions() {
       // Course - Groups settings
       document.getElementById("course-groups-export").checked =
         items.courseGroupsExportEnabled;
+      document.getElementById("course-groups-expand-collapse").checked =
+        items.courseGroupsExpandCollapseEnabled;
 
       // Course - User Access Report settings
       document.getElementById("course-user-access-report-export").checked =

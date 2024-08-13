@@ -51,6 +51,7 @@ Options will also be updated to allow the user to enable/disable certain customi
   - Enable filters on enrollment lists (Term, Enrolled as, Published)
   - Enable search bars on enrollment lists (Course, Nickname)
   - Enable column sorts on enrollment lists
+  - Enable All Courses simple search (Uses Canvas LMS API)
 
 - Dashboard
 
@@ -61,7 +62,7 @@ Options will also be updated to allow the user to enable/disable certain customi
 
   - Global for Course
     - Enable sticky course header
-    - Enable course simple search
+    - Enable course simple search (Uses Canvas LMS API)
     - Simple search course navigation position
     - Enable course statistics button on home
   - Modules
@@ -83,6 +84,7 @@ Options will also be updated to allow the user to enable/disable certain customi
   - Assignments
     - Add load assignment details button on assignments page (Uses Canvas LMS API)
     - Include Turnitin check with assignment details (Uses Canvas LMS API)
+    - Add expand/collapse assignment groups button
     - Add export grades button to assignment page (Uses Canvas LMS API)
     - Add rubric used for grading indicator (Uses Canvas LMS API)
   - Discussions

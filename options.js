@@ -248,6 +248,12 @@ function saveOptions() {
   const isSisAccountIdShown = document.getElementById(
     "admin-sub-accounts-sis-id"
   ).checked;
+  const isSubAccountSearchEnabled = document.getElementById(
+    "admin-sub-accounts-search"
+  ).checked;
+  const isSubAccountExpandAllEnabled = document.getElementById(
+    "admin-sub-accounts-expand"
+  ).checked;
 
   // Admin - SIS Import settings
   const isSisImportLogEnabled = document.getElementById(
@@ -338,6 +344,8 @@ function saveOptions() {
       adminQuestionBanksSearch: isQuestionBanksSearchable,
       adminSubAccountsCanvasId: isCanvasAccountIdShown,
       adminSubAccountsSisId: isSisAccountIdShown,
+      adminSubAccountsSearch: isSubAccountSearchEnabled,
+      adminSubAccountsExpand: isSubAccountExpandAllEnabled,
       adminSisImportLog: isSisImportLogEnabled,
       rubricsImport: isRubricsDragDropCriteriaEnabled,
       rubricsDragDropCriteria: isRubricsImportCriteriaEnabled,
@@ -425,6 +433,8 @@ function restoreOptions() {
       adminQuestionBanksSearch: true,
       adminSubAccountsCanvasId: true,
       adminSubAccountsSisId: true,
+      adminSubAccountsSearch: true,
+      adminSubAccountsExpand: true,
       adminSisImportLog: true,
       rubricsImport: true,
       rubricsDragDropCriteria: true,
@@ -610,6 +620,10 @@ function restoreOptions() {
         items.adminSubAccountsCanvasId;
       document.getElementById("admin-sub-accounts-sis-id").checked =
         items.adminSubAccountsSisId;
+      document.getElementById("admin-sub-accounts-search").checked =
+        items.adminSubAccountsSearch;
+      document.getElementById("admin-sub-accounts-expand").checked =
+        items.adminSubAccountsExpand;
 
       // Admin - Terms settings
       document.getElementById("admin-terms-search").checked =

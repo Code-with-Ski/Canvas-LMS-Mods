@@ -83,6 +83,9 @@ function saveOptions() {
   const isGroupsExportButtonEnabled = document.getElementById(
     "course-groups-export"
   ).checked;
+  const isCourseGroupsExpandCollapseEnabled = document.getElementById(
+    "course-groups-expand-collapse"
+  ).checked;
 
   // Course - User Access Report settings
   const isCourseUserAccessReportButtonEnabled = document.getElementById(
@@ -108,6 +111,9 @@ function saveOptions() {
   ).checked;
   const isAssignmentsLoadDetailsEnabledWithTurnitin = document.getElementById(
     "course-assignments-load-details-turnitin"
+  ).checked;
+  const isAssignmentsExpandCollapseEnabled = document.getElementById(
+    "course-assignments-expand-collapse"
   ).checked;
   const isAssignmentGradesExportButtonEnabled = document.getElementById(
     "course-assignments-assignment-export-grades"
@@ -242,6 +248,12 @@ function saveOptions() {
   const isSisAccountIdShown = document.getElementById(
     "admin-sub-accounts-sis-id"
   ).checked;
+  const isSubAccountSearchEnabled = document.getElementById(
+    "admin-sub-accounts-search"
+  ).checked;
+  const isSubAccountExpandAllEnabled = document.getElementById(
+    "admin-sub-accounts-expand"
+  ).checked;
 
   // Admin - SIS Import settings
   const isSisImportLogEnabled = document.getElementById(
@@ -286,6 +298,7 @@ function saveOptions() {
       coursePeopleSectionFilter: isCoursePeopleSectionFilterEnabled,
       coursePeopleSortEnabled: isCoursePeopleSortEnabled,
       courseGroupsExportEnabled: isGroupsExportButtonEnabled,
+      courseGroupsExapndCollapseEnabled: isCourseGroupsExpandCollapseEnabled,
       courseUserAccessExportEnabled: isCourseUserAccessReportButtonEnabled,
       courseSpeedGraderCommentsWithHyperlinksEnabled:
         isSpeedGraderCommentHyperlinksEnabled,
@@ -295,6 +308,7 @@ function saveOptions() {
       courseAssignmentsLoadDetails: isAssignmentsLoadDetailsEnabled,
       courseAssignmentsLoadDetailsTurnitin:
         isAssignmentsLoadDetailsEnabledWithTurnitin,
+      courseAssignmentsExpandCollapse: isAssignmentsExpandCollapseEnabled,
       courseAssignmentExportGrades: isAssignmentGradesExportButtonEnabled,
       courseAssignmentRubricUsedForGradingCheck:
         isRubricUsedForGradingIndicatorEnabled,
@@ -330,6 +344,8 @@ function saveOptions() {
       adminQuestionBanksSearch: isQuestionBanksSearchable,
       adminSubAccountsCanvasId: isCanvasAccountIdShown,
       adminSubAccountsSisId: isSisAccountIdShown,
+      adminSubAccountsSearch: isSubAccountSearchEnabled,
+      adminSubAccountsExpand: isSubAccountExpandAllEnabled,
       adminSisImportLog: isSisImportLogEnabled,
       rubricsImport: isRubricsDragDropCriteriaEnabled,
       rubricsDragDropCriteria: isRubricsImportCriteriaEnabled,
@@ -375,12 +391,14 @@ function restoreOptions() {
       coursePeopleSectionFilter: true,
       coursePeopleSortEnabled: true,
       courseGroupsExportEnabled: true,
+      courseGroupsExpandCollapseEnabled: true,
       courseUserAccessExportEnabled: true,
       courseSpeedGraderCommentsWithHyperlinksEnabled: true,
       courseSpeedGraderDraftCommentIndicator: false,
       courseStatisticsCourseReport: true,
       courseAssignmentsLoadDetails: true,
       courseAssignmentsLoadDetailsTurnitin: true,
+      courseAssignmentsExpandCollapse: true,
       courseAssignmentExportGrades: true,
       courseAssignmentRubricUsedForGradingCheck: true,
       courseDiscussionExportGrades: true,
@@ -415,6 +433,8 @@ function restoreOptions() {
       adminQuestionBanksSearch: true,
       adminSubAccountsCanvasId: true,
       adminSubAccountsSisId: true,
+      adminSubAccountsSearch: true,
+      adminSubAccountsExpand: true,
       adminSisImportLog: true,
       rubricsImport: true,
       rubricsDragDropCriteria: true,
@@ -486,6 +506,8 @@ function restoreOptions() {
       // Course - Groups settings
       document.getElementById("course-groups-export").checked =
         items.courseGroupsExportEnabled;
+      document.getElementById("course-groups-expand-collapse").checked =
+        items.courseGroupsExpandCollapseEnabled;
 
       // Course - User Access Report settings
       document.getElementById("course-user-access-report-export").checked =
@@ -508,7 +530,9 @@ function restoreOptions() {
         items.courseAssignmentsLoadDetails;
       document.getElementById(
         "course-assignments-load-details-turnitin"
-      ).checked = items.courseAssignmentsLoadDetails;
+      ).checked = items.courseAssignmentsLoadDetailsTurnitin;
+      document.getElementById("course-assignments-expand-collapse").checked =
+        items.courseAssignmentsExpandCollapse;
       document.getElementById(
         "course-assignments-assignment-export-grades"
       ).checked = items.courseAssignmentExportGrades;
@@ -596,6 +620,10 @@ function restoreOptions() {
         items.adminSubAccountsCanvasId;
       document.getElementById("admin-sub-accounts-sis-id").checked =
         items.adminSubAccountsSisId;
+      document.getElementById("admin-sub-accounts-search").checked =
+        items.adminSubAccountsSearch;
+      document.getElementById("admin-sub-accounts-expand").checked =
+        items.adminSubAccountsExpand;
 
       // Admin - Terms settings
       document.getElementById("admin-terms-search").checked =

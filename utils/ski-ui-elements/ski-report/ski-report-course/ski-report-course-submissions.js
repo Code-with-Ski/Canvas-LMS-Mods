@@ -197,10 +197,10 @@ class SkiReportCourseSubmissions extends SkiReport {
           }
         }
         if (!assignment) {
-          const assignment = await SkiCanvasLmsApiCaller.getRequestAllPages(
-            `/api/v1/courses/${courseId}/assignments/${selectedAssignmentId}`,
-            { order_by: "due_at" }
+          const assignmentRequest = await SkiCanvasLmsApiCaller.getRequest(
+            `/api/v1/courses/${courseId}/assignments/${selectedAssignmentId}`
           );
+          assignment = assignmentRequest?.results;
         }
         assignments.push(assignment);
       } else {
@@ -256,7 +256,13 @@ class SkiReportCourseSubmissions extends SkiReport {
                 "assignment_ids[]": selectedAssignmentId,
               }
             );
-          submissions.push(...currentSubmissions);
+          if (!currentSubmissions) {
+            console.warn(
+              `ERROR: Submission request failed for assignment (ID: ${selectedAssignmentId}) and workflow state of ${checkbox.value}`
+            );
+          } else {
+            submissions.push(...currentSubmissions);
+          }
         }
       } else {
         for (const checkbox of submissionStateCheckboxes) {
@@ -273,7 +279,13 @@ class SkiReportCourseSubmissions extends SkiReport {
                 workflow_state: checkbox.value,
               }
             );
-          submissions.push(...currentSubmissions);
+          if (!currentSubmissions) {
+            console.warn(
+              `ERROR: Submission request failed for assignments with workflow state of ${checkbox.value}`
+            );
+          } else {
+            submissions.push(...currentSubmissions);
+          }
         }
       }
 

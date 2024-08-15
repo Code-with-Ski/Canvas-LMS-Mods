@@ -14,6 +14,16 @@
           items.adminSubAccountsCanvasId,
           items.adminSubAccountsSisId
         );
+        SkiMonitorChanges.watchForAddedNodesOfElement(
+          document.querySelector("#content div.account"),
+          (addedNode) => {
+            handleAddedNode(
+              addedNode,
+              items.adminSubAccountsCanvasId,
+              items.adminSubAccountsSisId
+            );
+          }
+        );
       }
     );
   }
@@ -37,28 +47,16 @@
           "div.show_account span.links"
         );
         if (isCanvasAccountIdShown) {
-          accountLinks.insertAdjacentHTML(
-            "afterend",
-            `<div style='color: var(--ic-brand-font-color-dark-lightened-15); font-size: 12px; font-size: 0.75rem;' class='ski-canvas-account-id'>Canvas Account ID: ${canvasId}</div>`
-          );
+          addCanvasAccountId(topLevelAccount, accountLinks, canvasId);
         }
         if (isSisAccountIdShown) {
-          const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
-          fetch(`${baseUrl}/api/v1/accounts/${canvasId}`)
-            .then((response) => response.json())
-            .then((data) => {
-              let sisId = data["sis_account_id"];
-              if (!sisId) {
-                sisId = "No SIS ID";
-              }
-              accountLinks.insertAdjacentHTML(
-                "afterend",
-                `<div style='color: var(--ic-brand-font-color-dark-lightened-15); font-size: 12px; font-size: 0.75rem;' class='ski-sis-account-id'>SIS Account ID: ${sisId}</div>`
-              );
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-            });
+          if (
+            !topLevelAccount.querySelector(
+              "div.show_account .ski-sis-account-id"
+            )
+          ) {
+            addSisAccountId(accountLinks, canvasId);
+          }
         }
       }
 
@@ -76,33 +74,106 @@
               "div.show_account span.links"
             );
             if (isCanvasAccountIdShown) {
-              accountLinks.insertAdjacentHTML(
-                "afterend",
-                `<div style='color: var(--ic-brand-font-color-dark-lightened-15); font-size: 12px; font-size: 0.75rem;' class='ski-canvas-account-id'>Canvas Account ID: ${canvasId}</div>`
-              );
+              addCanvasAccountId(item, accountLinks, canvasId);
             }
             if (isSisAccountIdShown) {
-              requestNum++;
-              await new Promise((r) => setTimeout(r, requestNum * 10));
-              const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
-              fetch(`${baseUrl}/api/v1/accounts/${canvasId}`)
-                .then((response) => response.json())
-                .then((data) => {
-                  let sisId = data["sis_account_id"];
-                  if (!sisId) {
-                    sisId = "No SIS ID";
-                  }
-                  accountLinks.insertAdjacentHTML(
-                    "afterend",
-                    `<div style='color: var(--ic-brand-font-color-dark-lightened-15); font-size: 12px; font-size: 0.75rem;' class='ski-sis-account-id'>SIS Account ID: ${sisId}</div>`
-                  );
-                })
-                .catch((error) => {
-                  console.error("Error:", error);
-                });
+              if (!item.querySelector("div.show_account .ski-sis-account-id")) {
+                requestNum++;
+                await new Promise((r) => setTimeout(r, requestNum * 10));
+                addSisAccountId(accountLinks, canvasId);
+              }
             }
           }
         });
+      }
+    }
+  }
+
+  function addAccountIds(
+    accountDiv,
+    isCanvasAccountIdShown,
+    isSisAccountIdShown,
+    requestNum = 0
+  ) {
+    const canvasId = accountDiv.querySelector(
+      "div.show_account span.id"
+    )?.textContent;
+    if (canvasId) {
+      const accountLinks = accountDiv.querySelector(
+        "div.show_account span.links"
+      );
+      if (isCanvasAccountIdShown) {
+        addCanvasAccountId(accountDiv, accountLinks, canvasId);
+      }
+      if (isSisAccountIdShown) {
+        if (!accountDiv.querySelector("div.show_account .ski-sis-account-id")) {
+          addSisAccountId(accountLinks, canvasId);
+        }
+      }
+    }
+
+    const subAccountDivs = [
+      ...accountDiv.querySelectorAll("ul.sub_accounts div.account"),
+    ];
+    if (subAccountDivs) {
+      subAccountDivs.forEach(async (item) => {
+        requestNum++;
+        addAccountIds(
+          item,
+          isCanvasAccountIdShown,
+          isSisAccountIdShown,
+          requestNum
+        );
+      });
+    }
+  }
+
+  function addCanvasAccountId(accountDiv, accountLinks, canvasId) {
+    if (!accountDiv.querySelector("div.show_account .ski-canvas-account-id")) {
+      accountLinks.insertAdjacentHTML(
+        "afterend",
+        `<div style='color: var(--ic-brand-font-color-dark-lightened-15); font-size: 12px; font-size: 0.75rem;' class='ski-canvas-account-id'>Canvas Account ID: ${canvasId}</div>`
+      );
+    }
+  }
+
+  async function addSisAccountId(accountLinks, canvasId, requestNum = 0) {
+    await new Promise((r) => setTimeout(r, requestNum * 10));
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
+    fetch(`${baseUrl}/api/v1/accounts/${canvasId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        let sisId = data["sis_account_id"];
+        if (!sisId) {
+          sisId = "No SIS ID";
+        }
+        accountLinks.insertAdjacentHTML(
+          "afterend",
+          `<div style='color: var(--ic-brand-font-color-dark-lightened-15); font-size: 12px; font-size: 0.75rem;' class='ski-sis-account-id'>SIS Account ID: ${sisId}</div>`
+        );
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
+  function handleAddedNode(
+    addedNode,
+    isCanvasAccountIdShown,
+    isSisAccountIdShown
+  ) {
+    if (addedNode?.classList?.contains("account")) {
+      addAccountIds(addedNode, isCanvasAccountIdShown, isSisAccountIdShown);
+    } else {
+      const addedAccounts = [
+        ...(addedNode?.querySelectorAll("div.account") ?? []),
+      ];
+      for (const addedAccount of addedAccounts) {
+        addAccountIds(
+          addedAccount,
+          isCanvasAccountIdShown,
+          isSisAccountIdShown
+        );
       }
     }
   }

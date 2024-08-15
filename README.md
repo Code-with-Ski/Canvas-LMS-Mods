@@ -74,6 +74,7 @@ Options will also be updated to allow the user to enable/disable certain customi
     - Enable people sort by columns
   - Groups
     - Enable groups export to CSV button (Requires course admin permission) (Uses Canvas LMS API)
+    - Enable groups expand/collapse button
   - User
     - Enable access report export to CSV button
   - SpeedGrader
@@ -136,6 +137,8 @@ Options will also be updated to allow the user to enable/disable certain customi
   - Sub-accounts
     - Enable show Canvas account ID
     - Enable show SIS account ID (Uses Canvas LMS API)
+    - Enable sub-account search
+    - Enable "Expand All" button
   - Terms
     - [DEPRECATED] Add a search ability to the terms
     - [DEPRECATED] Move the add term button to the top of the terms table

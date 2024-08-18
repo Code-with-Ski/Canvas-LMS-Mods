@@ -83,6 +83,7 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
   }
 
   async loadData(table, formContainer) {
+    this.updateLoadingMessage("clear");
     try {
       const courseId = SkiReport.contextDetails.get("courseId");
       if (!courseId) {
@@ -95,7 +96,11 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
 
       let discussions = [];
       if (selectedDiscussionId) {
-        this.updateLoadingMessage("info", "Getting discussion details...");
+        this.updateLoadingMessage(
+          "info",
+          "Getting discussion details...",
+          true
+        );
         let discussion;
         if (SkiReport.cache.has("discussions")) {
           const cachedDiscussions = await SkiReport.cache.get("discussions");
@@ -113,26 +118,57 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
             `/api/v1/courses/${this.courseId}/discussion_topics/${selectedDiscussionId}`,
             {}
           );
+          if (!discussion) {
+            this.updateLoadingMessage(
+              "error",
+              "ERROR: Failed to get selected discussion",
+              true
+            );
+            return;
+          }
         }
-        this.updateLoadingMessage("info", "Getting replies for discussion...");
+        this.updateLoadingMessage(
+          "info",
+          "Getting replies for discussion...",
+          true
+        );
         if (!discussion.hasOwnProperty("fullDiscussion")) {
           const fullDiscussion = await SkiCanvasLmsApiCaller.getRequestAllPages(
             `/api/v1/courses/${courseId}/discussion_topics/${selectedDiscussionId}/view`
           );
 
-          discussion.fullDiscussion = fullDiscussion;
+          if (!fullDiscussion) {
+            this.updateLoadingMessage(
+              "error",
+              `ERROR: Failed to get full discussion (Discussion: ${discussion.title} [ID: ${discussion.id}])`,
+              true
+            );
+            return;
+          } else {
+            discussion.fullDiscussion = fullDiscussion;
+          }
         }
         discussions.push(discussion);
       } else {
-        this.updateLoadingMessage("info", "Getting all discussions...");
+        this.updateLoadingMessage("info", "Getting all discussions...", true);
         discussions = await this.#getDiscussions(courseId);
+        if (!discussions) {
+          this.updateLoadingMessage(
+            "error",
+            "ERROR: Failed to get discussions",
+            true
+          );
+          return;
+        }
+
         const numOfDiscussions = discussions.length;
         for (let i = 0; i < numOfDiscussions; i++) {
           this.updateLoadingMessage(
             "info",
             `Getting replies for discussion (${
               i + 1
-            } of ${numOfDiscussions})...`
+            } of ${numOfDiscussions})...`,
+            true
           );
           const discussion = discussions[i];
           if (discussion.hasOwnProperty("fullDiscussion")) {
@@ -143,18 +179,26 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
             `/api/v1/courses/${courseId}/discussion_topics/${discussionId}/view`
           );
 
-          discussion.fullDiscussion = fullDiscussion;
+          if (!fullDiscussion) {
+            this.updateLoadingMessage(
+              "error",
+              `ERROR: Failed to get full discussion (Discussion: ${discussion.title} [ID: ${discussion.id}])`,
+              true
+            );
+          } else {
+            discussion.fullDiscussion = fullDiscussion;
+          }
         }
       }
 
-      this.updateLoadingMessage("info", "Formatting data for table...");
+      this.updateLoadingMessage("info", "Formatting data for table...", true);
       const discussionRepliesData = this.extractData(discussions);
 
-      this.updateLoadingMessage("info", "Adding data to table...");
+      this.updateLoadingMessage("info", "Adding data to table...", true);
       table.setTableBody(discussionRepliesData);
-      this.updateLoadingMessage("success", "Finished loading data");
+      this.updateLoadingMessage("success", "Finished loading data", true);
     } catch (error) {
-      console.error(error);
+      console.error(`Error: ${error}\n\nStack Trace: ${error.stack}`);
       this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
     }
   }
@@ -165,6 +209,9 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
       data.push(this.#extractDiscussionOriginData(discussion));
 
       const fullDiscussion = discussion.fullDiscussion;
+      if (!fullDiscussion) {
+        continue;
+      }
 
       const nestedReplies = fullDiscussion.view;
       if (!nestedReplies) {

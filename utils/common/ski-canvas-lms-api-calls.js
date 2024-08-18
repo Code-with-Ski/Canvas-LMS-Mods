@@ -151,7 +151,7 @@ class SkiCanvasLmsApiCaller {
     firstPageResponse,
     resultPropertySelector = null
   ) {
-    const MAX_BATCH_SIZE = 20;
+    const MAX_BATCH_SIZE = 10;
 
     const paginatedResults = [];
     const firstPageResults = firstPageResponse.results;

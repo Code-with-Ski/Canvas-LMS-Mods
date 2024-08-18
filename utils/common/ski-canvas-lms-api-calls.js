@@ -56,6 +56,11 @@ class SkiCanvasLmsApiCaller {
         );
         if (SKI_DEBUG_MODE) {
           console.log(responseResults);
+          if (!responseResults.isSuccessful) {
+            console.error(
+              `Error with Request (URL: ${responseResults.url}):\n${responseResults.statusMessage}`
+            );
+          }
         }
         return responseResults;
       })
@@ -80,10 +85,6 @@ class SkiCanvasLmsApiCaller {
     }
 
     if (!firstPageResponse.isSuccessful) {
-      console.error(
-        `Error with Request (URL: ${firstPageResponse.url}):\n${firstPageResponse.statusMessage}`
-      );
-
       // TODO Consider returning error message
       // Need to ensure current calls handle this appropriately
       return;
@@ -493,7 +494,9 @@ class SkiCanvasLmsApiResponse {
     } else if (responseJson.message) {
       errorMessage = `Error ${response.status}: ${responseJson.message}`;
     }
-    console.error(errorMessage);
+    if (SKI_DEBUG_MODE) {
+      console.error(errorMessage);
+    }
     return errorMessage;
   }
 

@@ -257,6 +257,14 @@ class SkiReportCourseSimpleSearch extends SkiReport {
       }),
     ];
 
+    if (searchOptions.includes("files") && searchValue.length < 3) {
+      this.updateLoadingMessage(
+        "error",
+        `ERROR: To search file names, the search keyword/phrase must be at least 3 characters`
+      );
+      return;
+    }
+
     try {
       const extractedData = [];
       const courseIds = [];

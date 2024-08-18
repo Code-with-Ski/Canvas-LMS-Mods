@@ -113,6 +113,8 @@ class SkiReport {
         `;
       }
     }
+
+    messageWrapper.scrollTop = messageWrapper.scrollHeight;
   }
 
   async loadData(table, formContainer) {

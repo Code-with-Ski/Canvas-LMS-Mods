@@ -475,12 +475,12 @@ class SkiReportCourseSimpleSearch extends SkiReport {
         if (searchOptions.includes("module-items")) {
           this.updateLoadingMessage(
             "info",
-            `Getting module items (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+            `Getting modules with module items (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
             true
           );
           const modules = await this.#getModules(courseId, {
             "include[]": "items",
-            per_page: 100,
+            per_page: 50,
           });
           if (!modules) {
             this.updateLoadingMessage(
@@ -495,15 +495,37 @@ class SkiReportCourseSimpleSearch extends SkiReport {
               true
             );
             for (const module of modules) {
-              const moduleItems = module.items ?? [];
-              extractedData.push(
-                ...this.extractData(
-                  moduleItems,
-                  "module-items",
-                  searchValue,
-                  course
-                )
-              );
+              const moduleId = module.id;
+              const moduleName = module.name;
+
+              let moduleItems = module.items;
+              if (!moduleItems) {
+                this.updateLoadingMessage(
+                  "info",
+                  `Gettting module items since they weren't included with module details (Module: ${moduleName} [ID: ${moduleId}]; Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+                  true
+                );
+                moduleItems = await this.#getModuleItems(courseId, moduleId, {
+                  per_page: 100,
+                });
+              }
+
+              if (!moduleItems) {
+                this.updateLoadingMessage(
+                  "error",
+                  `ERROR: Failed to get module items (Module: ${moduleName} [ID: ${moduleId}]; Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+                  true
+                );
+              } else {
+                extractedData.push(
+                  ...this.extractData(
+                    moduleItems,
+                    "module-items",
+                    searchValue,
+                    course
+                  )
+                );
+              }
             }
           }
         }
@@ -1026,5 +1048,12 @@ class SkiReportCourseSimpleSearch extends SkiReport {
         params
       );
     }
+  }
+
+  #getModuleItems(courseId, moduleId, params = {}) {
+    return SkiCanvasLmsApiCaller.getRequestAllPages(
+      `/api/v1/courses/${courseId}/modules/${moduleId}/items`,
+      params
+    );
   }
 }

@@ -91,7 +91,7 @@ class SkiReportCourseQuizzes extends SkiReport {
     return SkiReport.memoizeRequest("quizzes", () => {
       return SkiCanvasLmsApiCaller.getRequestAllPages(
         `/api/v1/courses/${courseId}/all_quizzes`,
-        {}
+        { per_page: 100 }
       );
     });
   }

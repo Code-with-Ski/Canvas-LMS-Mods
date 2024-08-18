@@ -26,23 +26,27 @@ class SkiReportCoursePages extends SkiReport {
   }
 
   async loadData(table) {
+    this.updateLoadingMessage("clear");
     try {
       const courseId = SkiReport.contextDetails.get("courseId");
       if (!courseId) {
         throw "Course ID not set in SkiReport";
       }
 
-      this.updateLoadingMessage("info", "Getting pages...");
+      this.updateLoadingMessage("info", "Getting pages...", true);
       const pages = await this.#getPages(courseId);
+      if (!pages) {
+        this.updateLoadingMessage("error", `ERROR: Failed to get pages`, true);
+      } else {
+        this.updateLoadingMessage("info", "Formatting data for table...", true);
+        const extractedData = this.extractData(pages);
 
-      this.updateLoadingMessage("info", "Formatting data for table...");
-      const extractedData = this.extractData(pages);
-
-      this.updateLoadingMessage("info", "Adding data to table...");
-      table.setTableBody(extractedData);
-      this.updateLoadingMessage("success", `Finished loading data`);
+        this.updateLoadingMessage("info", "Adding data to table...", true);
+        table.setTableBody(extractedData);
+        this.updateLoadingMessage("success", `Finished loading data`, true);
+      }
     } catch (error) {
-      console.error(error);
+      console.error(`Error: ${error}\n\nStack Trace: ${error.stack}`);
       this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
     }
   }

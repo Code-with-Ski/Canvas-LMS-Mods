@@ -60,7 +60,7 @@ class SkiCanvasLmsApiCaller {
         return responseResults;
       })
       .catch((error) => {
-        console.error(`Error: ${error}`);
+        console.error(`Error: ${error}\n\nStack Trace: ${error.stack}`);
         return;
       });
   }
@@ -80,6 +80,12 @@ class SkiCanvasLmsApiCaller {
     }
 
     if (!firstPageResponse.isSuccessful) {
+      console.error(
+        `Error with Request (URL: ${firstPageResponse.url}):\n${firstPageResponse.statusMessage}`
+      );
+
+      // TODO Consider returning error message
+      // Need to ensure current calls handle this appropriately
       return;
     }
 
@@ -285,6 +291,7 @@ class SkiCanvasLmsApiCaller {
         return SkiCanvasLmsApiResponse.FAILED_RETRY;
       }
     } else {
+      // TODO Update this return code. No retries since it wasn't a rate limit error
       return SkiCanvasLmsApiResponse.FAILED_RETRY;
     }
   }
@@ -474,9 +481,18 @@ class SkiCanvasLmsApiResponse {
       return response.statusMessage;
     }
 
-    const errorMessage = `${responseJson.status} (${responseJson.errors
-      .map((error) => error.message)
-      .join("; ")})`;
+    let errorMessage = `${response.status}`;
+    if (
+      responseJson.status &&
+      responseJson.errors &&
+      Array.isArray(responseJson.errors)
+    ) {
+      errorMessage = `${responseJson.status}: ${responseJson.errors
+        .map((error) => error.message)
+        .join("; ")}`;
+    } else if (responseJson.message) {
+      errorMessage = `Error ${response.status}: ${responseJson.message}`;
+    }
     console.error(errorMessage);
     return errorMessage;
   }

@@ -535,11 +535,8 @@ class SkiReportCourseSimpleSearch extends SkiReport {
       table.setTableBody(extractedData);
       this.updateLoadingMessage("success", `Finished loading data`, true);
     } catch (error) {
-      console.error(error);
-      this.updateLoadingMessage(
-        "error",
-        `ERROR LOADING DATA: ${error}\n\nStack Trace: ${error.stack}`
-      );
+      console.error(`Error: ${error}\n\nStack Trace: ${error.stack}`);
+      this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
     }
   }
 

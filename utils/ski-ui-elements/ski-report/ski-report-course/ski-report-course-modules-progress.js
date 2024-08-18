@@ -65,7 +65,7 @@ class SkiReportCourseModulesProgress extends SkiReport {
         const studentId = studentEnrollment["user_id"];
         this.updateLoadingMessage(
           "info",
-          `Getting module progress of student [ID: ${studentId}] (${
+          `Getting modules with items for student [ID: ${studentId}] (Student ${
             i + 1
           } of ${numOfStudents})...`,
           true
@@ -94,7 +94,11 @@ class SkiReportCourseModulesProgress extends SkiReport {
         for (const module of studentModulesProgress) {
           this.updateLoadingMessage(
             "info",
-            `Checking module [ID: ${module.id}] progress of student [ID: ${studentId}]`,
+            `Checking module [ID: ${
+              module.id
+            }] progress of student [ID: ${studentId}] (Student ${
+              i + 1
+            } of ${numOfStudents})...`,
             true
           );
           let items = module.items;
@@ -103,7 +107,11 @@ class SkiReportCourseModulesProgress extends SkiReport {
           if (!items) {
             this.updateLoadingMessage(
               "info",
-              `Getting items of module [ID: ${module.id}] for student [ID: ${studentId}]`
+              `Getting items of module [ID: ${
+                module.id
+              }] for student [ID: ${studentId}] (Student ${
+                i + 1
+              } of ${numOfStudents})...`
             );
             items = await SkiCanvasLmsApiCaller.getRequestAllPages(
               `/api/v1/courses/${courseId}/modules/${module.id}/items?student_id=${studentId}`,

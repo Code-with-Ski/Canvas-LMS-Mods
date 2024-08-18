@@ -361,7 +361,7 @@ class SkiReportCourseDiscussionReplies extends SkiReport {
     return SkiReport.memoizeRequest("discussions", () => {
       return SkiCanvasLmsApiCaller.getRequestAllPages(
         `/api/v1/courses/${courseId}/discussion_topics`,
-        {}
+        { per_page: 100 }
       );
     });
   }

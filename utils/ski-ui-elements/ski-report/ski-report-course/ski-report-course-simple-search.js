@@ -284,23 +284,24 @@ class SkiReportCourseSimpleSearch extends SkiReport {
         currentCourse++;
         this.updateLoadingMessage(
           "info",
-          `Getting course (Course ${currentCourse} of ${TOTAL_COURSES})...`
+          `Getting course (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`
         );
         const course = (
           await this.#getCourse(courseId, {
             "include[]": "syllabus_body",
           })
         )?.results;
+        const courseName = course.name;
 
         if (searchOptions.includes("syllabus")) {
           this.updateLoadingMessage(
             "info",
-            `Getting syllabus (Course ${currentCourse} of ${TOTAL_COURSES})...`
+            `Getting syllabus (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`
           );
           const syllabusBody = course?.syllabus_body ?? "";
           this.updateLoadingMessage(
             "info",
-            `Searching syllabus (Course ${currentCourse} of ${TOTAL_COURSES})...`
+            `Searching syllabus (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`
           );
           extractedData.push(
             ...this.extractData(syllabusBody, "syllabus", searchValue, course)
@@ -310,7 +311,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
         if (searchOptions.includes("pages")) {
           this.updateLoadingMessage(
             "info",
-            `Getting pages (Course ${currentCourse} of ${TOTAL_COURSES})...`
+            `Getting pages (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`
           );
           const pages = await this.#getPages(courseId, {
             "include[]": "body",
@@ -318,7 +319,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
           });
           this.updateLoadingMessage(
             "info",
-            `Searching pages (Course ${currentCourse} of ${TOTAL_COURSES})...`
+            `Searching pages (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`
           );
           extractedData.push(
             ...this.extractData(pages, "pages", searchValue, course)
@@ -328,7 +329,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
         if (searchOptions.includes("announcement-topics")) {
           this.updateLoadingMessage(
             "info",
-            `Getting announcements (Course ${currentCourse} of ${TOTAL_COURSES})...`
+            `Getting announcements (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`
           );
           const announcements = await this.#getDiscussions(courseId, {
             only_announcements: true,
@@ -336,7 +337,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
           });
           this.updateLoadingMessage(
             "info",
-            `Searching announcements (Course ${currentCourse} of ${TOTAL_COURSES})...`
+            `Searching announcements (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`
           );
           extractedData.push(
             ...this.extractData(
@@ -351,14 +352,14 @@ class SkiReportCourseSimpleSearch extends SkiReport {
         if (searchOptions.includes("discussion-topics")) {
           this.updateLoadingMessage(
             "info",
-            `Getting discussions (Course ${currentCourse} of ${TOTAL_COURSES})...`
+            `Getting discussions (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`
           );
           const discussions = await this.#getDiscussions(courseId, {
             per_page: 100,
           });
           this.updateLoadingMessage(
             "info",
-            `Searching discussions (Course ${currentCourse} of ${TOTAL_COURSES})...`
+            `Searching discussions (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`
           );
           extractedData.push(
             ...this.extractData(
@@ -373,14 +374,14 @@ class SkiReportCourseSimpleSearch extends SkiReport {
         if (searchOptions.includes("assignments")) {
           this.updateLoadingMessage(
             "info",
-            `Getting assignments (Course ${currentCourse} of ${TOTAL_COURSES})...`
+            `Getting assignments (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`
           );
           const assignments = await this.#getAssignments(courseId, {
             per_page: 100,
           });
           this.updateLoadingMessage(
             "info",
-            `Searching assignments (Course ${currentCourse} of ${TOTAL_COURSES})...`
+            `Searching assignments (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`
           );
           extractedData.push(
             ...this.extractData(assignments, "assignments", searchValue, course)
@@ -390,7 +391,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
         if (searchOptions.includes("files")) {
           this.updateLoadingMessage(
             "info",
-            `Getting files (Course ${currentCourse} of ${TOTAL_COURSES})...`
+            `Getting files (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`
           );
           const files = await this.#getFiles(courseId, {
             search_term: searchValue,
@@ -398,7 +399,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
           });
           this.updateLoadingMessage(
             "info",
-            `Searching files (Course ${currentCourse} of ${TOTAL_COURSES})...`
+            `Searching files (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`
           );
           extractedData.push(
             ...this.extractData(files, "files", searchValue, course)
@@ -408,7 +409,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
         if (searchOptions.includes("module-items")) {
           this.updateLoadingMessage(
             "info",
-            `Getting module items (Course ${currentCourse} of ${TOTAL_COURSES})...`
+            `Getting module items (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`
           );
           const modules = await this.#getModules(courseId, {
             "include[]": "items",
@@ -416,7 +417,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
           });
           this.updateLoadingMessage(
             "info",
-            `Searching module items (Course ${currentCourse} of ${TOTAL_COURSES})...`
+            `Searching module items (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`
           );
           for (const module of modules) {
             const moduleItems = module.items ?? [];

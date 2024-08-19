@@ -212,6 +212,7 @@ class SkiReportCourseGradeHistory extends SkiReport {
   }
 
   async loadData(table, formContainer) {
+    this.updateLoadingMessage("clear");
     try {
       const courseId = SkiReport.contextDetails.get("courseId");
       let contextId = courseId;
@@ -225,7 +226,7 @@ class SkiReportCourseGradeHistory extends SkiReport {
         throw "Course ID not set in SkiReport";
       }
 
-      this.updateLoadingMessage("info", "Getting selected options");
+      this.updateLoadingMessage("info", "Getting selected options", true);
       const selectedAssignmentId = formContainer.querySelector(
         ".ski-assignment-select"
       )?.value;
@@ -236,19 +237,43 @@ class SkiReportCourseGradeHistory extends SkiReport {
       let submissions = [];
       if (!selectedUserId) {
         if (!selectedAssignmentId) {
-          this.updateLoadingMessage("info", "Getting grade history...");
+          this.updateLoadingMessage(
+            "info",
+            "Getting grade history of all assignments...",
+            true
+          );
           const submissionHistory =
             await SkiCanvasLmsApiCaller.getRequestAllPages(
               `/api/v1/courses/${courseId}/gradebook_history/feed`
             );
-          submissions.push(...submissionHistory);
+          if (!submissionHistory) {
+            this.updateLoadingMessage(
+              "error",
+              "ERROR: Failed to get grade history of all assignments",
+              true
+            );
+          } else {
+            submissions.push(...submissionHistory);
+          }
         } else {
-          this.updateLoadingMessage("info", "Getting grade history...");
+          this.updateLoadingMessage(
+            "info",
+            `Getting grade history of selected assignment [ID: ${selectedAssignmentId}]...`,
+            true
+          );
           const submissionHistory =
             await SkiCanvasLmsApiCaller.getRequestAllPages(
               `/api/v1/courses/${courseId}/gradebook_history/feed?assignment_id=${selectedAssignmentId}`
             );
-          submissions.push(...submissionHistory);
+          if (!submissionHistory) {
+            this.updateLoadingMessage(
+              "error",
+              `ERROR: Failed to get grade history of selected assignment [ID: ${selectedAssignmentId}]`,
+              true
+            );
+          } else {
+            submissions.push(...submissionHistory);
+          }
         }
       } else {
         const enrollmentStates = ["active", "inactive", "concluded", "deleted"];
@@ -259,9 +284,17 @@ class SkiReportCourseGradeHistory extends SkiReport {
             contextId,
             selectedUserId
           );
-          for (const enrollment of enrollments) {
-            if (enrollment.type == "StudentEnrollment") {
-              userIds.add(enrollment.user_id);
+          if (!enrollments) {
+            this.updateLoadingMessage(
+              "error",
+              `ERROR: Failed to get enrollments of ${selectedUserId} state`,
+              true
+            );
+          } else {
+            for (const enrollment of enrollments) {
+              if (enrollment.type == "StudentEnrollment") {
+                userIds.add(enrollment.user_id);
+              }
             }
           }
         } else {
@@ -274,33 +307,49 @@ class SkiReportCourseGradeHistory extends SkiReport {
           currentCount++;
           this.updateLoadingMessage(
             "info",
-            `Getting grade history of users (${currentCount} of ${numOfUsers})...`
+            `Getting grade history of users (${currentCount} of ${numOfUsers})...`,
+            true
           );
           if (!selectedAssignmentId) {
             const submissionHistory =
               await SkiCanvasLmsApiCaller.getRequestAllPages(
                 `/api/v1/courses/${courseId}/gradebook_history/feed?user_id=${userId}`
               );
-            submissions.push(...submissionHistory);
+            if (!submissionHistory) {
+              this.updateLoadingMessage(
+                "error",
+                `ERROR: Failed to get all grade history of user [ID: ${userId}]`
+              );
+            } else {
+              submissions.push(...submissionHistory);
+            }
           } else {
             const submissionHistory =
               await SkiCanvasLmsApiCaller.getRequestAllPages(
                 `/api/v1/courses/${courseId}/gradebook_history/feed?user_id=${userId}&assignment_id=${selectedAssignmentId}`
               );
-            submissions.push(...submissionHistory);
+            if (!submissionHistory) {
+              this.updateLoadingMessage(
+                "error",
+                `ERROR: Failed to get grade history of user [ID: ${userId}] for selected assignment [ID: ${selectedAssignmentId}]`,
+                true
+              );
+            } else {
+              submissions.push(...submissionHistory);
+            }
           }
         }
       }
 
-      this.updateLoadingMessage("info", "Formatting data for table...");
+      this.updateLoadingMessage("info", "Formatting data for table...", true);
       const submissionsData = this.extractData(submissions);
 
-      this.updateLoadingMessage("info", "Setting table data...");
+      this.updateLoadingMessage("info", "Setting table data...", true);
       table.setTableBody(submissionsData);
 
-      this.updateLoadingMessage("success", "Finished loading data");
+      this.updateLoadingMessage("success", "Finished loading data", true);
     } catch (error) {
-      console.error(error);
+      console.error(`Error: ${error}\n\nStack Trace: ${error.stack}`);
       this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
     }
   }
@@ -399,7 +448,7 @@ class SkiReportCourseGradeHistory extends SkiReport {
     return SkiReport.memoizeRequest("assignments", () => {
       return SkiCanvasLmsApiCaller.getRequestAllPages(
         `/api/v1/courses/${courseId}/assignments`,
-        { order_by: "due_at" }
+        { order_by: "due_at", per_page: 100 }
       );
     });
   }

@@ -30,23 +30,31 @@ class SkiReportCourseQuizzes extends SkiReport {
   }
 
   async loadData(table) {
+    this.updateLoadingMessage("clear");
     try {
       const courseId = SkiReport.contextDetails.get("courseId");
       if (!courseId) {
         throw "Course ID not set in SkiReport";
       }
 
-      this.updateLoadingMessage("info", "Getting quizzes...");
+      this.updateLoadingMessage("info", "Getting quizzes...", true);
       const quizzes = await this.#getQuizzes(courseId);
+      if (!quizzes) {
+        this.updateLoadingMessage(
+          "error",
+          `ERROR: Failed to get quizzes`,
+          true
+        );
+      } else {
+        this.updateLoadingMessage("info", "Formatting data for table...", true);
+        const quizzesData = this.extractData(quizzes);
 
-      this.updateLoadingMessage("info", "Formatting data for table...");
-      const quizzesData = this.extractData(quizzes);
-
-      this.updateLoadingMessage("info", "Adding data to table...");
-      table.setTableBody(quizzesData);
-      this.updateLoadingMessage("success", `Finished loading data`);
+        this.updateLoadingMessage("info", "Adding data to table...", true);
+        table.setTableBody(quizzesData);
+        this.updateLoadingMessage("success", `Finished loading data`, true);
+      }
     } catch (error) {
-      console.error(error);
+      console.error(`Error: ${error}\n\nStack Trace: ${error.stack}`);
       this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
     }
   }
@@ -91,7 +99,7 @@ class SkiReportCourseQuizzes extends SkiReport {
     return SkiReport.memoizeRequest("quizzes", () => {
       return SkiCanvasLmsApiCaller.getRequestAllPages(
         `/api/v1/courses/${courseId}/all_quizzes`,
-        {}
+        { per_page: 100 }
       );
     });
   }

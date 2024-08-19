@@ -29,22 +29,30 @@ class SkiReportCourseAnnouncements extends SkiReport {
   }
 
   async loadData(table) {
+    this.updateLoadingMessage("clear");
     try {
-      this.updateLoadingMessage("info", "Getting announcements...");
+      this.updateLoadingMessage("info", "Getting announcements...", true);
       const courseId = SkiReport.contextDetails.get("courseId");
       if (!courseId) {
         throw "Course ID not set in SkiReport";
       }
-      const discussions = await this.#getAnnouncements(courseId);
+      const announcements = await this.#getAnnouncements(courseId);
+      if (!announcements) {
+        this.updateLoadingMessage(
+          "error",
+          "ERROR: Failed to get announcements",
+          true
+        );
+      } else {
+        this.updateLoadingMessage("info", "Formatting data for table...", true);
+        const data = this.extractData(announcements);
 
-      this.updateLoadingMessage("info", "Formatting data for table...");
-      const discussionsData = this.extractData(discussions);
-
-      this.updateLoadingMessage("info", "Adding data to table...");
-      table.setTableBody(discussionsData);
-      this.updateLoadingMessage("success", "Finished loading data");
+        this.updateLoadingMessage("info", "Adding data to table...", true);
+        table.setTableBody(data);
+        this.updateLoadingMessage("success", "Finished loading data", true);
+      }
     } catch (error) {
-      console.error(error);
+      console.error(`Error: ${error}\n\nStack Trace: ${error.stack}`);
       this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
     }
   }
@@ -126,7 +134,7 @@ class SkiReportCourseAnnouncements extends SkiReport {
     return SkiReport.memoizeRequest("announcements", () => {
       return SkiCanvasLmsApiCaller.getRequestAllPages(
         `/api/v1/courses/${courseId}/discussion_topics`,
-        { only_announcements: true }
+        { only_announcements: true, per_page: 100 }
       );
     });
   }

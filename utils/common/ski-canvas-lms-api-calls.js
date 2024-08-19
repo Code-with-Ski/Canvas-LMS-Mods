@@ -56,11 +56,16 @@ class SkiCanvasLmsApiCaller {
         );
         if (SKI_DEBUG_MODE) {
           console.log(responseResults);
+          if (!responseResults.isSuccessful) {
+            console.error(
+              `Error with Request (URL: ${responseResults.url}):\n${responseResults.statusMessage}`
+            );
+          }
         }
         return responseResults;
       })
       .catch((error) => {
-        console.error(`Error: ${error}`);
+        console.error(`Error: ${error}\n\nStack Trace: ${error.stack}`);
         return;
       });
   }
@@ -80,6 +85,8 @@ class SkiCanvasLmsApiCaller {
     }
 
     if (!firstPageResponse.isSuccessful) {
+      // TODO Consider returning error message
+      // Need to ensure current calls handle this appropriately
       return;
     }
 
@@ -145,7 +152,7 @@ class SkiCanvasLmsApiCaller {
     firstPageResponse,
     resultPropertySelector = null
   ) {
-    const MAX_BATCH_SIZE = 20;
+    const MAX_BATCH_SIZE = 10;
 
     const paginatedResults = [];
     const firstPageResults = firstPageResponse.results;
@@ -285,6 +292,7 @@ class SkiCanvasLmsApiCaller {
         return SkiCanvasLmsApiResponse.FAILED_RETRY;
       }
     } else {
+      // TODO Update this return code. No retries since it wasn't a rate limit error
       return SkiCanvasLmsApiResponse.FAILED_RETRY;
     }
   }
@@ -474,10 +482,21 @@ class SkiCanvasLmsApiResponse {
       return response.statusMessage;
     }
 
-    const errorMessage = `${responseJson.status} (${responseJson.errors
-      .map((error) => error.message)
-      .join("; ")})`;
-    console.error(errorMessage);
+    let errorMessage = `${response.status}`;
+    if (
+      responseJson.status &&
+      responseJson.errors &&
+      Array.isArray(responseJson.errors)
+    ) {
+      errorMessage = `${responseJson.status}: ${responseJson.errors
+        .map((error) => error.message)
+        .join("; ")}`;
+    } else if (responseJson.message) {
+      errorMessage = `Error ${response.status}: ${responseJson.message}`;
+    }
+    if (SKI_DEBUG_MODE) {
+      console.error(errorMessage);
+    }
     return errorMessage;
   }
 

@@ -201,6 +201,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
   }
 
   async loadData(table) {
+    this.updateLoadingMessage("clear");
     const searchTermInput = document.getElementById(
       "simple-search-search-input"
     );
@@ -257,6 +258,14 @@ class SkiReportCourseSimpleSearch extends SkiReport {
       }),
     ];
 
+    if (searchOptions.includes("files") && searchValue.length < 3) {
+      this.updateLoadingMessage(
+        "error",
+        `ERROR: To search file names, the search keyword/phrase must be at least 3 characters`
+      );
+      return;
+    }
+
     try {
       const extractedData = [];
       const courseIds = [];
@@ -276,23 +285,34 @@ class SkiReportCourseSimpleSearch extends SkiReport {
         currentCourse++;
         this.updateLoadingMessage(
           "info",
-          `Getting course (Course ${currentCourse} of ${TOTAL_COURSES})...`
+          `Getting course (Course: [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+          true
         );
         const course = (
           await this.#getCourse(courseId, {
             "include[]": "syllabus_body",
           })
         )?.results;
+        if (!course) {
+          this.updateLoadingMessage(
+            "error",
+            `ERROR: Failed to get course (Course: [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+            true
+          );
+        }
+        const courseName = course.name;
 
         if (searchOptions.includes("syllabus")) {
           this.updateLoadingMessage(
             "info",
-            `Getting syllabus (Course ${currentCourse} of ${TOTAL_COURSES})...`
+            `Getting syllabus (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+            true
           );
           const syllabusBody = course?.syllabus_body ?? "";
           this.updateLoadingMessage(
             "info",
-            `Searching syllabus (Course ${currentCourse} of ${TOTAL_COURSES})...`
+            `Searching syllabus (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+            true
           );
           extractedData.push(
             ...this.extractData(syllabusBody, "syllabus", searchValue, course)
@@ -302,133 +322,220 @@ class SkiReportCourseSimpleSearch extends SkiReport {
         if (searchOptions.includes("pages")) {
           this.updateLoadingMessage(
             "info",
-            `Getting pages (Course ${currentCourse} of ${TOTAL_COURSES})...`
+            `Getting pages (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+            true
           );
           const pages = await this.#getPages(courseId, {
             "include[]": "body",
             per_page: 100,
           });
-          this.updateLoadingMessage(
-            "info",
-            `Searching pages (Course ${currentCourse} of ${TOTAL_COURSES})...`
-          );
-          extractedData.push(
-            ...this.extractData(pages, "pages", searchValue, course)
-          );
+          if (!pages) {
+            this.updateLoadingMessage(
+              "error",
+              `ERROR: Failed to get pages (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+              true
+            );
+          } else {
+            this.updateLoadingMessage(
+              "info",
+              `Searching pages (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+              true
+            );
+            extractedData.push(
+              ...this.extractData(pages, "pages", searchValue, course)
+            );
+          }
         }
 
         if (searchOptions.includes("announcement-topics")) {
           this.updateLoadingMessage(
             "info",
-            `Getting announcements (Course ${currentCourse} of ${TOTAL_COURSES})...`
+            `Getting announcements (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+            true
           );
           const announcements = await this.#getDiscussions(courseId, {
             only_announcements: true,
             per_page: 100,
           });
-          this.updateLoadingMessage(
-            "info",
-            `Searching announcements (Course ${currentCourse} of ${TOTAL_COURSES})...`
-          );
-          extractedData.push(
-            ...this.extractData(
-              announcements,
-              "announcement-topics",
-              searchValue,
-              course
-            )
-          );
-        }
-
-        if (searchOptions.includes("discussion-topics")) {
-          this.updateLoadingMessage(
-            "info",
-            `Getting discussions (Course ${currentCourse} of ${TOTAL_COURSES})...`
-          );
-          const discussions = await this.#getDiscussions(courseId, {
-            per_page: 100,
-          });
-          this.updateLoadingMessage(
-            "info",
-            `Searching discussions (Course ${currentCourse} of ${TOTAL_COURSES})...`
-          );
-          extractedData.push(
-            ...this.extractData(
-              discussions,
-              "discussion-topics",
-              searchValue,
-              course
-            )
-          );
-        }
-
-        if (searchOptions.includes("assignments")) {
-          this.updateLoadingMessage(
-            "info",
-            `Getting assignments (Course ${currentCourse} of ${TOTAL_COURSES})...`
-          );
-          const assignments = await this.#getAssignments(courseId, {
-            per_page: 100,
-          });
-          this.updateLoadingMessage(
-            "info",
-            `Searching assignments (Course ${currentCourse} of ${TOTAL_COURSES})...`
-          );
-          extractedData.push(
-            ...this.extractData(assignments, "assignments", searchValue, course)
-          );
-        }
-
-        if (searchOptions.includes("files")) {
-          this.updateLoadingMessage(
-            "info",
-            `Getting files (Course ${currentCourse} of ${TOTAL_COURSES})...`
-          );
-          const files = await this.#getFiles(courseId, {
-            search_term: searchValue,
-            per_page: 100,
-          });
-          this.updateLoadingMessage(
-            "info",
-            `Searching files (Course ${currentCourse} of ${TOTAL_COURSES})...`
-          );
-          extractedData.push(
-            ...this.extractData(files, "files", searchValue, course)
-          );
-        }
-
-        if (searchOptions.includes("module-items")) {
-          this.updateLoadingMessage(
-            "info",
-            `Getting module items (Course ${currentCourse} of ${TOTAL_COURSES})...`
-          );
-          const modules = await this.#getModules(courseId, {
-            "include[]": "items",
-            per_page: 100,
-          });
-          this.updateLoadingMessage(
-            "info",
-            `Searching module items (Course ${currentCourse} of ${TOTAL_COURSES})...`
-          );
-          for (const module of modules) {
-            const moduleItems = module.items ?? [];
+          if (!announcements) {
+            this.updateLoadingMessage(
+              "error",
+              `ERROR: Failed to get announcements (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+              true
+            );
+          } else {
+            this.updateLoadingMessage(
+              "info",
+              `Searching announcements (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+              true
+            );
             extractedData.push(
               ...this.extractData(
-                moduleItems,
-                "module-items",
+                announcements,
+                "announcement-topics",
                 searchValue,
                 course
               )
             );
           }
         }
+
+        if (searchOptions.includes("discussion-topics")) {
+          this.updateLoadingMessage(
+            "info",
+            `Getting discussions (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+            true
+          );
+          const discussions = await this.#getDiscussions(courseId, {
+            per_page: 100,
+          });
+          if (!discussions) {
+            this.updateLoadingMessage(
+              "error",
+              `ERROR: Failed to get discussions (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+              true
+            );
+          } else {
+            this.updateLoadingMessage(
+              "info",
+              `Searching discussions (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+              true
+            );
+            extractedData.push(
+              ...this.extractData(
+                discussions,
+                "discussion-topics",
+                searchValue,
+                course
+              )
+            );
+          }
+        }
+
+        if (searchOptions.includes("assignments")) {
+          this.updateLoadingMessage(
+            "info",
+            `Getting assignments (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+            true
+          );
+          const assignments = await this.#getAssignments(courseId, {
+            per_page: 100,
+          });
+          if (!assignments) {
+            this.updateLoadingMessage(
+              "error",
+              `ERROR: Failed to get assignments (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+              true
+            );
+          } else {
+            this.updateLoadingMessage(
+              "info",
+              `Searching assignments (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+              true
+            );
+            extractedData.push(
+              ...this.extractData(
+                assignments,
+                "assignments",
+                searchValue,
+                course
+              )
+            );
+          }
+        }
+
+        if (searchOptions.includes("files")) {
+          this.updateLoadingMessage(
+            "info",
+            `Getting files (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+            true
+          );
+          const files = await this.#getFiles(courseId, {
+            search_term: searchValue,
+            per_page: 100,
+          });
+          if (!files) {
+            this.updateLoadingMessage(
+              "error",
+              `ERROR: Failed to get files (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+              true
+            );
+          } else {
+            this.updateLoadingMessage(
+              "info",
+              `Searching files (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+              true
+            );
+            extractedData.push(
+              ...this.extractData(files, "files", searchValue, course)
+            );
+          }
+        }
+
+        if (searchOptions.includes("module-items")) {
+          this.updateLoadingMessage(
+            "info",
+            `Getting modules with module items (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+            true
+          );
+          const modules = await this.#getModules(courseId, {
+            "include[]": "items",
+            per_page: 50,
+          });
+          if (!modules) {
+            this.updateLoadingMessage(
+              "error",
+              `ERROR: Failed to get modules (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+              true
+            );
+          } else {
+            this.updateLoadingMessage(
+              "info",
+              `Searching module items (Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+              true
+            );
+            for (const module of modules) {
+              const moduleId = module.id;
+              const moduleName = module.name;
+
+              let moduleItems = module.items;
+              if (!moduleItems) {
+                this.updateLoadingMessage(
+                  "info",
+                  `Gettting module items since they weren't included with module details (Module: ${moduleName} [ID: ${moduleId}]; Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+                  true
+                );
+                moduleItems = await this.#getModuleItems(courseId, moduleId, {
+                  per_page: 100,
+                });
+              }
+
+              if (!moduleItems) {
+                this.updateLoadingMessage(
+                  "error",
+                  `ERROR: Failed to get module items (Module: ${moduleName} [ID: ${moduleId}]; Course: ${courseName} [ID: ${courseId}] ${currentCourse} of ${TOTAL_COURSES})...`,
+                  true
+                );
+              } else {
+                extractedData.push(
+                  ...this.extractData(
+                    moduleItems,
+                    "module-items",
+                    searchValue,
+                    course
+                  )
+                );
+              }
+            }
+          }
+        }
       }
 
-      this.updateLoadingMessage("info", "Adding data to table...");
+      this.updateLoadingMessage("info", "Adding data to table...", true);
       table.setTableBody(extractedData);
-      this.updateLoadingMessage("success", `Finished loading data`);
+      this.updateLoadingMessage("success", `Finished loading data`, true);
     } catch (error) {
-      console.error(error);
+      console.error(`Error: ${error}\n\nStack Trace: ${error.stack}`);
       this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
     }
   }
@@ -941,5 +1048,12 @@ class SkiReportCourseSimpleSearch extends SkiReport {
         params
       );
     }
+  }
+
+  #getModuleItems(courseId, moduleId, params = {}) {
+    return SkiCanvasLmsApiCaller.getRequestAllPages(
+      `/api/v1/courses/${courseId}/modules/${moduleId}/items`,
+      params
+    );
   }
 }

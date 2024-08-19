@@ -117,10 +117,19 @@ class SkiReportCourseEnrollments extends SkiReport {
 
       let sections = [];
       if (context == "courses") {
-        this.updateLoadingMessage("info", "Getting sections...");
-        sections = await this.#getSections(courseId);
+        this.updateLoadingMessage("info", "Getting sections...", true);
+        const fetchedSections = await this.#getSections(courseId);
+        if (!fetchedSections) {
+          this.updateLoadingMessage(
+            "error",
+            "ERROR: Failed to get sections",
+            true
+          );
+        } else {
+          sections = fetchedSections;
+        }
       } else {
-        this.updateLoadingMessage("info", "Getting section details...");
+        this.updateLoadingMessage("info", "Getting section details...", true);
         let section;
         if (SkiReport.cache.has("sections")) {
           const cachedSections = await SkiReport.cache.get("sections");
@@ -137,9 +146,18 @@ class SkiReportCourseEnrollments extends SkiReport {
             `/api/v1/courses/${courseId}/sections/${sectionId}`,
             {}
           );
+          if (!section) {
+            this.updateLoadingMessage(
+              "error",
+              `ERROR: Failed to get section details`,
+              true
+            );
+          }
         }
 
-        sections.push(section);
+        if (section) {
+          sections.push(section);
+        }
       }
       if (SKI_DEBUG_MODE) {
         console.log("Retrieved sections");
@@ -160,24 +178,33 @@ class SkiReportCourseEnrollments extends SkiReport {
       for (const state of enrollmentStates) {
         this.updateLoadingMessage(
           "info",
-          `Getting enrollments with ${state} states...`
+          `Getting enrollments with ${state} state...`,
+          true
         );
         const stateEnrollments = await this.#getEnrollments(
           context,
           contextId,
           state
         );
+        if (!stateEnrollments) {
+          this.updateLoadingMessage(
+            "error",
+            `ERROR: Failed to get enrollments with ${state} state`,
+            true
+          );
+          continue;
+        }
         enrollments.push(...stateEnrollments);
       }
 
-      this.updateLoadingMessage("info", "Formatting data for table...");
+      this.updateLoadingMessage("info", "Formatting data for table...", true);
       const extractedData = this.extractData(enrollments, sectionsDict);
 
-      this.updateLoadingMessage("info", "Adding data to table...");
+      this.updateLoadingMessage("info", "Adding data to table...", true);
       table.setTableBody(extractedData);
-      this.updateLoadingMessage("success", `Finished loading data`);
+      this.updateLoadingMessage("success", `Finished loading data`, true);
     } catch (error) {
-      console.error(error);
+      console.error(`Error: ${error}\n\nStack Trace: ${error.stack}`);
       this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
     }
   }
@@ -262,7 +289,9 @@ class SkiReportCourseEnrollments extends SkiReport {
           "number"
         ),
         new SkiTableDataConfig(enrollment?.sis_section_id),
-        new SkiTableDataConfig(sections[enrollment.course_section_id].name),
+        new SkiTableDataConfig(
+          sections[enrollment.course_section_id]?.name ?? "ERROR"
+        ),
         new SkiTableDataConfig(userId, undefined, "number"),
         new SkiTableDataConfig(userSisId, undefined, "number"),
         new SkiTableDataConfig(userSortableName),

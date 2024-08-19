@@ -136,6 +136,7 @@ class SkiReportCourseUserAccess extends SkiReport {
   }
 
   async loadData(table, formContainer) {
+    this.updateLoadingMessage("clear");
     try {
       const courseId = SkiReport.contextDetails.get("courseId");
       const context = SkiReport.contextDetails.get("reportContext");
@@ -145,7 +146,7 @@ class SkiReportCourseUserAccess extends SkiReport {
         throw "Course ID not set in SkiReport";
       }
 
-      this.updateLoadingMessage("info", "Getting selected option");
+      this.updateLoadingMessage("info", "Getting selected option", true);
       const userSelect = formContainer.querySelector(".ski-user-select");
       const selectedUserId = userSelect?.value;
 
@@ -158,6 +159,14 @@ class SkiReportCourseUserAccess extends SkiReport {
             contextId,
             state
           );
+          if (!enrollments) {
+            this.updateLoadingMessage(
+              "error",
+              `ERROR: Failed to get ${state} enrollments`,
+              true
+            );
+            continue;
+          }
           for (const enrollment of enrollments) {
             users[enrollment.user_id] = enrollment?.user?.short_name;
           }
@@ -168,8 +177,16 @@ class SkiReportCourseUserAccess extends SkiReport {
           contextId,
           selectedUserId
         );
-        for (const enrollment of enrollments) {
-          users[enrollment.user_id] = enrollment?.user?.short_name;
+        if (!enrollments) {
+          this.updateLoadingMessage(
+            "error",
+            `ERROR: Failed to get ${selectedUserId} enrollments`,
+            true
+          );
+        } else {
+          for (const enrollment of enrollments) {
+            users[enrollment.user_id] = enrollment?.user?.short_name;
+          }
         }
       } else {
         const selectedOption = userSelect.options[userSelect.selectedIndex];
@@ -184,26 +201,34 @@ class SkiReportCourseUserAccess extends SkiReport {
         const userId = userIds[i];
         this.updateLoadingMessage(
           "info",
-          `Getting access history of users (${i + 1} of ${numOfUsers})...`
+          `Getting access history of user [ID: ${userId}] (${
+            i + 1
+          } of ${numOfUsers})...`,
+          true
         );
         const accessHistory = await SkiCanvasLmsApiCaller.getRequestAllPages(
           `/courses/${courseId}/users/${userId}/usage.json`
         );
         if (!accessHistory) {
+          this.updateLoadingMessage(
+            "error",
+            `ERROR: Failed to get access history of user [ID: ${userId}]`,
+            true
+          );
           continue;
         }
         accessData.push(...accessHistory);
       }
 
-      this.updateLoadingMessage("info", "Formatting data for table...");
+      this.updateLoadingMessage("info", "Formatting data for table...", true);
       const extractedData = this.extractData(accessData, users);
 
-      this.updateLoadingMessage("info", "Setting table data...");
+      this.updateLoadingMessage("info", "Setting table data...", true);
       table.setTableBody(extractedData);
 
-      this.updateLoadingMessage("success", "Finished loading data");
+      this.updateLoadingMessage("success", "Finished loading data", true);
     } catch (error) {
-      console.error(error);
+      console.error(`Error: ${error}\n\nStack Trace: ${error.stack}`);
       this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
     }
   }

@@ -182,6 +182,15 @@ table thead td.ski-column-search-field {
   padding: 7px;
 }
 
+.ski-ui-loading-message-wrapper {
+  max-height: 100px;
+  overflow: auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-top: 1px solid gray;
+  border-radius: 5px;
+}
+
 .ski-course-title-search,
 .ski-course-nickname-search,
 .ski-course-term-filter,

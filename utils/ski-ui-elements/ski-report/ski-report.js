@@ -81,26 +81,40 @@ class SkiReport {
     return messageDiv;
   }
 
-  updateLoadingMessage(messageType, newMessage = "") {
+  updateLoadingMessage(messageType, newMessage = "", appendMessage = false) {
     const messageWrapper = this.#reportContainer.querySelector(
       ".ski-ui-loading-message-wrapper"
     );
     if (messageType == "clear") {
       messageWrapper.innerHTML = "";
     } else if (messageType == "success") {
-      messageWrapper.innerHTML = `
-        <p class='text-success'><i class='icon-line icon-check'></i> ${newMessage}</p>
-      `;
+      if (appendMessage) {
+        messageWrapper.innerHTML += `
+          <p class='text-success'><i class='icon-line icon-check'></i> ${newMessage}</p>
+        `;
+      } else {
+        messageWrapper.innerHTML = `
+          <p class='text-success'><i class='icon-line icon-check'></i> ${newMessage}</p>
+        `;
+      }
     } else if (messageType == "error") {
       messageWrapper.innerHTML = `
         ${messageWrapper.innerHTML}
         <p class='text-error'><i class='icon-line icon-warning'></i> ${newMessage}</p>
       `;
     } else {
-      messageWrapper.innerHTML = `
-        <p class='text-info'><i class='icon-line icon-info'></i> ${newMessage}</p>
-      `;
+      if (appendMessage) {
+        messageWrapper.innerHTML += `
+          <p class='text-info'><i class='icon-line icon-info'></i> ${newMessage}</p>
+        `;
+      } else {
+        messageWrapper.innerHTML = `
+          <p class='text-info'><i class='icon-line icon-info'></i> ${newMessage}</p>
+        `;
+      }
     }
+
+    messageWrapper.scrollTop = messageWrapper.scrollHeight;
   }
 
   async loadData(table, formContainer) {

@@ -114,6 +114,7 @@ class SkiReportCourseGradingToDo extends SkiReport {
   }
 
   async loadData(table, formContainer) {
+    this.updateLoadingMessage("clear");
     try {
       const courseId = SkiReport.contextDetails.get("courseId");
       const context = SkiReport.contextDetails.get("reportContext");
@@ -128,7 +129,11 @@ class SkiReportCourseGradingToDo extends SkiReport {
       )?.value;
       let assignments = [];
       if (selectedAssignmentId) {
-        this.updateLoadingMessage("info", "Getting assignment details...");
+        this.updateLoadingMessage(
+          "info",
+          `Getting assignment details [ID: ${selectedAssignmentId}]...`,
+          true
+        );
         let assignment;
         if (SkiReport.cache.has("assignments")) {
           const cachedAssignments = await SkiReport.cache.get("assignments");
@@ -143,21 +148,45 @@ class SkiReportCourseGradingToDo extends SkiReport {
         }
         if (!assignment) {
           assignment = await SkiCanvasLmsApiCaller.getRequestAllPages(
-            `/api/v1/courses/${courseId}/assignments/${selectedAssignmentId}`,
-            { order_by: "due_at" }
+            `/api/v1/courses/${courseId}/assignments/${selectedAssignmentId}`
           );
         }
-        assignments.push(assignment);
+        if (!assignment) {
+          this.updateLoadingMessage(
+            "error",
+            `ERROR: Failed to get assignment [ID: ${selectedAssignmentId}]`,
+            true
+          );
+        } else {
+          assignments.push(assignment);
+        }
       } else {
-        this.updateLoadingMessage("info", "Getting details of assignments...");
-        assignments = await this.#getAssignments(courseId);
+        this.updateLoadingMessage(
+          "info",
+          "Getting details of assignments...",
+          true
+        );
+        const fetchedAssignments = await this.#getAssignments(courseId);
+        if (!fetchedAssignments) {
+          this.updateLoadingMessage(
+            "error",
+            `ERROR: Failed to get assignments`,
+            true
+          );
+        } else {
+          assignments = fetchedAssignments;
+        }
       }
       const assignmentsDict = {};
       for (const assignment of assignments) {
         assignmentsDict[assignment.id] = assignment;
       }
 
-      this.updateLoadingMessage("info", "Getting enrolled students...");
+      this.updateLoadingMessage(
+        "info",
+        "Getting enrolled active students...",
+        true
+      );
       const studentsDict = {};
       let students;
       if (SkiReport.cache.has("enrollments-active")) {
@@ -169,10 +198,20 @@ class SkiReportCourseGradingToDo extends SkiReport {
         });
       }
       if (!students) {
-        students = await SkiCanvasLmsApiCaller.getRequestAllPages(
-          `/api/v1/courses/${courseId}/enrollments?type[]=StudentEnrollment`,
-          {}
+        const fetchedStudents = await SkiCanvasLmsApiCaller.getRequestAllPages(
+          `/api/v1/courses/${courseId}/enrollments`,
+          { per_page: 100, "type[]": "StudentEnrollment", "state[]": "active" }
         );
+        if (!fetchedStudents) {
+          this.updateLoadingMessage(
+            "error",
+            `ERROR: Failed to get enrolled active students`,
+            true
+          );
+          students = [];
+        } else {
+          students = fetchedStudents;
+        }
       }
       for (const student of students) {
         studentsDict[student.user_id] = student.user;
@@ -185,41 +224,59 @@ class SkiReportCourseGradingToDo extends SkiReport {
         for (const submissionState of submissionStatesToCheck) {
           this.updateLoadingMessage(
             "info",
-            `Getting ${submissionState} submissions of assignment...`
+            `Getting ${submissionState} submissions of assignment [ID: ${selectedAssignmentId}]...`,
+            true
           );
           const currentSubmissions =
             await SkiCanvasLmsApiCaller.getRequestAllPages(
               `/api/v1/${context}/${contextId}/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment&assignment_ids[]=${selectedAssignmentId}&workflow_state=${submissionState}`
             );
-          submissions.push(...currentSubmissions);
+          if (!currentSubmissions) {
+            this.updateLoadingMessage(
+              "error",
+              `ERROR: Failed to get ${submissionState} submissions of assignment [ID: ${selectedAssignmentId}]`,
+              true
+            );
+          } else {
+            submissions.push(...currentSubmissions);
+          }
         }
       } else {
         for (const submissionState of submissionStatesToCheck) {
           this.updateLoadingMessage(
             "info",
-            `Getting ${submissionState} submissions for all assignments...`
+            `Getting ${submissionState} submissions for all assignments...`,
+            true
           );
           const currentSubmissions =
             await SkiCanvasLmsApiCaller.getRequestAllPages(
               `/api/v1/${context}/${contextId}/students/submissions?student_ids[]=all&include[]=submission_comments&include[]=rubric_assessment&workflow_state=${submissionState}`
             );
-          submissions.push(...currentSubmissions);
+          if (!currentSubmissions) {
+            this.updateLoadingMessage(
+              "error",
+              `ERROR: Failed to get ${submissionState} submissions for all assignments`,
+              true
+            );
+          } else {
+            submissions.push(...currentSubmissions);
+          }
         }
       }
 
-      this.updateLoadingMessage("info", "Formatting data for table...");
+      this.updateLoadingMessage("info", "Formatting data for table...", true);
       const submissionsData = this.extractData(
         submissions,
         assignmentsDict,
         studentsDict
       );
 
-      this.updateLoadingMessage("info", "Setting table data...");
+      this.updateLoadingMessage("info", "Setting table data...", true);
       table.setTableBody(submissionsData);
 
-      this.updateLoadingMessage("success", "Finished loading data");
+      this.updateLoadingMessage("success", "Finished loading data", true);
     } catch (error) {
-      console.error(error);
+      cconsole.error(`Error: ${error}\n\nStack Trace: ${error.stack}`);
       this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
     }
   }
@@ -237,13 +294,15 @@ class SkiReportCourseGradingToDo extends SkiReport {
         studentName = students[submission.user_id].sortable_name;
       }
       const assignment = assignments[submission.assignment_id];
-      const assignmentName = assignment.name;
+      const assignmentName = assignment?.name ?? "ERROR";
       const assignmentNameLink = document.createElement("a");
-      assignmentNameLink.href = assignment.html_url;
+      assignmentNameLink.href =
+        assignment?.html_url ??
+        `/courses/${courseId}/assignments/${submission.assignment_id}`;
       assignmentNameLink.target = "_blank";
       assignmentNameLink.innerText = assignmentName;
-      const pointsPossible = assignment.points_possible;
-      const omitFromFinalGrade = assignment.omit_from_final_grade;
+      const pointsPossible = assignment?.points_possible ?? "ERROR";
+      const omitFromFinalGrade = assignment?.omit_from_final_grade ?? "ERROR";
 
       const speedGraderLink = document.createElement("a");
       speedGraderLink.href = `/courses/${courseId}/gradebook/speed_grader?assignment_id=${submission.assignment_id}&student_id=${submission.user_id}`;
@@ -341,7 +400,7 @@ class SkiReportCourseGradingToDo extends SkiReport {
     return SkiReport.memoizeRequest("assignments", () => {
       return SkiCanvasLmsApiCaller.getRequestAllPages(
         `/api/v1/courses/${courseId}/assignments`,
-        { order_by: "due_at" }
+        { order_by: "due_at", per_page: 100 }
       );
     });
   }

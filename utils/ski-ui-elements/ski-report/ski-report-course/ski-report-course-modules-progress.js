@@ -26,6 +26,7 @@ class SkiReportCourseModulesProgress extends SkiReport {
   }
 
   async loadData(table) {
+    this.updateLoadingMessage("clear");
     try {
       const courseId = SkiReport.contextDetails.get("courseId");
       const context = SkiReport.contextDetails.get("reportContext");
@@ -35,24 +36,40 @@ class SkiReportCourseModulesProgress extends SkiReport {
         throw "Course ID not set in SkiReport";
       }
 
-      this.updateLoadingMessage("info", "Getting enrolled students...");
+      this.updateLoadingMessage(
+        "info",
+        "Getting enrolled active students...",
+        true
+      );
+      let students = [];
       const enrollments = await this.#getEnrollments(
         context,
         contextId,
         "active"
       );
-      const students = enrollments.filter((enrollment) => {
-        return enrollment.type == "StudentEnrollment";
-      });
+      if (!enrollments) {
+        this.updateLoadingMessage(
+          "error",
+          `ERROR: Failed to get enrolled active students`,
+          true
+        );
+      } else {
+        students = enrollments.filter((enrollment) => {
+          return enrollment.type == "StudentEnrollment";
+        });
+      }
 
       const numOfStudents = students.length;
       for (let i = 0; i < numOfStudents; i++) {
-        this.updateLoadingMessage(
-          "info",
-          `Getting module progress of student (${i + 1} of ${numOfStudents})...`
-        );
         const studentEnrollment = students[i];
         const studentId = studentEnrollment["user_id"];
+        this.updateLoadingMessage(
+          "info",
+          `Getting modules with items for student [ID: ${studentId}] (Student ${
+            i + 1
+          } of ${numOfStudents})...`,
+          true
+        );
         const studentModulesProgress =
           await SkiCanvasLmsApiCaller.getRequestAllPages(
             `/api/v1/courses/${courseId}/modules?include[]=items&student_id=${studentId}`,
@@ -64,16 +81,38 @@ class SkiReportCourseModulesProgress extends SkiReport {
           console.warn(
             `Issue retrieving module progress for student ID ${studentId}. Skipping student`
           );
+          this.updateLoadingMessage(
+            "error",
+            `ERROR: Failed to get modules with items for student [ID: ${studentId}]`,
+            true
+          );
           continue;
         }
 
         let totalNumOfItemsWithRequirements = 0;
         let totalNumOfItemsCompleted = 0;
         for (const module of studentModulesProgress) {
+          this.updateLoadingMessage(
+            "info",
+            `Checking module [ID: ${
+              module.id
+            }] progress of student [ID: ${studentId}] (Student ${
+              i + 1
+            } of ${numOfStudents})...`,
+            true
+          );
           let items = module.items;
 
           // Attempt to get module items if not included with module details
           if (!items) {
+            this.updateLoadingMessage(
+              "info",
+              `Getting items of module [ID: ${
+                module.id
+              }] for student [ID: ${studentId}] (Student ${
+                i + 1
+              } of ${numOfStudents})...`
+            );
             items = await SkiCanvasLmsApiCaller.getRequestAllPages(
               `/api/v1/courses/${courseId}/modules/${module.id}/items?student_id=${studentId}`,
               {}
@@ -83,6 +122,11 @@ class SkiReportCourseModulesProgress extends SkiReport {
             if (!items || !Array.isArray(items)) {
               console.warn(
                 `Issue retrieving module items of module for student ID ${studentId}. Skipping module (${module}).`
+              );
+              this.updateLoadingMessage(
+                "error",
+                `ERROR: Failed to get items in module [ID: ${module.id}] for student [ID: ${studentId}]`,
+                true
               );
               continue;
             } else {
@@ -112,14 +156,14 @@ class SkiReportCourseModulesProgress extends SkiReport {
         studentEnrollment.completedItems = totalNumOfItemsCompleted;
       }
 
-      this.updateLoadingMessage("info", "Formatting data for table...");
+      this.updateLoadingMessage("info", "Formatting data for table...", true);
       const modulesProgressData = this.extractData(students);
 
-      this.updateLoadingMessage("info", "Adding data to table...");
+      this.updateLoadingMessage("info", "Adding data to table...", true);
       table.setTableBody(modulesProgressData);
-      this.updateLoadingMessage("success", `Finished loading data`);
+      this.updateLoadingMessage("success", `Finished loading data`, true);
     } catch (error) {
-      console.error(error);
+      console.error(`Error: ${error}\n\nStack Trace: ${error.stack}`);
       this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
     }
   }

@@ -156,10 +156,12 @@ class SkiReportCourseSubmissions extends SkiReport {
   }
 
   async loadData(table, formContainer) {
+    this.updateLoadingMessage("clear");
     try {
       this.updateLoadingMessage(
         "info",
-        "Getting selected submission states..."
+        "Getting selected submission states...",
+        true
       );
       const submissionStateCheckboxes = [
         ...formContainer.querySelectorAll(
@@ -168,7 +170,11 @@ class SkiReportCourseSubmissions extends SkiReport {
       ];
       if (submissionStateCheckboxes.length == 0) {
         alert("At least one submission state must be checked");
-        this.updateLoadingMessage("error", "No submission states selected");
+        this.updateLoadingMessage(
+          "error",
+          "No submission states selected",
+          true
+        );
         return;
       }
 
@@ -185,7 +191,11 @@ class SkiReportCourseSubmissions extends SkiReport {
       )?.value;
       let assignments = [];
       if (selectedAssignmentId) {
-        this.updateLoadingMessage("info", "Getting assignment details...");
+        this.updateLoadingMessage(
+          "info",
+          "Getting assignment details...",
+          true
+        );
         let assignment;
         if (SkiReport.cache.has("assignments")) {
           const cachedAssignments = await SkiReport.cache.get("assignments");
@@ -200,17 +210,40 @@ class SkiReportCourseSubmissions extends SkiReport {
           const assignmentRequest = await SkiCanvasLmsApiCaller.getRequest(
             `/api/v1/courses/${courseId}/assignments/${selectedAssignmentId}`
           );
-          assignment = assignmentRequest?.results;
+          if (!assignmentRequest?.isSuccessful) {
+            this.updateLoadingMessage(
+              "error",
+              `ERROR: Failed to get assignment [ID: ${selectedAssignmentId}]`,
+              true
+            );
+          } else {
+            assignment = assignmentRequest?.results;
+            assignments.push(assignment);
+          }
+        } else {
+          assignments.push(assignment);
         }
-        assignments.push(assignment);
       } else {
-        this.updateLoadingMessage("info", "Getting details of assignments...");
+        this.updateLoadingMessage(
+          "info",
+          "Getting details of assignments...",
+          true
+        );
         assignments = await this.#getAssignments(courseId);
+        if (!assignments) {
+          this.updateLoadingMessage(
+            "error",
+            `ERROR: Failed to get assignments`,
+            true
+          );
+          assignments = [];
+        }
       }
 
       this.updateLoadingMessage(
         "info",
-        "Determining maximum number of criteria for any associated rubric(s)..."
+        "Determining maximum number of criteria for any associated rubric(s)...",
+        true
       );
       const assignmentsDict = {};
       let maxRubricCriteria = 0;
@@ -226,16 +259,24 @@ class SkiReportCourseSubmissions extends SkiReport {
 
       this.#addRubricHeadings(table, maxRubricCriteria);
 
-      this.updateLoadingMessage("info", "Getting enrolled students...");
+      this.updateLoadingMessage("info", "Getting enrolled active students...");
       const studentsDict = {};
       const enrollments = await this.#getEnrollments(
         context,
         contextId,
         "active"
       );
-      for (const enrollment of enrollments) {
-        if (enrollment.type == "StudentEnrollment") {
-          studentsDict[enrollment.user_id] = enrollment.user;
+      if (!enrollments) {
+        this.updateLoadingMessage(
+          "error",
+          `ERROR: Failed to get enrolled active students`,
+          true
+        );
+      } else {
+        for (const enrollment of enrollments) {
+          if (enrollment.type == "StudentEnrollment") {
+            studentsDict[enrollment.user_id] = enrollment.user;
+          }
         }
       }
 
@@ -244,7 +285,8 @@ class SkiReportCourseSubmissions extends SkiReport {
         for (const checkbox of submissionStateCheckboxes) {
           this.updateLoadingMessage(
             "info",
-            `Getting ${checkbox.value} submissions of assignment...`
+            `Getting ${checkbox.value} submissions of assignment...`,
+            true
           );
           const currentSubmissions =
             await SkiCanvasLmsApiCaller.getRequestAllPages(
@@ -260,6 +302,11 @@ class SkiReportCourseSubmissions extends SkiReport {
             console.warn(
               `ERROR: Submission request failed for assignment (ID: ${selectedAssignmentId}) and workflow state of ${checkbox.value}`
             );
+            this.updateLoadingMessage(
+              "error",
+              `ERROR: Failed to get ${checkbox.value} submissions of assignment [ID: ${selectedAssignmentId}]`,
+              true
+            );
           } else {
             submissions.push(...currentSubmissions);
           }
@@ -268,7 +315,8 @@ class SkiReportCourseSubmissions extends SkiReport {
         for (const checkbox of submissionStateCheckboxes) {
           this.updateLoadingMessage(
             "info",
-            `Getting ${checkbox.value} submissions for all assignments...`
+            `Getting ${checkbox.value} submissions for all assignments...`,
+            true
           );
           const currentSubmissions =
             await SkiCanvasLmsApiCaller.getRequestAllPages(
@@ -283,30 +331,40 @@ class SkiReportCourseSubmissions extends SkiReport {
             console.warn(
               `ERROR: Submission request failed for assignments with workflow state of ${checkbox.value}`
             );
+            this.updateLoadingMessage(
+              "error",
+              `ERROR: Failed to get ${checkbox.value} submissions for all assignments`,
+              true
+            );
           } else {
             submissions.push(...currentSubmissions);
           }
         }
       }
 
-      this.updateLoadingMessage("info", "Formatting data for table...");
+      this.updateLoadingMessage("info", "Formatting data for table...", true);
       const submissionsData = this.extractData(
         submissions,
         assignmentsDict,
         studentsDict
       );
 
-      this.updateLoadingMessage("info", "Setting table data...");
+      this.updateLoadingMessage("info", "Setting table data...", true);
       table.setTableBody(submissionsData);
 
-      this.updateLoadingMessage("success", "Finished loading data");
+      this.updateLoadingMessage("success", "Finished loading data", true);
     } catch (error) {
-      console.error(error);
+      console.error(`Error: ${error}\n\nStack Trace: ${error.stack}`);
       this.updateLoadingMessage("error", `ERROR LOADING DATA: ${error}`);
     }
   }
 
   extractData(submissions, assignments, students) {
+    const courseId = SkiReport.contextDetails.get("courseId");
+    if (!courseId) {
+      throw "Course ID not set in SkiReport";
+    }
+
     const data = [];
     for (const submission of submissions) {
       let studentName = "Unknown";
@@ -314,12 +372,14 @@ class SkiReportCourseSubmissions extends SkiReport {
         studentName = students[submission.user_id].sortable_name;
       }
       const assignment = assignments[submission.assignment_id];
-      const assignmentName = assignment.name;
+      const assignmentName = assignment?.name ?? "ERROR";
       const assignmentNameLink = document.createElement("a");
-      assignmentNameLink.href = assignment.html_url;
+      assignmentNameLink.href =
+        assignment?.html_url ??
+        `/courses/${courseId}/assignments/${submission.assignment_id}`;
       assignmentNameLink.target = "_blank";
       assignmentNameLink.innerText = assignmentName;
-      const pointsPossible = assignment.points_possible;
+      const pointsPossible = assignment?.points_possible ?? "ERROR";
 
       let submittedDate = submission.submitted_at;
       let submittedDateIso = "";
@@ -393,9 +453,15 @@ class SkiReportCourseSubmissions extends SkiReport {
       ];
 
       if (hasRubricGrade) {
-        rowData.push(...this.#extractRubricData(assignment, submission));
+        if (!assignment) {
+          rowData.push(
+            new SkiTableDataConfig("ERROR: Missing assignment details")
+          );
+        } else {
+          rowData.push(...this.#extractRubricData(assignment, submission));
+        }
       } else {
-        rowData.push({ content: "N/A" });
+        rowData.push(new SkiTableDataConfig("N/A"));
       }
 
       data.push(rowData);
@@ -482,7 +548,7 @@ class SkiReportCourseSubmissions extends SkiReport {
     return SkiReport.memoizeRequest("assignments", () => {
       return SkiCanvasLmsApiCaller.getRequestAllPages(
         `/api/v1/courses/${courseId}/assignments`,
-        { order_by: "due_at" }
+        { order_by: "due_at", per_page: 100 }
       );
     });
   }

@@ -185,7 +185,7 @@ table thead td.ski-column-search-field {
 .ski-ui-loading-message-wrapper {
   max-height: 100px;
   overflow: auto;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   margin-bottom: 1rem;
   border-top: 1px solid gray;
   border-radius: 5px;

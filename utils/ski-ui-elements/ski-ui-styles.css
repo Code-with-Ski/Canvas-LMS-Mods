@@ -54,6 +54,7 @@ div.ski-checkbox-inline > label {
 
 fieldset.ski-ui {
   margin-bottom: 1rem;
+  border: 0;
 }
 
 fieldset.ski-ui > legend {

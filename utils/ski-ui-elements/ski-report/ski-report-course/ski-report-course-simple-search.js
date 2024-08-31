@@ -8,7 +8,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
   createTable() {
     const reportContext = SkiReport.contextDetails.get("reportContext");
     const headingConfigs = [];
-    if (reportContext == "all-courses") {
+    if (reportContext == "all-courses" || reportContext == "user") {
       headingConfigs.push(
         ...[
           new SkiTableHeadingConfig("Canvas Course ID", true, true),
@@ -269,8 +269,10 @@ class SkiReportCourseSimpleSearch extends SkiReport {
     try {
       const extractedData = [];
       const courseIds = [];
-      if (reportContext == "all-courses") {
-        courseIds.push(...this.#getVisibleCourseIds(enrollmentOptions));
+      if (reportContext == "all-courses" || reportContext == "user") {
+        courseIds.push(
+          ...this.#getVisibleCourseIds(reportContext, enrollmentOptions)
+        );
       } else {
         const courseId = SkiReport.contextDetails.get("courseId");
         if (!courseId) {
@@ -540,47 +542,66 @@ class SkiReportCourseSimpleSearch extends SkiReport {
     }
   }
 
-  #getVisibleCourseIds(enrollmentOptions) {
-    const courseRows = [];
-    if (enrollmentOptions.includes("current")) {
-      const currentCourseRows = [
-        ...document.querySelectorAll(
-          "#my_courses_table tr.course-list-table-row"
-        ),
-      ];
-      courseRows.push(...currentCourseRows);
-    }
-    if (enrollmentOptions.includes("past")) {
-      const pastCourseRows = [
-        ...document.querySelectorAll(
-          "#past_enrollments_table tr.course-list-table-row"
-        ),
-      ];
-      courseRows.push(...pastCourseRows);
-    }
-    if (enrollmentOptions.includes("future")) {
-      const futureCourseRows = [
-        ...document.querySelectorAll(
-          "#future_enrollments_table tr.course-list-table-row"
-        ),
-      ];
-      courseRows.push(...futureCourseRows);
-    }
+  #getVisibleCourseIds(reportContext, enrollmentOptions) {
+    let courseIds = [];
+    if (reportContext == "all-courses") {
+      const courseRows = [];
+      if (enrollmentOptions.includes("current")) {
+        const currentCourseRows = [
+          ...document.querySelectorAll(
+            "#my_courses_table tr.course-list-table-row"
+          ),
+        ];
+        courseRows.push(...currentCourseRows);
+      }
+      if (enrollmentOptions.includes("past")) {
+        const pastCourseRows = [
+          ...document.querySelectorAll(
+            "#past_enrollments_table tr.course-list-table-row"
+          ),
+        ];
+        courseRows.push(...pastCourseRows);
+      }
+      if (enrollmentOptions.includes("future")) {
+        const futureCourseRows = [
+          ...document.querySelectorAll(
+            "#future_enrollments_table tr.course-list-table-row"
+          ),
+        ];
+        courseRows.push(...futureCourseRows);
+      }
 
-    const visibleCourseRows = [
-      ...courseRows.filter((row) => {
-        return row.style.display != "none";
-      }),
-    ];
+      const visibleCourseRows = [
+        ...courseRows.filter((row) => {
+          return row.style.display != "none";
+        }),
+      ];
 
-    const courseIds = [
-      ...visibleCourseRows.map((row) => {
-        return row
-          .querySelector(".course-list-course-title-column a")
-          ?.href?.split("/")
-          ?.pop();
-      }),
-    ];
+      courseIds = [
+        ...visibleCourseRows.map((row) => {
+          return row
+            .querySelector(".course-list-course-title-column a")
+            ?.href?.split("/")
+            ?.pop();
+        }),
+      ];
+    } else if (reportContext == "user") {
+      const courseItems = [
+        ...document.querySelectorAll("div#courses_list div.courses ul li"),
+      ];
+
+      const visibleCourseItems = [
+        ...courseItems.filter((item) => {
+          return item.style.display != "none";
+        }),
+      ];
+
+      courseIds = [
+        ...visibleCourseItems.map((item) => {
+          return item.querySelector("a")?.href?.split("/")[4];
+        }),
+      ];
+    }
 
     // User may have multiple enrollments in the same course
     const uniqueCourseIds = Array.from(new Set(courseIds));
@@ -658,7 +679,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
     if (contentType == "syllabus") {
       const extractedData = this.extractSyllabusData(content, searchValue);
       if (extractedData) {
-        if (reportContext == "all-courses") {
+        if (reportContext == "all-courses" || reportContext == "user") {
           extractedData.unshift(...this.extractCourseData(course));
         }
         data.push(extractedData);
@@ -687,7 +708,7 @@ class SkiReportCourseSimpleSearch extends SkiReport {
       }
 
       if (extractedData) {
-        if (reportContext == "all-courses") {
+        if (reportContext == "all-courses" || reportContext == "user") {
           extractedData.unshift(...this.extractCourseData(course));
         }
         data.push(extractedData);

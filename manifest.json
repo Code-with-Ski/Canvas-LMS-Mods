@@ -1,8 +1,8 @@
 {
   "name": "Canvas LMS Mods (Basic)",
   "description": "This provides modifications to the Canvas LMS to improve the user experience visually and functionally.",
-  "version": "7.1.0",
-  "version_name": "7.1.0",
+  "version": "7.2.0",
+  "version_name": "7.2.0",
   "manifest_version": 3,
   "permissions": ["storage"],
   "host_permissions": [
@@ -177,12 +177,17 @@
     {
       "matches": ["*://*/accounts/*/users/*", "*://*/users/*"],
       "js": [
+        "utils/ski-ui-elements/ski-table-elements/ski-table.js",
+        "utils/ski-ui-elements/ski-report/ski-report.js",
+        "utils/ski-ui-elements/ski-report/ski-report-course/ski-report-course-simple-search.js",
+        "canvas-mods/shared-locations/users/feature-simple-search/user-simple-search.js",
         "canvas-mods/shared-locations/users/feature-add-view-grades-link/add-view-grades-link-user.js",
         "canvas-mods/shared-locations/users/feature-enhance-accounts-list/enhance-accounts-list-user.js",
         "canvas-mods/shared-locations/users/feature-enhance-courses-list/enhance-courses-list-user.js",
         "canvas-mods/shared-locations/users/feature-enhance-groups-list/enhance-groups-list-user.js",
         "canvas-mods/shared-locations/users/feature-resizeable-avatar/resizeable-avatar-user.js"
-      ]
+      ],
+      "css": ["utils/ski-ui-elements/ski-table-elements/ski-table-elements.css"]
     },
     {
       "matches": ["*://*/accounts/*/avatars*"],

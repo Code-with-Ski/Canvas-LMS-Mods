@@ -1,11 +1,15 @@
 (() => {
-  if (/^\/courses\??/.test(window.location.pathname)) {
+  if (
+    /^\/accounts\/[0-9]+\/users\/[0-9]+/.test(window.location.pathname) ||
+    /^\/accounts\/self\/users\/[0-9]+/.test(window.location.pathname) ||
+    /^\/users\/[0-9]+/.test(window.location.pathname)
+  ) {
     chrome.storage.sync.get(
       {
-        allCoursesSimpleSearch: true,
+        userCourseEnrollmentsSimpleSearch: true,
       },
       function (items) {
-        if (items.allCoursesSimpleSearch) {
+        if (items.userCourseEnrollmentsSimpleSearch) {
           addSimpleSearch();
         }
       }
@@ -13,10 +17,15 @@
   }
 
   function addSimpleSearch() {
-    const allCoursesHeaderDiv = document.querySelector(".ic-Action-header");
-    allCoursesHeaderDiv.insertAdjacentHTML(
-      "beforeend",
-      `<button class="ski-simple-search Button" type="button" tabindex="0" title="Open Simple Search">
+    const coursesHeader = document.querySelector("#courses_list h3");
+    console.log(coursesHeader);
+    if (!coursesHeader) {
+      return;
+    }
+
+    coursesHeader.insertAdjacentHTML(
+      "beforebegin",
+      `<button class="ski-simple-search Button" type="button" tabindex="0" title="Open Simple Search" style="margin-bottom: 0.5rem">
         <i class="icon-solid icon-search"></i>&nbsp;Simple Search
       </button>`
     );
@@ -59,7 +68,7 @@
     const dialogBody = document.createElement("div");
     dialogBody.classList.add("ski-ui-dialog-body");
 
-    SkiReport.contextDetails.set("reportContext", "all-courses");
+    SkiReport.contextDetails.set("reportContext", "user");
     const report = new SkiReportCourseSimpleSearch();
     const reportContainer = report.getReportContainer();
     dialogBody.append(reportContainer);

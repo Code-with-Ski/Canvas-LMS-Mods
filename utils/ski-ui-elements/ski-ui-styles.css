@@ -220,3 +220,44 @@ table thead td.ski-column-search-field {
   width: 90%;
   margin-left: 5%;
 }
+
+dialog.ski-ui-dialog {
+  width: 800px;
+  min-width: 50vw;
+  max-width: 90%;
+  height: 600px;
+  max-height: 90vh;
+  resize: both;
+  overflow: hidden;
+  padding: 0;
+}
+
+dialog.ski-ui-dialog .ski-ui-dialog-content-wrapper {
+  padding: 0;
+  height: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+dialog.ski-ui-dialog .ski-ui-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  background-color: #fdfdfd;
+  border-bottom: 1px solid black;
+  padding: 0.75rem;
+}
+
+dialog.ski-ui-dialog .ski-ui-dialog-body {
+  padding: 1rem;
+  overflow: auto;
+  flex: 1 1 auto;
+}
+
+dialog.ski-ui-dialog .ski-ui-dialog-footer {
+  display: flex;
+  justify-content: right;
+  background-color: #dbdbdb;
+  border-top: 1px solid black;
+  padding: 0.75rem;
+}

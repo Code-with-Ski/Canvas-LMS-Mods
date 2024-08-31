@@ -43,32 +43,54 @@
   function addSimpleSearchModal() {
     const dialog = document.createElement("dialog");
     dialog.id = "ski-simple-search-dialog";
-    dialog.style.width = "800px";
-    dialog.style.maxWidth = "90%";
-    dialog.style.height = "600px";
-    dialog.style.maxHeight = "90%";
-    dialog.style.resize = "both";
-    dialog.style.overflow = "hidden";
+    dialog.classList.add("ski-ui-dialog");
+
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("ski-ui-dialog-content-wrapper");
+
+    const dialogHeader = document.createElement("div");
+    dialogHeader.classList.add("ski-ui-dialog-header");
+
+    const dialogHeading = document.createElement("h2");
+    dialogHeading.innerText = "Simple Search";
+
+    const exitButton = document.createElement("button");
+    exitButton.classList.add("Button");
+    exitButton.innerText = "X";
+    exitButton.style.padding = "0.25rem 1rem";
+    exitButton.addEventListener("click", () => {
+      closeSimpleSearchModal(dialog);
+    });
+
+    dialogHeader.append(dialogHeading);
+    dialogHeader.append(exitButton);
+
+    const dialogBody = document.createElement("div");
+    dialogBody.classList.add("ski-ui-dialog-body");
 
     SkiReport.contextDetails.set("reportContext", "user");
     const report = new SkiReportCourseSimpleSearch();
     const reportContainer = report.getReportContainer();
-    reportContainer.style.maxHeight = "calc(100% - 4rem)";
-    reportContainer.style.overflow = "auto";
-    dialog.appendChild(reportContainer);
+    dialogBody.append(reportContainer);
+
+    const dialogFooter = document.createElement("div");
+    dialogFooter.classList.add("ski-ui-dialog-footer");
 
     const closeButton = document.createElement("button");
     closeButton.innerText = "Close";
     closeButton.classList.add("Button", "Button--secondary");
-    closeButton.style.float = "right";
-    closeButton.style.marginTop = "1rem";
     closeButton.addEventListener("click", () => {
       closeSimpleSearchModal(dialog);
     });
-    dialog.appendChild(closeButton);
+    dialogFooter.append(closeButton);
+
+    wrapper.append(dialogHeader);
+    wrapper.append(dialogBody);
+    wrapper.append(dialogFooter);
+    dialog.append(wrapper);
 
     const content = document.getElementById("content");
-    content.appendChild(dialog);
+    content.append(dialog);
 
     return dialog;
   }

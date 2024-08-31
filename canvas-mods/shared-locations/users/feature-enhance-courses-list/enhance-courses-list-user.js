@@ -302,7 +302,6 @@
             if (enrollmentRoleSelectMenu) {
               const selectedEnrollmentRole = enrollmentRoleSelectMenu.value;
               if (selectedEnrollmentRole) {
-                console.log(`Selected role: ${selectedEnrollmentRole}`);
                 const lastSubtitle = subtitles?.pop();
                 const hasEnrollment =
                   lastSubtitle?.textContent?.includes("Enrolled as: ");
@@ -311,11 +310,9 @@
                     .split("Enrolled as: ")[1]
                     ?.replaceAll("\n", "")
                     ?.trim();
-                  console.log(currentRole);
                   if (currentRole != selectedEnrollmentRole) {
                     shouldShow = false;
                   }
-                  console.log(shouldShow);
                 } else {
                   shouldShow = false;
                 }

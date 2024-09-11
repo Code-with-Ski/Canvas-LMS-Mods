@@ -11,6 +11,7 @@
         adminUsersEnrollmentsSort: true,
         adminUsersEnrollmentsFilter: true,
         adminUsersEnrollmentsCourseCode: true,
+        adminUsersEnrollmentsSisCourseId: true,
         adminUsersEnrollmentsCanvasId: true,
       },
       function (items) {
@@ -26,17 +27,35 @@
             sortEnrollments(coursesList);
           }
           if (items.adminUsersEnrollmentsFilter) {
-            addCourseStatusFilter(coursesList);
-            addCourseEnrollmentsStatusFilter(coursesList);
-            addCourseEnrollmentsTermFilter(coursesList);
-            addCourseEnrollmentsRoleFilter(coursesList);
+            addSearchFilters(
+              coursesList,
+              items.adminUsersEnrollmentsCourseCode,
+              items.adminUsersEnrollmentsSisCourseId
+            );
+            addSelectMenuFilters(coursesList);
+            //addCourseStatusFilter(coursesList);
+            //addCourseEnrollmentsStatusFilter(coursesList);
+            //addCourseEnrollmentsTermFilter(coursesList);
+            //addCourseEnrollmentsRoleFilter(coursesList);
+            /*
             addCourseEnrollmentsNameSearch(coursesList);
             if (items.adminUsersEnrollmentsCourseCode) {
               addCourseEnrollmentsCourseCodeSearch(coursesList);
             }
+            if (items.adminUsersEnrollmentsSisCourseId) {
+              addCourseEnrollmentsSisCourseIdSearch(coursesList);
+            }
+              */
           }
-          if (items.adminUsersEnrollmentsCourseCode) {
-            addCourseCodeToEnrollmentsList(coursesList);
+          if (
+            items.adminUsersEnrollmentsCourseCode ||
+            items.adminUsersEnrollmentsSisCourseId
+          ) {
+            addCourseCodesToEnrollmentsList(
+              coursesList,
+              items.adminUsersEnrollmentsCourseCode,
+              items.adminUsersEnrollmentsSisCourseId
+            );
           }
           if (items.adminUsersEnrollmentsCanvasId) {
             addCanvasIdToEnrollmentsList(coursesList);
@@ -46,11 +65,37 @@
     );
   }
 
+  function addSearchFilters(
+    coursesList,
+    isCourseCodeEnabled,
+    isSisCourseIdEnabled
+  ) {
+    const wrapper = document.createElement("div");
+    coursesList.insertAdjacentElement("beforebegin", wrapper);
+
+    addCourseEnrollmentsNameSearch(wrapper);
+    if (isCourseCodeEnabled) {
+      addCourseEnrollmentsCourseCodeSearch(wrapper);
+    }
+    if (isSisCourseIdEnabled) {
+      addCourseEnrollmentsSisCourseIdSearch(wrapper);
+    }
+  }
+
+  function addSelectMenuFilters(coursesList) {
+    const wrapper = document.createElement("div");
+    coursesList.insertAdjacentElement("beforebegin", wrapper);
+    addCourseStatusFilter(wrapper, coursesList);
+    addCourseEnrollmentsTermFilter(wrapper, coursesList);
+    addCourseEnrollmentsStatusFilter(wrapper, coursesList);
+    addCourseEnrollmentsRoleFilter(wrapper, coursesList);
+  }
+
   /*
     This creates a filter in the course enrollments section filled with the terms
     that are shown in the list of enrollments and the default term.
   */
-  function addCourseEnrollmentsTermFilter(coursesList) {
+  function addCourseEnrollmentsTermFilter(wrapper, coursesList) {
     const coursesListItems = coursesList.querySelectorAll("li");
     const courseTerms = [...coursesListItems]
       .filter((item) => {
@@ -76,7 +121,7 @@
       termSelectMenu += `<option value="${term}">${term}</option>`;
     });
     termSelectMenu += `</select>`;
-    coursesList.insertAdjacentHTML("beforebegin", termSelectMenu);
+    wrapper.insertAdjacentHTML("beforeend", termSelectMenu);
     document.getElementById("ski-course-term-select-filter").onchange = () => {
       filterCourseEnrollments();
     };
@@ -86,7 +131,7 @@
     This creates a filter in the course enrollments section filled with the enrollment roles
     that are shown in the list of enrollments.
   */
-  function addCourseEnrollmentsRoleFilter(coursesList) {
+  function addCourseEnrollmentsRoleFilter(wrapper, coursesList) {
     const coursesListItems = coursesList.querySelectorAll("li");
     const courseRoles = [...coursesListItems]
       .map((item) => {
@@ -120,7 +165,7 @@
       roleSelectMenu += `<option value="${role}">${role}</option>`;
     });
     roleSelectMenu += `</select>`;
-    coursesList.insertAdjacentHTML("beforebegin", roleSelectMenu);
+    wrapper.insertAdjacentHTML("beforeend", roleSelectMenu);
     document.getElementById("ski-course-role-select-filter").onchange = () => {
       filterCourseEnrollments();
     };
@@ -130,7 +175,7 @@
     This adds a filter in the course enrollments section for the different 
     enrollment statues a user may have for a course
   */
-  function addCourseEnrollmentsStatusFilter(coursesList) {
+  function addCourseEnrollmentsStatusFilter(wrapper, coursesList) {
     const enrollmentStatuses = {
       Active: "active",
       Completed: "completed",
@@ -145,7 +190,7 @@
       statusSelectMenu += `<option value="${enrollmentStatuses[status]}">${status}</option>`;
     }
     statusSelectMenu += `</select>`;
-    coursesList.insertAdjacentHTML("beforebegin", statusSelectMenu);
+    wrapper.insertAdjacentHTML("beforeend", statusSelectMenu);
     document.getElementById("ski-enrollment-status-select-filter").onchange =
       () => {
         filterCourseEnrollments();
@@ -156,7 +201,7 @@
     This adds a filter in the course enrollments section for the different
     published states of a course
   */
-  function addCourseStatusFilter(coursesList) {
+  function addCourseStatusFilter(wrapper, coursesList) {
     const courseStatuses = {
       Published: "published",
       Unpublished: "unpublished",
@@ -168,7 +213,7 @@
       statusSelectMenu += `<option value="${courseStatuses[status]}">${status}</option>`;
     }
     statusSelectMenu += `</select>`;
-    coursesList.insertAdjacentHTML("beforebegin", statusSelectMenu);
+    wrapper.insertAdjacentHTML("beforeend", statusSelectMenu);
     document.getElementById("ski-course-status-select-filter").onchange =
       () => {
         filterCourseEnrollments();
@@ -178,9 +223,9 @@
   /*
     This adds a search input for the course name
   */
-  function addCourseEnrollmentsNameSearch(coursesList) {
-    coursesList.insertAdjacentHTML(
-      "beforebegin",
+  function addCourseEnrollmentsNameSearch(wrapper) {
+    wrapper.insertAdjacentHTML(
+      "beforeend",
       `
       <label><span class="screenreader-only">Search course name </span>
         <input type="text" id="ski-course-name-search" placeholder="Search course name" title="Search course name">
@@ -204,9 +249,9 @@
   /*
     This adds a search input for the course code
   */
-  function addCourseEnrollmentsCourseCodeSearch(coursesList) {
-    coursesList.insertAdjacentHTML(
-      "beforebegin",
+  function addCourseEnrollmentsCourseCodeSearch(wrapper) {
+    wrapper.insertAdjacentHTML(
+      "beforeend",
       `
         <label><span class="screenreader-only">Search course code </span>
           <input type="text" id="ski-course-code-search" placeholder="Search course code" title="Search course code">
@@ -222,6 +267,32 @@
         filterCourseEnrollments()
       );
       newCourseCodeSearch.addEventListener("blur", () =>
+        filterCourseEnrollments()
+      );
+    }
+  }
+
+  /*
+    This adds a search input for the course code
+  */
+  function addCourseEnrollmentsSisCourseIdSearch(wrapper) {
+    wrapper.insertAdjacentHTML(
+      "beforeend",
+      `
+          <label><span class="screenreader-only">Search SIS course code </span>
+            <input type="text" id="ski-sis-course-id-search" placeholder="Search SIS course code" title="Search SIS course code">
+          </label>
+        `
+    );
+
+    const newSisCourseIdSearch = document.getElementById(
+      "ski-sis-course-id-search"
+    );
+    if (newSisCourseIdSearch) {
+      newSisCourseIdSearch.addEventListener("keyup", () =>
+        filterCourseEnrollments()
+      );
+      newSisCourseIdSearch.addEventListener("blur", () =>
         filterCourseEnrollments()
       );
     }
@@ -368,6 +439,37 @@
                     }
                   }
                 }
+
+                // Check for filtering by SIS course code if filtering is still needed
+                if (shouldShow) {
+                  const sisCourseIdSearchInput = document.getElementById(
+                    "ski-sis-course-id-search"
+                  );
+                  if (sisCourseIdSearchInput) {
+                    const sisCourseIdSearchValue = new DOMParser()
+                      .parseFromString(
+                        sisCourseIdSearchInput.value,
+                        "text/html"
+                      )
+                      .body.innerText?.toUpperCase();
+                    if (
+                      sisCourseIdSearchValue &&
+                      sisCourseIdSearchValue.length > 0
+                    ) {
+                      const sisCourseId =
+                        item
+                          .querySelector("a span.ski-sis-course-id")
+                          ?.innerText?.trim()
+                          .toUpperCase() ?? "";
+                      if (
+                        !sisCourseId ||
+                        !sisCourseId.includes(sisCourseIdSearchValue)
+                      ) {
+                        shouldShow = false;
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -440,12 +542,11 @@
     }
   }
 
-  /*
-    Takes in the list of course enrollments.
-    For each enrollment in the list of course enrollments,
-    it will fetch the course code and add it to the shown details.
-  */
-  function addCourseCodeToEnrollmentsList(coursesList) {
+  function addCourseCodesToEnrollmentsList(
+    coursesList,
+    isCourseCodeEnabled,
+    isSisCourseIdEnabled
+  ) {
     const coursesListItems = [...coursesList.querySelectorAll("li")];
     if (coursesListItems) {
       let requestNum = 0;
@@ -457,7 +558,13 @@
           const courseCode = courseNameLink.parentElement.querySelector(
             "span.ski-course-code"
           );
-          if (!courseCode) {
+          const sisCourseId = courseNameLink.parentElement.querySelector(
+            "span.ski-sis-course-id"
+          );
+          if (
+            (isCourseCodeEnabled && !courseCode) ||
+            (isSisCourseIdEnabled && !sisCourseId)
+          ) {
             const canvasCourseCode = courseNameLink.href
               .match(/\/courses\/[0-9]+\//)[0]
               .replace("courses", "")
@@ -466,12 +573,17 @@
             fetch(`${baseUrl}/api/v1/courses/${canvasCourseCode}`)
               .then((response) => response.json())
               .then((data) => {
-                const courseCode = data["course_code"];
+                const courseCode = data?.course_code;
+                const sisCourseId = data?.sis_course_id;
                 const courseName = courseNameLink.querySelector("span.name");
-                courseName.insertAdjacentHTML(
-                  "afterend",
-                  `<span class="ski-course-code subtitle" style="word-break: break-word; font-style: italic;">Course Code: ${courseCode}</span>`
-                );
+                let courseCodes = "";
+                if (isCourseCodeEnabled) {
+                  courseCodes += `<span class="subtitle" style="word-break: break-word; font-style: italic;">Course Code: <span class="ski-course-code">${courseCode}</span></span>`;
+                }
+                if (isSisCourseIdEnabled) {
+                  courseCodes += `<span class="subtitle" style="word-break: break-word; font-style: italic;">SIS Course ID: <span class="ski-sis-course-id">${sisCourseId}</span></span>`;
+                }
+                courseName.insertAdjacentHTML("afterend", courseCodes);
               })
               .catch((error) => {
                 console.error("Error:", error);

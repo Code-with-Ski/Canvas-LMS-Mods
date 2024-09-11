@@ -6,10 +6,10 @@
   ) {
     chrome.storage.sync.get(
       {
-        userCourseEnrollmentsSimpleSearch: true,
+        adminUsersEnrollmentsSimpleSearch: true,
       },
       function (items) {
-        if (items.userCourseEnrollmentsSimpleSearch) {
+        if (items.adminUsersEnrollmentsSimpleSearch) {
           addSimpleSearch();
         }
       }
@@ -18,7 +18,6 @@
 
   function addSimpleSearch() {
     const coursesHeader = document.querySelector("#courses_list h3");
-    console.log(coursesHeader);
     if (!coursesHeader) {
       return;
     }

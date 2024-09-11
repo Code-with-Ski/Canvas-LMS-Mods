@@ -174,8 +174,14 @@ function saveOptions() {
   const isShowCourseCodeInEnrollments = document.getElementById(
     "admin-users-enrollments-course-code"
   ).checked;
+  const isShowSisCourseIdInEnrollments = document.getElementById(
+    "admin-users-enrollments-sis-course-id"
+  ).checked;
   const isShowCanvasIdInEnrollments = document.getElementById(
     "admin-users-enrollments-canvas-id"
+  ).checked;
+  const isShowSimpleSearchInEnrollments = document.getElementById(
+    "admin-users-enrollments-simple-search"
   ).checked;
 
   const isAccountListResizable = document.getElementById(
@@ -326,7 +332,9 @@ function saveOptions() {
       adminUsersEnrollmentsSort: isSortCourseEnrollments,
       adminUsersEnrollmentsFilter: isAddCourseEnrollmentFilters,
       adminUsersEnrollmentsCourseCode: isShowCourseCodeInEnrollments,
+      adminUsersEnrollmentsSisCourseId: isShowSisCourseIdInEnrollments,
       adminUsersEnrollmentsCanvasId: isShowCanvasIdInEnrollments,
+      adminUsersEnrollmentsSimpleSearch: isShowSimpleSearchInEnrollments,
       adminUsersAccountsResizable: isAccountListResizable,
       adminUsersAccountsDefaultHeight: accountListDefaultSize,
       adminUsersAccountsRoles: isShowAdminRoles,
@@ -415,7 +423,9 @@ function restoreOptions() {
       adminUsersEnrollmentsSort: true,
       adminUsersEnrollmentsFilter: true,
       adminUsersEnrollmentsCourseCode: true,
+      adminUsersEnrollmentsSisCourseId: true,
       adminUsersEnrollmentsCanvasId: true,
+      adminUsersEnrollmentsSimpleSearch: true,
       adminUsersAccountsResizable: true,
       adminUsersAccountsDefaultHeight: 100,
       adminUsersAccountsRoles: true,
@@ -578,8 +588,12 @@ function restoreOptions() {
         items.adminUsersEnrollmentsFilter;
       document.getElementById("admin-users-enrollments-course-code").checked =
         items.adminUsersEnrollmentsCourseCode;
+      document.getElementById("admin-users-enrollments-sis-course-id").checked =
+        items.adminUsersEnrollmentsSisCourseId;
       document.getElementById("admin-users-enrollments-canvas-id").checked =
         items.adminUsersEnrollmentsCanvasId;
+      document.getElementById("admin-users-enrollments-simple-search").checked =
+        items.adminUsersEnrollmentsSimpleSearch;
 
       document.getElementById("admin-users-accounts-resizable").checked =
         items.adminUsersAccountsResizable;

@@ -63,6 +63,7 @@ class SkiReportCourseEnrollments extends SkiReport {
       "inactive",
       "completed",
       "deleted",
+      "rejected",
     ];
     for (const option of enrollmentStateOptions) {
       const optionCheckbox = document.createElement("input");

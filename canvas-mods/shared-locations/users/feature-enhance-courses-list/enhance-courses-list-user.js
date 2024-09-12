@@ -33,19 +33,6 @@
               items.adminUsersEnrollmentsSisCourseId
             );
             addSelectMenuFilters(coursesList);
-            //addCourseStatusFilter(coursesList);
-            //addCourseEnrollmentsStatusFilter(coursesList);
-            //addCourseEnrollmentsTermFilter(coursesList);
-            //addCourseEnrollmentsRoleFilter(coursesList);
-            /*
-            addCourseEnrollmentsNameSearch(coursesList);
-            if (items.adminUsersEnrollmentsCourseCode) {
-              addCourseEnrollmentsCourseCodeSearch(coursesList);
-            }
-            if (items.adminUsersEnrollmentsSisCourseId) {
-              addCourseEnrollmentsSisCourseIdSearch(coursesList);
-            }
-              */
           }
           if (
             items.adminUsersEnrollmentsCourseCode ||
@@ -578,10 +565,10 @@
                 const courseName = courseNameLink.querySelector("span.name");
                 let courseCodes = "";
                 if (isCourseCodeEnabled) {
-                  courseCodes += `<span class="subtitle" style="word-break: break-word; font-style: italic;">Course Code: <span class="ski-course-code">${courseCode}</span></span>`;
+                  courseCodes += `<span class="ski-course-code-wrapper subtitle" style="word-break: break-word; font-style: italic;">Course Code: <span class="ski-course-code">${courseCode}</span></span>`;
                 }
                 if (isSisCourseIdEnabled) {
-                  courseCodes += `<span class="subtitle" style="word-break: break-word; font-style: italic;">SIS Course ID: <span class="ski-sis-course-id">${sisCourseId}</span></span>`;
+                  courseCodes += `<span class="ski-sis-course-id-wrapper subtitle" style="word-break: break-word; font-style: italic;">SIS Course ID: <span class="ski-sis-course-id">${sisCourseId}</span></span>`;
                 }
                 courseName.insertAdjacentHTML("afterend", courseCodes);
               })

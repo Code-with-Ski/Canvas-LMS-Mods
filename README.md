@@ -111,9 +111,11 @@ Options will also be updated to allow the user to enable/disable certain customi
         - Make it resizable
         - Set a default height
         - Sort the enrollments by status, term, and role
-        - Filter enrollments by course published status, enrollment status, and/or term
+        - Filter enrollments by course published status, enrollment status, term, enrollment role, course name, course code, and/or SIS course ID
         - Add the course code to the list of enrollments (Uses Canvas LMS API)
+        - Add the SIS course ID to the list of enrollments (Uses Canvas LMS API)
         - Add the Canvas course ID to the list of enrollments
+        - Enable Simple Search of user's course enrollments (Uses Canvas LMS API)
       - Accounts box
         - Make it resizable
         - Set a default height

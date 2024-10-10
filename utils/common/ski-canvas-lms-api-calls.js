@@ -87,6 +87,9 @@ class SkiCanvasLmsApiCaller {
     if (!firstPageResponse.isSuccessful) {
       // TODO Consider returning error message
       // Need to ensure current calls handle this appropriately
+      console.error(
+        `ERROR ${firstPageResponse.statusCode}: ${firstPageResponse.statusMessage}`
+      );
       return;
     }
 
@@ -289,10 +292,14 @@ class SkiCanvasLmsApiCaller {
         if (SKI_DEBUG_MODE) {
           console.log("Rate limit was exceeded. Retries failed.");
         }
+        console.error(
+          `ERROR ${response.statusCode}: ${response.statusMessage}`
+        );
         return SkiCanvasLmsApiResponse.FAILED_RETRY;
       }
     } else {
       // TODO Update this return code. No retries since it wasn't a rate limit error
+      console.error(`ERROR ${response.statusCode}: ${response.statusMessage}`);
       return SkiCanvasLmsApiResponse.FAILED_RETRY;
     }
   }

@@ -6,7 +6,10 @@
       },
       function (items) {
         if (items.coursePeopleSectionFilter) {
-          SkiMonitorChanges.watchForElementByQuery("div.roster-tab select[name='enrollment_role_id']", addSectionFilter);
+          SkiMonitorChanges.watchForElementByQuery(
+            "div.roster-tab select[name='enrollment_role_id']",
+            addSectionFilter
+          );
         }
       }
     );
@@ -17,8 +20,14 @@
     section name
   */
   async function addSectionFilter(roleSelect) {
-    roleSelect.insertAdjacentHTML(
-      "afterend",
+    const wrapper = document.createElement("div");
+    wrapper.style.display = "inline-block";
+    wrapper.style.marginBottom = "0.5rem";
+    roleSelect.insertAdjacentElement("beforebegin", wrapper);
+
+    wrapper.append(roleSelect);
+    wrapper.insertAdjacentHTML(
+      "beforeend",
       `
       <select name="ski-section-names" id="ski-users-section-filter" title="Show users in the selected section" aria-label="Show users in the selected section">
         <option value="">All Sections</option>
@@ -28,9 +37,7 @@
 
     await loadSectionNames();
 
-    const sectionsFilter = document.getElementById(
-      "ski-users-section-filter"
-    );
+    const sectionsFilter = document.getElementById("ski-users-section-filter");
     if (sectionsFilter) {
       sectionsFilter.addEventListener("change", () => {
         const sectionsFilter = document.getElementById(

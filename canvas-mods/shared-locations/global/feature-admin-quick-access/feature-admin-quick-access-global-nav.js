@@ -448,11 +448,21 @@
         };
       }
     }
+    if (SKI_DEBUG_MODE) {
+      console.log("Nested Accounts");
+      console.log(nestedAccounts);
+    }
 
     const accountSelect = document.getElementById("ski-account-select");
     if (accountSelect) {
       for (let accountId in nestedAccounts) {
         const account = nestedAccounts[accountId];
+        if (!account) {
+          console.error(
+            `ERROR: Account not found to load into account select (ID: ${accountId})`
+          );
+          continue;
+        }
         addAccountOption(accountSelect, account.details, 0);
 
         let children = account.children;
@@ -735,6 +745,12 @@
   ) {
     for (let childId of childrenAccounts) {
       const currentAccount = allAccounts[childId];
+      if (!currentAccount) {
+        console.error(
+          `ERROR: Account not found to load into account select (ID: ${childId})`
+        );
+        continue;
+      }
       addAccountOption(selectMenu, currentAccount.details, indentLevel);
       let children = currentAccount.children;
       if (children.length > 0) {

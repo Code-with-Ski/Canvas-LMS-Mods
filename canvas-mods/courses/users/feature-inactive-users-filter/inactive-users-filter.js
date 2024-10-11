@@ -20,8 +20,9 @@
     It defaults to not checked so that inactive users are hidden by default.
   */
   function addInactiveUsersFilter(rosterTableWrapper) {
+    rosterTableWrapper.style.clear = "both";
     rosterTableWrapper.insertAdjacentHTML(
-      "beforebegin",
+      "afterbegin",
       `
       <div class="ic-Form-control ic-Form-control--checkbox pull-right">
         <input type="checkbox" id="ski-users-inactive-filter">

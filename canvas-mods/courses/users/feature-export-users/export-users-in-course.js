@@ -15,6 +15,15 @@
     );
   }
 
+  function removePullRightFromAddPeopleButton() {
+    const addPeopleButton = document.getElementById("addUsers");
+    if (!addPeopleButton) {
+      return;
+    }
+
+    addPeopleButton.classList.remove("pull-right");
+  }
+
   /*
     Get the user's course permissions
   */
@@ -48,18 +57,36 @@
     Adds a button to export the users to a CSV
   */
   function addExportButton() {
-    const roleSelect = document.querySelector(
-      "div.roster-tab select[name='enrollment_role_id']"
-    );
-    if (roleSelect) {
-      roleSelect.insertAdjacentHTML(
-        "afterend",
-        `
-        <button id="ski-users-download" class="btn pull-right" title="Export to CSV" aria-label="Export to CSV" style="margin-left: 0.25rem;">
+    const addPeopleButton = document.getElementById("addUsers");
+    const tableWrapper = document.querySelector("div.roster-tab div.v-gutter");
+    if (tableWrapper) {
+      if (!addPeopleButton) {
+        tableWrapper.insertAdjacentHTML(
+          "beforebegin",
+          `
+        <button id="ski-users-download" class="btn" title="Export to CSV" aria-label="Export to CSV" style="margin-left: 0.25rem;">
           <i class="icon-download"></i> Export
         </button>
       `
-      );
+        );
+      } else {
+        const wrapper = document.createElement("div");
+        wrapper.classList.add("pull-right");
+        wrapper.style.marginBottom = "0.5rem";
+        wrapper.style.display = "flex";
+
+        removePullRightFromAddPeopleButton();
+        wrapper.append(addPeopleButton);
+        wrapper.insertAdjacentHTML(
+          "beforeend",
+          `
+            <button id="ski-users-download" class="btn" title="Export to CSV" aria-label="Export to CSV" style="margin-left: 0.25rem;">
+              <i class="icon-download"></i> Export
+            </button>
+          `
+        );
+        tableWrapper.insertAdjacentElement("beforebegin", wrapper);
+      }
 
       const downloadButton = document.getElementById("ski-users-download");
       if (downloadButton) {

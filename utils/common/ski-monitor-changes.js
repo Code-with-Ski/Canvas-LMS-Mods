@@ -106,6 +106,8 @@ class SkiMonitorChanges {
     });
 
     observer.observe(element, config);
+
+    return observer;
   }
 
   static watchForRemovedNodesOfElement(

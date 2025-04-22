@@ -110,7 +110,6 @@
 
   function watchForAddedAccounts() {
     expandObserver?.disconnect();
-    console.log("watching for newly added accounts");
     expandObserver = SkiMonitorChanges.watchForAddedNodeOfElement(
       document,
       "#sub_account_mount > span > span[direction='column']",

@@ -98,13 +98,11 @@
     );
     const accountFiller = accountRow.querySelector(":scope > span");
     const accountFillerWidth = accountFiller?.clientWidth ?? 0;
+    const accountName = accountHeader.querySelector("a[data-testid^='link_']");
     let shouldShow = true;
     if (searchPhrase) {
       shouldShow = false;
 
-      const accountName = accountHeader.querySelector(
-        "a[data-testid^='link_']"
-      );
       if (
         accountName &&
         accountName.innerText.toUpperCase().includes(searchPhrase)
@@ -129,7 +127,7 @@
     }
 
     let hasSubAccountMatch = false;
-    while (currentRowIndex < subAccountRows.length - 2) {
+    while (currentRowIndex < subAccountRows.length - 1) {
       const nextRow = subAccountRows[currentRowIndex + 1];
       nextRow.style.display = "";
       const nextRowFiller = nextRow.querySelector(":scope > span");

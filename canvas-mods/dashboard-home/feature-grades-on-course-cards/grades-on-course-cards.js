@@ -46,6 +46,9 @@
   */
   async function getStudentGradesByCourse() {
     const userCourses = await getStudentCoursesOfSelf();
+    if (!userCourses || userCourses.length == 0) {
+      return {};
+    }
     const studentEnrollmentGrades = {};
     for (const course of userCourses) {
       const enrollments = course.enrollments;

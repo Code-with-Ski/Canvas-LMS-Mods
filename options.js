@@ -260,6 +260,9 @@ function saveOptions() {
   const isSubAccountExpandAllEnabled = document.getElementById(
     "admin-sub-accounts-expand"
   ).checked;
+  const isSubAccountAutoExpandEnabled = document.getElementById(
+    "admin-sub-accounts-auto-expand"
+  ).checked;
 
   // Admin - SIS Import settings
   const isSisImportLogEnabled = document.getElementById(
@@ -354,6 +357,7 @@ function saveOptions() {
       adminSubAccountsSisId: isSisAccountIdShown,
       adminSubAccountsSearch: isSubAccountSearchEnabled,
       adminSubAccountsExpand: isSubAccountExpandAllEnabled,
+      adminSubAccountsAutoExpand: isSubAccountAutoExpandEnabled,
       adminSisImportLog: isSisImportLogEnabled,
       rubricsImport: isRubricsDragDropCriteriaEnabled,
       rubricsDragDropCriteria: isRubricsImportCriteriaEnabled,
@@ -445,6 +449,7 @@ function restoreOptions() {
       adminSubAccountsSisId: true,
       adminSubAccountsSearch: true,
       adminSubAccountsExpand: true,
+      adminSubAccountsAutoExpand: true,
       adminSisImportLog: true,
       rubricsImport: true,
       rubricsDragDropCriteria: true,
@@ -638,6 +643,8 @@ function restoreOptions() {
         items.adminSubAccountsSearch;
       document.getElementById("admin-sub-accounts-expand").checked =
         items.adminSubAccountsExpand;
+      document.getElementById("admin-sub-accounts-auto-expand").checked =
+        items.adminSubAccountsAutoExpand;
 
       // Admin - Terms settings
       document.getElementById("admin-terms-search").checked =

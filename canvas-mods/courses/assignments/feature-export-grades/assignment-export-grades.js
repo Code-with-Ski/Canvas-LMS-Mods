@@ -10,25 +10,24 @@
       },
       function (items) {
         if (items.courseAssignmentExportGrades) {
-          watchForGradedRatioSpan();
+          watchForSpeedGraderLink();
         }
       }
     );
   }
 
-  function watchForGradedRatioSpan() {
+  function watchForSpeedGraderLink() {
     SkiMonitorChanges.watchForElementById(
-      "ratio_of_submissions_graded",
+      "assignment-speedgrader-link",
       addExportGradesButton
     );
   }
 
-  function addExportGradesButton(gradedRatioSpan) {
+  function addExportGradesButton() {
     const exportGrades = createExportGradesButton();
-    gradedRatioSpan.parentElement.insertAdjacentElement(
-      "afterend",
-      exportGrades
-    );
+
+    const rightSide = document.getElementById("sidebar_content");
+    rightSide?.insertAdjacentElement("beforeend", exportGrades);
 
     const rubric = document.querySelector(
       "div.rubric_container.rubric div.rubric_title"

@@ -355,6 +355,19 @@
   function loadCriteria(criteriaDetails, outcomes) {
     let num = 1;
     let totalPoints = 0;
+
+    const existingRows = [
+      ...document.querySelectorAll(
+        ".rubric_container.editing table.rubric_table > tbody > tr.criterion:not(.blank)"
+      ),
+    ];
+    for (const row of existingRows) {
+      const pointsSpan = row.querySelector(".display_criterion_points");
+      if (pointsSpan && !!pointsSpan.innerText?.trim()) {
+        totalPoints += Number(pointsSpan.innerText?.trim() ?? "0");
+      }
+    }
+
     for (const criteriaRowDetails of criteriaDetails) {
       totalPoints += loadCriteriaRow(criteriaRowDetails, num, outcomes);
       num++;
@@ -367,6 +380,7 @@
       rubricTotalSpan.innerText = ` ${totalPoints}`;
     }
 
+    /*
     const editCriterionLink = document.querySelector(
       ".rubric_container.editing tr#criterion_1 .edit_criterion_link"
     );
@@ -380,6 +394,7 @@
     ) {
       updateCriterionButton.click();
     }
+    */
   }
 
   function loadCriteriaRow(rowDetails, criteriaNum, outcomes) {
@@ -394,7 +409,6 @@
     const criterionRow = document.createElement("tr");
     criterionRow.id = `criterion_${criteriaNum}`;
     criterionRow.classList.add("criterion");
-    criterionRow.style.display = "table-row";
 
     const criterionDescriptionTd = document.createElement("td");
     criterionDescriptionTd.classList.add(
@@ -403,23 +417,36 @@
       "pad-box-micro"
     );
     criterionDescriptionTd.innerHTML = `
-      <div class="container">
-        <div class="links editing">
-          <a href="#" class="edit_criterion_link"><i class="icon-edit standalone-icon"></i><span class="screenreader-only">Edit criterion description</span></a>
-          <a href="#" class="delete_criterion_link"><i class="icon-trash standalone-icon"></i><span class="screenreader-only">Delete criterion row</span></a>
-        </div>
+      <div class="criterion_description_container">
         <div class="description_content">
-          <span class="description description_title">${rowDetails[0]}</span>
-          <div class="long_description small_description">${rowDetails[1]}</div>
+          <span role="text">
+            <span class="description description_title">${rowDetails[0]}</span>
+            <div class="long_description small_description">${
+              rowDetails[1]
+            }</div>
+          </span>
           <div class="hide_when_learning_outcome">
             <div class="criterion_use_range_div editing toggle_for_hide_points ">
-              <label>Range
+              <label class="criterion_range_label" aria-label="Range">
                 <input type="checkbox" class="criterion_use_range" ${
                   rowDetails[2] ? "checked" : ""
                 }>
+                <span aria-hidden="true">
+                  Range
+                </span>
               </label>
             </div>
           </div>
+        </div>
+        <div class="links editing">
+          <a href="#" class="edit_criterion_link" role="button">
+            <i class="icon-edit standalone-icon"></i>
+            <span class="screenreader-only">Edit criterion description</span>
+          </a>
+          <a href="#" class="delete_criterion_link" role="button">
+            <i class="icon-trash standalone-icon"></i>
+            <span class="screenreader-only">Delete criterion row</span>
+          </a>
         </div>
       </div>
     `;
@@ -427,13 +454,9 @@
     const criterionRatingTd = document.createElement("td");
     criterionRatingTd.style.padding = 0;
     criterionRatingTd.innerHTML = `
-      <table class="ratings" style="">
-        <tbody>
-          <tr>
-            ${generateRatingTdsHTML(rowDetails)}
-          </tr>
-        </tbody>
-      </table>
+      <div class="ratings">
+        ${generateRatingCellsHTML(rowDetails)}
+      </div>
     `;
 
     const criterionPointsTd = document.createElement("td");
@@ -455,143 +478,151 @@
     criterionRow.appendChild(criterionRatingTd);
     criterionRow.appendChild(criterionPointsTd);
 
-    const summaryRow = document.querySelector(
-      ".rubric_container.editing tbody tr.summary"
+    const tableBody = document.querySelector(
+      ".rubric.editing table.rubric_table > tbody"
     );
-    if (summaryRow) {
-      summaryRow.insertAdjacentElement("beforebegin", criterionRow);
-    }
+    tableBody?.insertAdjacentElement("beforeend", criterionRow);
 
     const rangeCheckbox = criterionRow.querySelector(
       "input.criterion_use_range"
     );
-    if (rangeCheckbox) {
-      rangeCheckbox.addEventListener("change", () => {
-        const rangeRatingSpans = [
-          ...criterionRow.querySelectorAll("td span.range_rating"),
-        ];
-        for (const span of rangeRatingSpans) {
-          const parent = span.parentElement;
-          const pointsSpan = parent?.querySelector(".points");
-          const minPointsSpan = parent?.querySelector(".min_points");
-          if (!pointsSpan || !minPointsSpan) {
-            continue;
-          }
-          if (pointsSpan.innerText == minPointsSpan.innerText) {
-            continue;
-          }
-
-          span.style.display = rangeCheckbox.checked ? "inline" : "none";
+    rangeCheckbox?.addEventListener("change", () => {
+      const rangeRatingSpans = [
+        ...criterionRow.querySelectorAll("td span.range_rating"),
+      ];
+      for (const span of rangeRatingSpans) {
+        const parent = span.parentElement;
+        const pointsSpan = parent?.querySelector(".points");
+        const minPointsSpan = parent?.querySelector(".min_points");
+        if (!pointsSpan || !minPointsSpan) {
+          continue;
         }
-      });
-    }
+        if (pointsSpan.innerText == minPointsSpan.innerText) {
+          continue;
+        }
+
+        span.style.display = rangeCheckbox.checked ? "inline" : "none";
+      }
+    });
 
     return Number(rowDetails[3]);
   }
 
-  function generateRatingTdsHTML(rowDetails) {
-    const tds = [];
+  function generateRatingCellsHTML(rowDetails) {
+    const cells = [];
     for (let i = 3; i < rowDetails.length; i += 3) {
       if (i == 3) {
-        tds.push(`
-          <td class="rating edge_rating">
+        cells.push(`
+          <div class="rating edge_rating">
             <div class="container">
               <div class="rating-main">
-                <div class="editing links">
-                  <a href="#" class="edit_rating_link"><i class="icon-edit standalone-icon"></i><span class="screenreader-only">Edit rating</span></a>
-                  <a href="#" class="delete_rating_link"><i class="icon-trash standalone-icon"></i><span class="screenreader-only">Delete rating</span></a>
-                </div>
-                <div class="clear"></div>
-                <span class="nobr toggle_for_hide_points ">
-                  <span class="points">${rowDetails[i]}</span>
-                  <span class="range_rating" ${
-                    rowDetails[2]
-                      ? "style='display: inline;'"
-                      : "style='display: none;'"
-                  }>to &gt;<span class="min_points">${
-          rowDetails[i + 3]
-        }</span></span> pts
+                <span role="text" class="rating-content-wrapper">
+                  <span class="nobr toggle_for_hide_points ">
+                    <span class="points">${rowDetails[i]}</span>
+                    <span class="range_rating" ${
+                      rowDetails[2] ? "" : "style='display: none;'"
+                    }>to &gt;
+                      <span class="min_points">${rowDetails[i + 3]}</span>
+                    </span> pts
+                  </span>
+                  <span class="description rating_description_value">${
+                    rowDetails[i + 1]
+                  }</span>
+                  <span class="rating_long_description small_description">${
+                    rowDetails[i + 2]
+                  }</span>
                 </span>
-                <div class="description rating_description_value">${
-                  rowDetails[i + 1]
-                }</div>
-                <div class="rating_long_description small_description">${
-                  rowDetails[i + 2]
-                }</div>
                 <span class="rating_id" style="display: none;">blank</span>
+                ${generateEditingLinksHTML()}          
               </div>
-              <div class="editing links add_rating_link">
-                <a href="#" class="add_rating_link_after" aria-label="Add rating"><i class="icon-add icon-Solid"></i></a>
-              </div>
+              ${generateAddRatingLinkHTML()}
             </div>
-          </td>
+          </div>
         `);
       } else if (i == rowDetails.length - 3) {
-        tds.push(`
-          <td class="rating edge_rating infinitesimal">
+        cells.push(`
+          <div class="rating edge_rating infinitesimal">
             <div class="container">
               <div class="rating-main">
-                <div class="editing links">
-                  <a href="#" class="edit_rating_link"><i class="icon-edit standalone-icon"></i><span class="screenreader-only">Edit rating</span></a>
-                  <a href="#" class="delete_rating_link"><i class="icon-trash standalone-icon"></i><span class="screenreader-only">Delete rating</span></a>
-                </div>
-                <div class="clear"></div>
-                <span class="nobr toggle_for_hide_points ">
-                  <span class="points">${rowDetails[i]}</span>
-                  <span class="range_rating" ${
-                    rowDetails[2] && rowDetails[i] != "0"
-                      ? "style='display: inline'"
-                      : "style='display: none;'"
-                  }>to &gt;<span class="min_points">0</span></span> pts
+                <span role="text" class="rating-content-wrapper">
+                  <span class="nobr toggle_for_hide_points ">
+                    <span class="points">${rowDetails[i]}</span>
+                    <span class="range_rating" ${
+                      rowDetails[2] && rowDetails[i] != "0"
+                        ? ""
+                        : "style='display: none;'"
+                    }>to &gt;
+                      <span class="min_points">0</span>
+                    </span> pts
+                  </span>
+                  <span class="description rating_description_value">${
+                    rowDetails[i + 1]
+                  }</span>
+                  <span class="rating_long_description small_description">${
+                    rowDetails[i + 2]
+                  }</span>
                 </span>
-                <div class="description rating_description_value">${
-                  rowDetails[i + 1]
-                }</div>
-                <div class="rating_long_description small_description">${
-                  rowDetails[i + 2]
-                }</div>
                 <span class="rating_id" style="display: none;">blank</span>
+                ${generateEditingLinksHTML()}
               </div>
             </div>
-          </td>
+          </div>
         `);
       } else {
-        tds.push(`
-          <td class="rating">
+        cells.push(`
+          <div class="rating">
             <div class="container">
               <div class="rating-main">
-                <div class="editing links">
-                  <a href="#" class="edit_rating_link"><i class="icon-edit standalone-icon"></i><span class="screenreader-only">Edit rating</span></a>
-                  <a href="#" class="delete_rating_link"><i class="icon-trash standalone-icon"></i><span class="screenreader-only">Delete rating</span></a>
-                </div>
-                <div class="clear"></div>
-                <span class="nobr toggle_for_hide_points ">
-                  <span class="points">${rowDetails[i]}</span>
-                  <span class="range_rating" ${
-                    rowDetails[2]
-                      ? "style='display: inline'"
-                      : "style='display: none;'"
-                  }>to &gt;<span class="min_points">${
-          rowDetails[i + 3]
-        }</span></span> pts
+                <span role="text" class="rating-content-wrapper">
+                  <span class="nobr toggle_for_hide_points ">
+                    <span class="points">${rowDetails[i]}</span>
+                    <span class="range_rating" ${
+                      rowDetails[2] ? "" : "style='display: none;'"
+                    }>to &gt;
+                      <span class="min_points">${rowDetails[i + 3]}</span>
+                    </span> pts
+                  </span>
+                  <span class="description rating_description_value">${
+                    rowDetails[i + 1]
+                  }</span>
+                  <span class="rating_long_description small_description">${
+                    rowDetails[i + 2]
+                  }</span>
                 </span>
-                <div class="description rating_description_value">${
-                  rowDetails[i + 1]
-                }</div>
-                <div class="rating_long_description small_description">${
-                  rowDetails[i + 2]
-                }</div>
                 <span class="rating_id" style="display: none;">blank</span>
+                ${generateEditingLinksHTML()}
               </div>
-              <div class="editing links add_rating_link">
-                <a href="#" class="add_rating_link_after" aria-label="Add rating"><i class="icon-add icon-Solid"></i></a>
-              </div>
+              ${generateAddRatingLinkHTML()}
             </div>
-          </td>
+          </div>
         `);
       }
     }
-    return tds.join("");
+
+    return cells.join("");
+  }
+
+  function generateEditingLinksHTML() {
+    return `
+      <div class="editing links">
+        <a href="#" class="edit_rating_link" role="button" aria-label="Edit rating">
+          <i class="icon-edit standalone-icon" aria-hidden="true"></i>
+        </a>
+        <a href="#" class="delete_rating_link" role="button" aria-label="Delete rating" aria-hidden="true">
+          <i class="icon-trash standalone-icon"></i>
+        </a>
+      </div>
+    `;
+  }
+
+  function generateAddRatingLinkHTML() {
+    return `
+      <div class="editing links add_rating_link">
+        <a href="#" class="add_rating_link_after" aria-label="Add rating" role="button">
+          <i class="icon-add icon-Solid"></i>
+        </a>
+      </div>
+    `;
   }
 
   function loadOutcomeCriteriaRow(rowDetails, criteriaNum, outcomes) {
@@ -610,7 +641,6 @@
     const criterionRow = document.createElement("tr");
     criterionRow.id = `criterion_${criteriaNum}`;
     criterionRow.classList.add("criterion", "learning_outcome_criterion");
-    criterionRow.style.display = "table-row";
 
     const criterionDescriptionTd = document.createElement("td");
     criterionDescriptionTd.classList.add(
@@ -619,29 +649,36 @@
       "pad-box-micro"
     );
     criterionDescriptionTd.innerHTML = `
-      <div class="container">
-        <div class="links editing">
-          <a href="#" class="delete_criterion_link"><i class="icon-trash standalone-icon"></i><span class="screenreader-only">Delete criterion row</span></a>
-        </div>
+      <div class="criterion_description_container">
         <div class="description_content">
           <span class="outcome_sr_content" aria-hidden="false">
             <i class="learning_outcome_flag icon-outcomes" aria-hidden="true"></i>
             <span class="screenreader-only">This criterion is linked to a Learning Outcome</span>
-          </span>    
-          <span class="description description_title">${outcomeDetails.title}</span>
-          <span class="learning_outcome_id" style="display: none;">${outcomeId}</span>
-          <span class="criterion_id" style="display: none;"></span>
+          </span> 
+          <span role="text">
+            <span class="description description_title">${outcomeDetails.title}</span>
+            <span class="learning_outcome_id" style="display: none;">${outcomeId}</span>
+            <span class="criterion_id" style="display: none;"></span>
             <div class="long_description small_description">${outcomeDetails.description}</div>
-          <div class="hide_when_learning_outcome " style="display: none;">
+            <div role="text" class="threshold toggle_for_hide_points">
+              threshold:
+              <span class="mastery_points">${outcomeDetails.mastery_points}</span> pts
+            </div>
+          </span>   
+          <div class="hide_when_learning_outcome hidden">
             <div class="criterion_use_range_div editing toggle_for_hide_points ">
-              <label>Range
-                <input type="checkbox" class="criterion_use_range"></label>
+              <label class="criterion_use_range_label" aria-label="Range">
+                <input type="checkbox" class="criterion_use_range">
+                <span aria-hidden="true"> Range </span>
+              </label>
             </div>
           </div>
-          <div class="threshold toggle_for_hide_points">
-            threshold:
-            <span class="mastery_points">${outcomeDetails.mastery_points}</span> pts
-          </div>
+        </div>
+        <div class="links editing">
+          <a href="#" class="delete_criterion_link" role="button">
+            <i class="icon-trash standalone-icon"></i>
+            <span class="screenreader-only">Delete criterion row</span>
+          </a>
         </div>
       </div>
     `;
@@ -649,13 +686,9 @@
     const criterionRatingTd = document.createElement("td");
     criterionRatingTd.style.padding = 0;
     criterionRatingTd.innerHTML = `
-      <table class="ratings" style="">
-        <tbody>
-          <tr>
-            ${generateOutcomeRatingTdsHTML(outcomeDetails)}
-          </tr>
-        </tbody>
-      </table>
+      <div class="ratings">
+        ${generateOutcomeRatingCellsHTML(outcomeDetails)}
+      </div>
     `;
 
     const criterionPointsTd = document.createElement("td");
@@ -679,193 +712,73 @@
     criterionRow.appendChild(criterionRatingTd);
     criterionRow.appendChild(criterionPointsTd);
 
-    const summaryRow = document.querySelector(
-      ".rubric_container.editing tbody tr.summary"
+    const tableBody = document.querySelector(
+      ".rubric.editing table.rubric_table > tbody"
     );
-    if (summaryRow) {
-      summaryRow.insertAdjacentElement("beforebegin", criterionRow);
-    }
+    tableBody?.insertAdjacentElement("beforeend", criterionRow);
 
     return outcomeDetails.points_possible;
-    /*
-      <tr id="criterion_2" class="criterion learning_outcome_criterion" style="display: table-row;" draggable="true">
-        <td class="criterion_description hover-container pad-box-micro">
-          <div class="container">
-            <div class="links editing">
-                
-              <a href="#" class="delete_criterion_link"><i class="icon-trash standalone-icon"></i><span class="screenreader-only">Delete criterion row</span></a>
-            </div>
-            <div class="description_content">
-              <span class="outcome_sr_content" aria-hidden="false">
-                <i class="learning_outcome_flag icon-outcomes" aria-hidden="true"></i>
-                <span class="screenreader-only">This criterion is linked to a Learning Outcome</span>
-              </span>
-              <span class="description description_title">A-CED.3</span>
-              <span class="learning_outcome_id" style="display: none;">1134099</span>
-              <span class="criterion_id" style="display: none;"></span>
-                <div class="long_description small_description">Represent constraints by equations or inequalities, and by systems of equations and/or inequalities, and interpret solutions as viable or non-viable options in a modeling context.</div>
-              <div class="hide_when_learning_outcome " style="display: none;">
-                <div class="criterion_use_range_div editing toggle_for_hide_points ">
-                  <label>Range
-                    <input type="checkbox" class="criterion_use_range"></label>
-                </div>
-              </div>
-              <div class="threshold toggle_for_hide_points ">
-                threshold:
-                <span class="mastery_points">3</span> pts
-              </div>
-            </div>
-
-          </div>
-        </td>
-
-
-
-        <td style="padding: 0;">
-            <table class="ratings" style=""><tbody><tr>
-                <td class="rating edge_rating">
-                  <div class="container" style="height: 151px;">
-                    <div class="rating-main">
-                        
-                        <div class="clear"></div>
-                      <span class="nobr toggle_for_hide_points ">
-                        <span class="points">5</span>
-                        <span class="range_rating" style="display: none;">to &gt;<span class="min_points">3</span></span> pts
-                      </span>
-                      <div class="description rating_description_value">Exceeds Expectations</div>
-                      <div class="rating_long_description small_description"></div>
-                      <span class="rating_id" style="display: none;">blank</span>
-                    </div>
-                      
-                  </div>
-                </td><td class="rating new_rating">
-                  <div class="container" style="height: 151px;">
-                    <div class="rating-main">
-                        
-                        <div class="clear"></div>
-                      <span class="nobr toggle_for_hide_points ">
-                        <span class="points">3</span>
-                        <span class="range_rating" style="display: none;">to &gt;<span class="min_points">0</span></span> pts
-                      </span>
-                      <div class="description rating_description_value">Meets Expectations</div>
-                      <div class="rating_long_description small_description"></div>
-                      <span class="rating_id" style="display: none;">blank</span>
-                    </div>
-                      
-                  </div>
-                </td>
-                <td class="rating edge_rating
-                      infinitesimal
-                      infinitesimal">
-                  <div class="container" style="height: 151px;">
-                    <div class="rating-main">
-                        
-                        <div class="clear"></div>
-                      <span class="nobr toggle_for_hide_points ">
-                        <span class="points">0</span>
-                        <span class="range_rating" style="display: none;">to &gt;<span class="min_points">0</span></span> pts
-                      </span>
-                      <div class="description rating_description_value">Does Not Meet Expectations</div>
-                      <div class="rating_long_description small_description"></div>
-                      <span class="rating_id" style="display: none;">blank_2</span>
-                    </div>
-                  </div>
-                </td>
-            </tr></tbody></table>
-            <div style="display: none; font-size: 0.8em; margin: 5px;" class="custom_ratings">
-              This area will be used by the assessor to leave comments related to this criterion.
-            </div>
-        </td>
-
-
-
-
-        <td class="nobr points_form toggle_for_hide_points ">
-          <div class="editing" style="white-space: normal">
-            <span style="white-space: nowrap; font-size: 0.8em">
-                
-                  <input type="text" aria-label="Points" value="5" class="criterion_points span1 no-margin-bottom">
-                pts
-            </span><br>
-          </div>
-          <div class="displaying">
-            <span style="white-space: nowrap;">
-              <span class="criterion_rating_points_holder" style="display: none;">
-                <span class="criterion_rating_points">&nbsp;</span> /
-              </span>
-              <span class="display_criterion_points">5</span> pts<br>
-            </span>
-          </div>
-          <div class="ignoring">
-            <span> -- </span>
-          </div>
-          <div class="criterion_comments">
-              <a href="#" class="no-hover criterion_comments_link" title="Additional Comments">
-                <img alt="Additional Comments" src="https://du11hjcvx0uqb.cloudfront.net/dist/images/rubric_comment-ddae8546ab.png">
-              </a>
-              <div class="custom_rating" style="display: none;"></div>
-          </div>
-        </td>
-      </tr>
-    */
   }
 
-  function generateOutcomeRatingTdsHTML(outcomeDetails) {
-    const tds = [];
+  function generateOutcomeRatingCellsHTML(outcomeDetails) {
+    const cells = [];
     const ratings = outcomeDetails.ratings;
     for (let i = 0; i < ratings.length; i++) {
       const rating = ratings[i];
       if (i == 0) {
-        tds.push(`
-          <td class="rating edge_rating">
+        cells.push(`
+          <div class="rating edge_rating">
             <div class="container">
               <div class="rating-main">
-                <div class="clear"></div>
-                <span class="nobr toggle_for_hide_points ">
-                  <span class="points">${rating.points}</span>
+                <span role="text" class="rating-content-wrapper">
+                  <span class="nobr toggle_for_hide_points ">
+                    <span class="points">${rating.points}</span>
+                  </span>
+                  <span class="description rating_description_value">${rating.description}</span>
+                  <span class="rating_long_description small_description"></span>
                 </span>
-                <div class="description rating_description_value">${rating.description}</div>
-                <div class="rating_long_description small_description"></div>
                 <span class="rating_id" style="display: none;">blank</span>
               </div>
             </div>
-          </td>
+          </div>
         `);
       } else if (i == ratings.length - 1) {
-        tds.push(`
-          <td class="rating edge_rating infinitesimal">
+        cells.push(`
+          <div class="rating edge_rating infinitesimal">
             <div class="container">
               <div class="rating-main">
-                <div class="clear"></div>
-                <span class="nobr toggle_for_hide_points ">
-                  <span class="points">${rating.points}</span>
+                <span role="text" class="rating-content-wrapper">
+                  <span class="nobr toggle_for_hide_points ">
+                    <span class="points">${rating.points}</span>
+                  </span>
+                  <span class="description rating_description_value">${rating.description}</span>
+                  <span class="rating_long_description small_description"></span>
                 </span>
-                <div class="description rating_description_value">${rating.description}</div>
-                <div class="rating_long_description small_description"></div>
                 <span class="rating_id" style="display: none;">blank</span>
               </div>
             </div>
-          </td>
+          </div>
         `);
       } else {
-        tds.push(`
-          <td class="rating">
+        cells.push(`
+          <div class="rating">
             <div class="container">
               <div class="rating-main">
-                <div class="clear"></div>
-                <span class="nobr toggle_for_hide_points ">
-                  <span class="points">${rating.points}</span>
+                <span role="text" class="rating-content-wrapper">
+                  <span class="nobr toggle_for_hide_points ">
+                    <span class="points">${rating.points}</span>
+                  </span>
+                  <span class="description rating_description_value">${rating.description}</span>
+                  <span class="rating_long_description small_description"></span>
                 </span>
-                <div class="description rating_description_value">${rating.description}</div>
-                <div class="rating_long_description small_description"></div>
                 <span class="rating_id" style="display: none;">blank</span>
               </div>
             </div>
-          </td>
+          </div>
         `);
       }
     }
-    return tds.join("");
+    return cells.join("");
   }
 
   async function getOutcome(outcomeId) {
@@ -944,20 +857,18 @@
           }`
         );
 
-        const ratingsTableData = [
-          ...row.querySelectorAll("table.ratings td.rating"),
-        ];
-        for (const ratingTd of ratingsTableData) {
+        const ratingsData = [...row.querySelectorAll(".ratings > .rating")];
+        for (const ratingCell of ratingsData) {
           rowData.push(
-            `${ratingTd.querySelector(".points")?.innerText?.trim()}`
+            `${ratingCell.querySelector(".points")?.innerText?.trim()}`
           );
           rowData.push(
-            `${ratingTd
+            `${ratingCell
               .querySelector(".description.rating_description_value")
               ?.innerText?.trim()}`
           );
           rowData.push(
-            `${ratingTd
+            `${ratingCell
               .querySelector(".rating_long_description")
               ?.innerText?.trim()}`
           );

@@ -71,7 +71,7 @@ Options will also be updated to allow the user to enable/disable certain customi
     - Enable users export to CSV button (Requires course admin permission)
     - Enable ability to hide inactive users
     - Enable ability to filter by section (Uses Canvas LMS API)
-    - Enable people sort by columns
+    - Enable people sort by columns (Uses Canvas LMS API)
   - Groups
     - Enable groups export to CSV button (Requires course admin permission) (Uses Canvas LMS API)
     - Enable groups expand/collapse button
